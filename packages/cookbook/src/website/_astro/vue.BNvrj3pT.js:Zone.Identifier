@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://console.cloud.tencent.com/cos/bucket?type=object&tab=objectDetail&bucket=donut-milkio-1302551071&path=%252Fi.zip&region=ap-shanghai
+HostUrl=https://donut-milkio-1302551071.cos.ap-shanghai.myqcloud.com/i.zip?q-sign-algorithm=sha1&q-ak=AKIDPHVXSmh5aVSQd0GhqVdgzqj3tmSyUDdS9p3trmueVMuaxfzQo6BcVnZGeHiZglia&q-sign-time=1728654240;1728657840&q-key-time=1728654240;1728657840&q-header-list=host&q-url-param-list=&q-signature=e702865934567e7a3d7a84c62682ed7505663e2f&x-cos-security-token=w6HUELWGglEPrR07orLLDdec79uUnUga02b0f2def602fc04f056fbd183d3dc62Ecj9NHmveYcsQqnkVSDxpQAdKOV4ZgLz96FmRgdFT4CcgVnTfDfbjCcb2Ul7XxcYQ1YwdYnfVw355HDTI3MiyUdhDMp17ODorb_PoVb9UtLXRmL_kr1gRwYh-zMXVWPo6oIcuxrlFad3haVWLu5wEWf_rrSzgGYP6uCkG-1pAtwKSQd4lvGMtyvFXv77yGCm&response-content-type=application%2Foctet-stream&response-content-disposition=attachment

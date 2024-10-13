@@ -1,0 +1,8 @@
+[general]
+cookbookPort = 8000
+
+[projects.__test__]
+type = "milkio"
+port = 9000
+start = ["bun", "run", "index.ts"]
+build = ["bun", "run", ".milkio/bun-build.ts"]
