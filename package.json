@@ -4,8 +4,8 @@
   "workspaces": ["projects/*", "packages/milkio-astra", "packages/milkio-stargate"],
   "module": "index.ts",
   "scripts": {
-    "dev": "bun i  && ./packages/cookbook/develop.ts && sleep 2 && clear && cookbook",
-    "build": "bun i && ./packages/cookbook/develop.ts && sleep 2 && cookbook build",
+    "dev": "bun i  && ./packages/cookbook/develop.ts && cookbook",
+    "build": "bun i && ./packages/cookbook/develop.ts && cookbook build",
     "test": "vitest --max-concurrency=1"
   },
   "trustedDependencies": [],
