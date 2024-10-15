@@ -4,7 +4,8 @@ import type { BunFile } from "bun";
 import { actionHandler, type MilkioActionResultFail } from "../actions";
 import { TSON } from "@southern-aurora/tson";
 import { emitter } from "../emitter";
-import { getActionOptions, type CookbookOptions } from "../utils/cookbook-parser";
+import type { CookbookOptions } from "@milkio/cookbook/src/utils/cookbook-dto-types";
+import { checkCookbookActionParams } from "@milkio/cookbook/src/utils/cookbook-dto-checks";
 
 export const initServer = async (options: CookbookOptions) => {
   Bun.serve({
@@ -14,7 +15,8 @@ export const initServer = async (options: CookbookOptions) => {
       switch (url.pathname) {
         case "/$action": {
           try {
-            const options = getActionOptions(await request.text());
+            const [error, options] = await checkCookbookActionParams(TSON.parse(await request.text()));
+            if (error) throw error;
             const result = await actionHandler(options);
             return new Response(TSON.stringify(result));
           } catch (error) {

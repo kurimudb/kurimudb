@@ -6,6 +6,7 @@ import { cwd } from "node:process";
 import { load } from "js-toml";
 import { TSON } from "@southern-aurora/tson";
 import { format } from "date-fns";
+import type { CookbookOptions } from "./utils/cookbook-dto-types";
 
 export type AstraOptionsInit = {
   stargate: { $types: any; execute: any; ping: any; cookbook: any };
@@ -41,9 +42,8 @@ type Log = [string /* executeId */, "[DEBUG]" | "[INFO]" | "[WARN]" | "[ERROR]" 
 type Reject = (description: string, ...params: Array<unknown>) => Error;
 
 export const createAstra = async <AstraOptions extends AstraOptionsInit, Generated extends AstraOptions["stargate"]["$types"]["generated"]>(astraOptions: AstraOptions) => {
-  let cookbookOptions: any = undefined;
   if (!existsSync(join(cwd(), "cookbook.toml"))) throw new Error(`The "cookbook.toml" file does not exist in the current directory. If you are running the test with the VS Code extension, make sure it exists in the root directory of the folder you are opening with VS Code.`);
-  cookbookOptions = load((await readFile(join(cwd(), "cookbook.toml"))).toString());
+  let cookbookOptions = load((await readFile(join(cwd(), "cookbook.toml"))).toString()) as CookbookOptions;
   // wait for all milkio projects to start and can be accessed
   // the reason why stargate's ping method is not used directly is that even if only one project is tested, it is necessary to wait for all milkio projects to start
   await Promise.all([

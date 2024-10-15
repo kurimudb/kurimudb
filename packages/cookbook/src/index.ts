@@ -8,7 +8,7 @@ import { initWatcher } from "./watcher";
 import { initServer } from "./server";
 import { generator } from "./generator";
 import { openProgress } from "./progress";
-import { getOptions, type CookbookOptions } from "./utils/cookbook-parser";
+import { checkCookbookOptions } from "./utils/cookbook-dto-checks";
 
 export const execute = async () => {
   switch (process.argv[2]) {
@@ -17,7 +17,16 @@ export const execute = async () => {
       const closeProgress = openProgress();
 
       const startTime = new Date();
-      const options: CookbookOptions = await getOptions(Bun.file(join(cwd(), "cookbook.toml")));
+      const cookbookToml = Bun.file(join(cwd(), "cookbook.toml"));
+      if (!(await cookbookToml.exists())) {
+        consola.error(`The "cookbook.toml" file does not exist in the current directory: ${join(cwd())}`);
+        exit(0);
+      }
+      const [error, options] = await checkCookbookOptions(Bun.TOML.parse(await cookbookToml.text()));
+      if (error) {
+        consola.error(error.message);
+        exit(0);
+      }
       if (Object.keys(options.projects).length === 0) {
         consola.error(`For at least one project, check your "cookbook.toml".`);
         exit(0);
@@ -63,7 +72,11 @@ export const execute = async () => {
 
     case "build": {
       const startTime = new Date();
-      const options: CookbookOptions = await getOptions(Bun.file(join(cwd(), "cookbook.toml")));
+      const [error, options] = await checkCookbookOptions(Bun.file(join(cwd(), "cookbook.toml")));
+      if (error) {
+        consola.error(error.message);
+        exit(0);
+      }
 
       await generator.significant(options);
       await generator.insignificant(options);

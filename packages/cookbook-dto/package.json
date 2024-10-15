@@ -1,7 +1,6 @@
 {
-  "name": "@milkio/cookbook-parser",
+  "name": "@milkio/cookbook-dto",
   "version": "1.0.0",
-  "module": "./generated/index.ts",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest"

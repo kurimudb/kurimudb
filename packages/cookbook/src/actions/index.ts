@@ -1,11 +1,7 @@
 import { emitter } from "../emitter";
+import type { CookbookActionParams } from "../utils/cookbook-dto-types";
 
-export type MilkioActionParams = {
-  type: "milkio@logger";
-  log: Array<any>;
-};
-
-export const actionHandler = async (options: MilkioActionParams): Promise<MilkioActionResultSuccess> => {
+export const actionHandler = async (options: CookbookActionParams): Promise<MilkioActionResultSuccess> => {
   if (options.type === "milkio@logger") {
     emitter.emit("data", {
       type: "milkio@logger",

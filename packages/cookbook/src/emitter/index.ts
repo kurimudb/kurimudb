@@ -1,25 +1,4 @@
 import mitt from "mitt";
+import type { CookbookSubscribeEmits } from "../utils/cookbook-dto";
 
-export type Emit =
-  | {
-      type: "workers@stdout";
-      key: string;
-      chunk: string;
-    }
-  | {
-      type: "workers@state";
-      key: string;
-      state: "running" | "stopped";
-      code: number | null | "kill" | "running";
-    }
-  | {
-      type: "watcher@change";
-      event: "rename" | "change";
-      path: string;
-    }
-  | {
-      type: "milkio@logger";
-      log: Array<any>;
-    };
-
-export const emitter = mitt<{ data: Emit }>();
+export const emitter = mitt<{ data: CookbookSubscribeEmits }>();

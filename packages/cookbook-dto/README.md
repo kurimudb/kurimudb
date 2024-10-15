@@ -1,4 +1,4 @@
-# @milkio/cookbook-parser
+# @milkio/cookbook-dto
 
 To install dependencies:
 

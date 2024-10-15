@@ -2,7 +2,7 @@ import { Glob } from "bun";
 import consola from "consola";
 import { join } from "node:path";
 import { exists } from "node:fs/promises";
-import type { CookbookOptions } from "../utils/cookbook-parser";
+import type { CookbookOptions } from "../utils/cookbook-dto";
 import { exit, cwd } from "node:process";
 import { checkPath } from "./utils";
 
