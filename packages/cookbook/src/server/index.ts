@@ -1,11 +1,10 @@
 import { consola } from "consola";
 import { join } from "node:path";
-import { getActionOptions } from "../typia/generated";
 import type { BunFile } from "bun";
 import { actionHandler, type MilkioActionResultFail } from "../actions";
 import { TSON } from "@southern-aurora/tson";
-import type { CookbookOptions } from "..";
 import { emitter } from "../emitter";
+import { getActionOptions, type CookbookOptions } from "../utils/cookbook-parser";
 
 export const initServer = async (options: CookbookOptions) => {
   Bun.serve({

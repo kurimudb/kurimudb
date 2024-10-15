@@ -3,13 +3,12 @@ import consola from "consola";
 import { join } from "node:path";
 import { exit, cwd } from "node:process";
 import { existsSync } from "node:fs";
-import { getOptions } from "./typia/generated";
 import { initWorkers } from "./workers";
 import { initWatcher } from "./watcher";
 import { initServer } from "./server";
 import { generator } from "./generator";
 import { openProgress } from "./progress";
-import { type CookbookOptions } from "@milkio/cookbook-parser";
+import { getOptions, type CookbookOptions } from "./utils/cookbook-parser";
 
 export const execute = async () => {
   switch (process.argv[2]) {

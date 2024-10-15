@@ -1,4 +1,4 @@
-import type { CookbookOptions } from "..";
+import type { CookbookOptions } from "../utils/cookbook-parser";
 import { join } from "node:path";
 import { exit, cwd } from "node:process";
 import { exists, mkdir } from "node:fs/promises";

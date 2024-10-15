@@ -1,6 +1,6 @@
 import { Glob } from "bun";
 import { join } from "node:path";
-import type { CookbookOptions } from "..";
+import type { CookbookOptions } from "../utils/cookbook-parser";
 import { exists } from "node:fs/promises";
 import { checkPath } from "./utils";
 

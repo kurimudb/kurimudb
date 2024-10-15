@@ -1,4 +1,4 @@
-import type { CookbookOptions } from "..";
+import type { CookbookOptions } from "../utils/cookbook-parser";
 import { debounce } from "lodash-es";
 import { watch } from "node:fs";
 import { join } from "node:path";

@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { exit, cwd } from "node:process";
-import type { CookbookOptions } from "..";
+import type { CookbookOptions } from "../utils/cookbook-parser";
 import consola from "consola";
 
 export const initTest = async (options: CookbookOptions) => {
