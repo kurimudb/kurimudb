@@ -9,25 +9,7 @@ import { initWatcher } from "./watcher";
 import { initServer } from "./server";
 import { generator } from "./generator";
 import { openProgress } from "./progress";
-
-export type CookbookOptions = {
-  projects: Record<
-    string,
-    {
-      type: "milkio" | "other";
-      port: number;
-      start: Array<string>;
-      build: Array<string>;
-      lazyRoutes?: boolean;
-      typiaMode?: "generation" | "bundler";
-      significant?: Array<string>;
-      insignificant?: Array<string>;
-    }
-  >;
-  general: {
-    cookbookPort: number;
-  };
-};
+import { type CookbookOptions } from "@milkio/cookbook-parser";
 
 export const execute = async () => {
   switch (process.argv[2]) {
