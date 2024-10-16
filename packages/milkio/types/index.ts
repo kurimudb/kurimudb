@@ -10,6 +10,8 @@ export type Mixin<T, U> = U & Omit<T, keyof U>;
 
 export type GeneratorGeneric<T> = T extends AsyncGenerator<infer I> ? I : never;
 
+export type ToEmptyObject<T> = T extends undefined | null | never ? {} : T extends object ? T : {};
+
 export type ExecuteId = string | "global";
 
 // DON'T TRY TO WRITE A MORE DETAILED TYPE FOR THIS TYPE

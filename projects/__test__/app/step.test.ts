@@ -12,5 +12,8 @@ test.sequential("basic", async () => {
   if (error) throw reject("Milkio did not execute successfully", error);
 
   // Check if the return value is as expected
-  expect(results).toBe(4);
+  expect(results.cAdd).toBe(4);
+  expect(results.cMul).toBe(8);
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  expect((results as any)._cDiv).toBe(undefined);
 });
