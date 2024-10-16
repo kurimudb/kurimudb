@@ -1,9 +1,9 @@
 import { Glob } from "bun";
 import consola from "consola";
 import { join } from "node:path";
-import type { CookbookOptions } from "../utils/cookbook-dto";
 import { exists } from "node:fs/promises";
 import { exit, cwd } from "node:process";
+import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const testSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
   const scanner = join(paths.cwd);
@@ -17,9 +17,7 @@ export const testSchema = async (options: CookbookOptions, paths: { cwd: string;
   let typescriptExports = "export default {";
   for await (let path of files) {
     path = path.replaceAll("\\", "/");
-    // const file = Bun.file(join(scanner, path));
-    // const fileUnit8Array = await file.text();
-    // if (!fileUnit8Array.includes("export default [")) continue;
+
     if (!/^[a-z0-9/$/-]+$/.test(path.slice(0, -8))) {
       consola.error(`Invalid path: "${join(cwd(), path)}". The path can only contain lowercase letters, numbers, and "-".\n`);
       exit(1);

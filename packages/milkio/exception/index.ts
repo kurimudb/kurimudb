@@ -8,7 +8,6 @@ export interface $rejectCode {
   REQUEST_TIMEOUT: { timeout: number; message: string };
   NOT_FOUND: { path: string };
   PARAMS_TYPE_INCORRECT: { path: string; expected: string; value: any; message: string } | null;
-  RESULTS_TYPE_INCORRECT: { path: string; expected: string; value: any; message: string } | null;
   UNACCEPTABLE: { expected: string; message: string };
   PARAMS_TYPE_NOT_SUPPORTED: { expected: string };
   INTERNAL_SERVER_ERROR: undefined;

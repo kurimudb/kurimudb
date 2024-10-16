@@ -1,7 +1,7 @@
 import { join } from "node:path";
 import { exit, cwd } from "node:process";
-import type { CookbookOptions } from "../utils/cookbook-dto";
 import consola from "consola";
+import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const initTest = async (options: CookbookOptions) => {
   //

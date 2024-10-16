@@ -8,5 +8,6 @@ export * from "./stream";
 export * from "./logger";
 export * from "./context";
 export * from "./meta";
+export * from "./step";
 export * from "./listener";
 export * from "./exception";

@@ -1,7 +1,7 @@
 import { type IValidation } from "typia";
 import { TSON } from "@southern-aurora/tson";
 import { createId } from "../utils/create-id";
-import { reject, type $context, type $meta, type ExecuteOptions, type Logger, type MilkioRuntimeInit, type Results, type GeneratedInit, type MilkioInit, createLogger, exceptionHandler, Ping } from "..";
+import { reject, type $context, type $meta, type ExecuteOptions, type Logger, type MilkioRuntimeInit, type Results, type GeneratedInit, type MilkioInit, createLogger, exceptionHandler, Ping, createStep } from "..";
 import { headersToJSON } from "../utils/headers-to-json";
 
 export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRuntimeInit<MilkioInit>> = MilkioRuntimeInit<MilkioInit>>(generated: GeneratedInit, runtime: MilkioRuntime) => {
@@ -65,6 +65,7 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
       path: options.path,
       logger: options.createdLogger,
       executeId: options.createdExecuteId,
+      step: createStep(),
     } as unknown as $context;
     const results: Results<unknown> = { value: undefined };
 
@@ -75,7 +76,7 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
     const module = await routeSchema.module();
     let meta = (module.meta ? module.meta : {}) as unknown as Readonly<$meta>;
 
-    if (!meta.typeSafety || meta.typeSafety.includes("params")) {
+    if (!meta.typeSafety || meta.typeSafety === true) {
       const validation = routeSchema.validateParams(params) as IValidation<any>;
       if (!validation.success) throw reject("PARAMS_TYPE_INCORRECT", { ...validation.errors[0], message: `The value '${validation.errors[0].path}' is '${validation.errors[0].value}', which does not meet '${validation.errors[0].expected}' requirements.` });
     }
@@ -85,11 +86,6 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
     results.value = await module.default.handler(context, params);
 
     await runtime.emit("milkio:executeAfter", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context, results });
-
-    if (!meta.typeSafety || meta.typeSafety.includes("results")) {
-      const validation = routeSchema.validateResults(results.value) as IValidation<any>;
-      if (!validation.success) throw reject("RESULTS_TYPE_INCORRECT", { ...validation.errors[0], message: `The value '${validation.errors[0].path}' is '${validation.errors[0].value}', which does not meet '${validation.errors[0].expected}' requirements.` });
-    }
 
     return { executeId, headers, params, results, context, meta, type: module.$milkioType };
   };

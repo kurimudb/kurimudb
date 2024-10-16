@@ -2,9 +2,9 @@ import { Glob } from "bun";
 import consola from "consola";
 import { join } from "node:path";
 import { exists } from "node:fs/promises";
-import type { CookbookOptions } from "../utils/cookbook-dto";
 import { exit, cwd } from "node:process";
 import { checkPath } from "./utils";
+import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const routeSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
   const scanner = join(paths.cwd, "app");
@@ -52,7 +52,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       }
       typescriptRouteExports += `validateParams: (params: unknown): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
       typescriptRouteExports += `validateResults: (results: unknown): IValidation<Awaited<ReturnType<typeof ${name}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${name}["handler"]>>>(results), `;
-      typescriptRouteExports += `randomParams: (): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.random<Parameters<typeof ${name}["handler"]>[1]>(), `;
+      typescriptRouteExports += `randomParams: (): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.random<Parameters<typeof ${name}["handler"]>[1]>() as any, `;
       typescriptRouteExports += `}],`;
       typescriptTypeExports += `"🐣": boolean, `;
       typescriptTypeExports += `meta: typeof ${name}["meta"], `;
@@ -88,7 +88,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       }
       typescriptRouteExports += `validateParams: (params: unknown): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
       typescriptRouteExports += `validateResults: (results: unknown): IValidation<Awaited<ReturnType<typeof ${name}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${name}["handler"]>>>(results), `;
-      typescriptRouteExports += `randomParams: (): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.random<Parameters<typeof ${name}["handler"]>[1]>(), `;
+      typescriptRouteExports += `randomParams: (): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.random<Parameters<typeof ${name}["handler"]>[1]>() as any, `;
       typescriptRouteExports += `}],`;
       typescriptTypeExports += `"🐣": number, `;
       typescriptTypeExports += `meta: typeof ${name}["meta"], `;

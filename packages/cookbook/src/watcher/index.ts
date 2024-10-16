@@ -1,4 +1,3 @@
-import type { CookbookOptions } from "../utils/cookbook-dto";
 import { debounce } from "lodash-es";
 import { watch } from "node:fs";
 import { join } from "node:path";
@@ -9,6 +8,7 @@ import { generator } from "../generator";
 import { workers } from "../workers";
 import consola from "consola";
 import { fetchWithTimeout } from "../utils/fetch-with-timeout";
+import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const initWatcher = async (options: CookbookOptions) => {
   let waiting: ReturnType<typeof Promise.withResolvers> = Promise.withResolvers();

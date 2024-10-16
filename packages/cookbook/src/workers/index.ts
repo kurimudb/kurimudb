@@ -1,10 +1,10 @@
 import { join } from "node:path";
 import { cwd, kill } from "node:process";
 import { env, type Subprocess } from "bun";
-import type { CookbookOptions } from "../utils/cookbook-dto";
 import { emitter } from "../emitter";
 import consola from "consola";
 import { fetchWithTimeout } from "../utils/fetch-with-timeout";
+import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 const textDecoder = new TextDecoder();
 export const workers = new Map<string, Worker>();

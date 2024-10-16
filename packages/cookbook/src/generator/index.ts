@@ -1,4 +1,3 @@
-import type { CookbookOptions } from "../utils/cookbook-dto";
 import { join } from "node:path";
 import { exit, cwd } from "node:process";
 import { exists, mkdir } from "node:fs/promises";
@@ -6,6 +5,7 @@ import { routeSchema } from "./route-schema";
 import { commandSchema } from "./command-schema";
 import { testSchema } from "./test-schema";
 import { $ } from "bun";
+import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const generator = {
   async significant(options: CookbookOptions) {

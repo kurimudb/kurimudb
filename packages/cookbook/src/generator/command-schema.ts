@@ -1,8 +1,8 @@
 import { Glob } from "bun";
 import { join } from "node:path";
-import type { CookbookOptions } from "../utils/cookbook-dto";
 import { exists } from "node:fs/promises";
 import { checkPath } from "./utils";
+import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const commandSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
   const scanner = join(paths.cwd, "commands");
