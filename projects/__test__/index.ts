@@ -14,7 +14,8 @@ declare module "milkio" {
 
 export const world = await createWorld(generated, {
   port: 9000,
-  cookbook: !env.MILKIO_DEVELOP ? undefined : { cookbookPort: 8000 },
+  cookbook: { cookbookPort: 8000 },
+  develop: env.MILKIO_DEVELOP === "ENABLE",
   argv: process.argv,
 });
 

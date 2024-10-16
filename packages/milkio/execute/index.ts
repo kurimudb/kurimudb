@@ -53,7 +53,7 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
     }
     if (typeof params !== "object" || Array.isArray(params)) throw reject("PARAMS_TYPE_NOT_SUPPORTED", { expected: "json" });
     if ("$milkioGenerateParams" in params && params.$milkioGenerateParams === "enable") {
-      if (!runtime.cookbook) throw reject("NOT_DEVELOP_MODE", "This feature must be in cookbook to use.");
+      if (!runtime.develop) throw reject("NOT_DEVELOP_MODE", "This feature must be in cookbook to use.");
       delete params.$milkioGenerateParams;
       let paramsRand = routeSchema.randomParams();
       if (paramsRand === undefined || paramsRand === null) paramsRand = {};
@@ -69,7 +69,7 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
     } as unknown as $context;
     const results: Results<unknown> = { value: undefined };
 
-    if (runtime.cookbook) {
+    if (runtime.develop) {
       options.createdLogger.request(`headers - ${TSON.stringify(headers.toJSON())}`, `\nparams - ${TSON.stringify(params)}`);
     }
 

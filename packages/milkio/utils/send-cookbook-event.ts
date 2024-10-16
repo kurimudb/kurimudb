@@ -8,7 +8,7 @@ type CookbookEvent = {
 
 export const sendCookbookEvent = async (runtime: MilkioRuntimeInit<MilkioInit>, event: CookbookEvent) => {
   try {
-    const response = await fetch(`http://localhost:${runtime.cookbook?.cookbookPort}/$action`, {
+    const response = await fetch(`http://localhost:${runtime.cookbook.cookbookPort}/$action`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

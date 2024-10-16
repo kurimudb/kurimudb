@@ -3,7 +3,8 @@ import { defineDefaultExecuteIdGenerator } from "../execute/execute-id-generator
 
 export type MilkioInit = {
   port: number;
-  cookbook?: {
+  develop: boolean;
+  cookbook: {
     cookbookPort: number;
   };
   cors?: {
