@@ -14,6 +14,6 @@ test.sequential("basic", async () => {
   // Check if the return value is as expected
   expect(results.cAdd).toBe(4);
   expect(results.cMul).toBe(8);
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   expect((results as any)._cDiv).toBe(undefined);
+  expect(results.cRem).toBe(0.5);
 });

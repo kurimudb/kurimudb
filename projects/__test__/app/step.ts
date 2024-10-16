@@ -36,6 +36,15 @@ export default action({
           _cDiv,
         };
       })
+      /**
+       * Calculate the remainder of _cDiv and 10
+       */
+      .step((stage) => {
+        const cRem = stage._cDiv % 10;
+        return {
+          cRem,
+        };
+      })
       .run();
   },
 });
