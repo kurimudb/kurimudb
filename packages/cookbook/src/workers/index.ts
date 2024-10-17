@@ -74,10 +74,10 @@ export const createWorkers = (key: string, options: { command: Array<string>; cw
       if (worker.state === "stopped") return;
       emitter.emit("data", { type: "workers@state", key, state: "stopped", code: "kill" });
       worker.state = "stopped";
+      spawn.kill(1);
       try {
         kill(spawn.pid, "SIGINT");
       } catch (error) {}
-      spawn.kill(1);
     },
     run: () => {
       if (worker.state === "running") return;
