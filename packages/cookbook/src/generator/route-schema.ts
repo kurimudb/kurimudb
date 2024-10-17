@@ -22,11 +22,11 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
 
   for await (let path of files) {
     path = path.replaceAll("\\", "/");
-    const file = Bun.file(join(scanner, path));
+    // const file = Bun.file(join(scanner, path));
     if (path.endsWith(".action.ts")) {
       // action
       checkPath(paths, path, "action");
-      let nameWithPath = path.slice(0, path.length - 3); // 3 === ".ts".length
+      let nameWithPath = path.slice(0, path.length - 10); // 10 === ".action.ts".length
       let key = nameWithPath;
       if (key.endsWith("/index") || key === "index") key = key.slice(0, key.length - 5); // 5 === "index".length
       if (key.endsWith("/") && key.length > 1) key = key.slice(0, key.length - 1);
@@ -44,10 +44,10 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       typescriptRouteExports += `\n  ["/${key}", { `;
       typescriptRouteExports += `type: "action", `;
       if (project?.lazyRoutes === undefined || project?.lazyRoutes === true) {
-        typescriptImports += `\nimport type ${name} from "../../../app/${nameWithPath}";`;
-        typescriptRouteExports += `module: () => import("../../../app/${nameWithPath}"), `;
+        typescriptImports += `\nimport type ${name} from "../../../app/${nameWithPath}.action";`;
+        typescriptRouteExports += `module: () => import("../../../app/${nameWithPath}.action"), `;
       } else {
-        typescriptImports += `\nimport ${name} from "../../../app/${nameWithPath}";`;
+        typescriptImports += `\nimport ${name} from "../../../app/${nameWithPath}.action";`;
         typescriptRouteExports += `module: () => ${name}, `;
       }
       typescriptRouteExports += `validateParams: (params: unknown): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
@@ -61,8 +61,8 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       typescriptTypeExports += `},`;
     } else if (path.endsWith(".stream.ts")) {
       // stream
-      checkPath(paths, path, "action");
-      let nameWithPath = path.slice(0, path.length - 3); // 3 === ".ts".length
+      checkPath(paths, path, "stream");
+      let nameWithPath = path.slice(0, path.length - 10); // 10 === ".stream.ts".length
       let key = nameWithPath;
       if (key.endsWith("/index") || key === "index") key = key.slice(0, key.length - 5); // 5 === "index".length
       if (key.endsWith("/") && key.length > 1) key = key.slice(0, key.length - 1);
@@ -79,10 +79,10 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       typescriptRouteExports += `\n  ["/${key}", { `;
       typescriptRouteExports += `type: "stream", `;
       if (project?.lazyRoutes === undefined || project.lazyRoutes === true) {
-        typescriptImports += `\nimport type ${name} from "../../../app/${nameWithPath}";`;
-        typescriptRouteExports += `module: () => import("../../../app/${nameWithPath}"), `;
+        typescriptImports += `\nimport type ${name} from "../../../app/${nameWithPath}.stream";`;
+        typescriptRouteExports += `module: () => import("../../../app/${nameWithPath}.stream"), `;
       } else {
-        typescriptImports += `\nimport ${name} from "../../../app/${nameWithPath}";`;
+        typescriptImports += `\nimport ${name} from "../../../app/${nameWithPath}.stream";`;
         typescriptRouteExports += `module: () => ${name}, `;
       }
       typescriptRouteExports += `validateParams: (params: unknown): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
