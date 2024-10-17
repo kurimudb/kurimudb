@@ -10,19 +10,13 @@ export type Mixin<T, U> = U & Omit<T, keyof U>;
 
 export type GeneratorGeneric<T> = T extends AsyncGenerator<infer I> ? I : never;
 
-export type DBCreate<T, KO extends keyof T | never = never> = Omit<
-  {
-    [K in keyof T]?: T[K] extends null ? undefined : Exclude<T[K], null>;
-  },
-  KO
->;
+export type DBCreate<T, KO extends keyof T | never = never, TO extends Omit<T, KO> = Omit<T, KO>> = {
+  [K in keyof TO]?: TO[K] extends null ? undefined : Exclude<TO[K], null>;
+};
 
-export type DBUpdate<T, KO extends keyof T | never = never> = Omit<
-  Partial<{
-    [K in keyof T]?: T[K] extends null ? undefined : Exclude<T[K], null>;
-  }>,
-  KO
->;
+export type DBUpdate<T, KO extends keyof T | never = never, TO extends Partial<Omit<T, KO>> = Partial<Omit<T, KO>>> = {
+  [K in keyof TO]?: TO[K] extends null ? undefined : Exclude<TO[K], null>;
+};
 
 export type ExecuteId = string | "global";
 
