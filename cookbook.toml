@@ -2,8 +2,8 @@
 cookbookPort = 8000
 
 [projects.__test__]
+port = 9000
 type = "milkio"
 typiaMode = "bundler"
-port = 9000
 start = ["bun", "run", "index.ts"]
 build = ["bun", "run", ".milkio/bun-build.ts"]
