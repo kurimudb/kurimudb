@@ -10,7 +10,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
   const scanner = join(paths.cwd, "app");
   let files: AsyncIterableIterator<string> | Array<string> = [];
   if (await exists(scanner)) {
-    const glob = new Glob("**/*.ts");
+    const glob = new Glob("**/*.{action,stream}.ts");
     files = glob.scan({ cwd: scanner, onlyFiles: true });
   }
 
@@ -23,10 +23,9 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
   for await (let path of files) {
     path = path.replaceAll("\\", "/");
     const file = Bun.file(join(scanner, path));
-    const fileTextRaw = await file.text();
-    if (fileTextRaw.includes("\nexport default action({\n")) {
+    if (path.endsWith(".action.ts")) {
       // action
-      checkPath(paths, path);
+      checkPath(paths, path, "action");
       let nameWithPath = path.slice(0, path.length - 3); // 3 === ".ts".length
       let key = nameWithPath;
       if (key.endsWith("/index") || key === "index") key = key.slice(0, key.length - 5); // 5 === "index".length
@@ -35,9 +34,10 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
         consola.error(`Invalid path: "${join(paths.cwd, "app", path)}". The most common reason for having paths duplicate is that you created a new "${path}.ts" and have a "${path}/index.ts".\n`);
         exit(1);
       }
+      key = key.split(".")[0];
       keys.push(key);
       const name = path
-        .slice(0, path.length - 3) // 3 === ".ts".length
+        .slice(0, path.length - 10) // 10 === ".action.ts".length
         .replaceAll("/", "$")
         .replaceAll("-", "_");
       typescriptTypeExports += `\n  "/${key}": { `;
@@ -59,9 +59,9 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       typescriptTypeExports += `params: Parameters<typeof ${name}["handler"]>[1], `;
       typescriptTypeExports += `result: Awaited<ReturnType<typeof ${name}["handler"]>> `;
       typescriptTypeExports += `},`;
-    } else if (fileTextRaw.includes("\nexport default stream({\n")) {
+    } else if (path.endsWith(".stream.ts")) {
       // stream
-      checkPath(paths, path);
+      checkPath(paths, path, "action");
       let nameWithPath = path.slice(0, path.length - 3); // 3 === ".ts".length
       let key = nameWithPath;
       if (key.endsWith("/index") || key === "index") key = key.slice(0, key.length - 5); // 5 === "index".length
@@ -72,10 +72,9 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       }
       keys.push(key);
       const name = path
-        .slice(0, path.length - 3) // 3 === ".ts".length
+        .slice(0, path.length - 10) // 10 === ".stream.ts".length
         .replaceAll("/", "$")
-        .replaceAll("-", "_")
-        .replaceAll(".ts", "");
+        .replaceAll("-", "_");
       typescriptTypeExports += `\n  "/${key}": { `;
       typescriptRouteExports += `\n  ["/${key}", { `;
       typescriptRouteExports += `type: "stream", `;
