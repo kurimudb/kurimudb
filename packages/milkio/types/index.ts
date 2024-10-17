@@ -10,10 +10,17 @@ export type Mixin<T, U> = U & Omit<T, keyof U>;
 
 export type GeneratorGeneric<T> = T extends AsyncGenerator<infer I> ? I : never;
 
-export type DBFilter<T, K extends keyof T | never = never> = Omit<
+export type DBCreate<T, K extends keyof T | never = never> = Omit<
   {
     [K in keyof T]: T[K] extends null ? undefined : T[K];
   },
+  K
+>;
+
+export type DBUpdate<T, K extends keyof T | never = never> = Omit<
+  Partial<{
+    [K in keyof T]: T[K] extends null ? undefined : T[K];
+  }>,
   K
 >;
 
