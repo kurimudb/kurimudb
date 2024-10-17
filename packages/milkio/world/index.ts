@@ -25,6 +25,7 @@ export type MilkioRuntimeInit<T extends MilkioInit> = Mixin<
     executeId: (request: Request) => string | Promise<string>;
     runtime: {
       request: Map<ExecuteId, { logger: Logger }>;
+      app: any;
     };
     on: Awaited<ReturnType<typeof __initEventManager>>["on"];
     off: Awaited<ReturnType<typeof __initEventManager>>["off"];
@@ -70,6 +71,8 @@ export const createWorld = async <MilkioOptions extends MilkioInit>(generated: G
     // listener
     listener,
   };
+
+  runtime.app = app;
 
   return app as MilkioWorld<MilkioOptions>;
 };

@@ -1,4 +1,4 @@
-import { type $rejectCode } from "..";
+import { type $context, type $rejectCode } from "..";
 
 export interface $types {
   [key: string]: Record<any, any>;

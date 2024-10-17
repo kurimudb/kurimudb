@@ -1,4 +1,4 @@
-import { type MilkioHttpRequest, type MilkioHttpResponse, type $types, type Logger, Steps } from "..";
+import { type MilkioHttpRequest, type MilkioHttpResponse, type $types, type Logger, type Steps, type Execute } from "..";
 
 export interface $context {
   executeId: string;
@@ -6,6 +6,7 @@ export interface $context {
   logger: Logger;
   http?: ContextHttp<Record<any, any>>;
   step: Steps<{}>["step"];
+  execute: Execute;
 }
 
 export type ContextHttp<ParamsParsed = any> = {
