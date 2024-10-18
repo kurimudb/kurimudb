@@ -2,6 +2,7 @@ import typia from "typia";
 import type { CookbookActionParams, CookbookOptions, CookbookSubscribeEmits } from "./cookbook-dto-types";
 
 export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[Record<any, any> & { message: string; stack: string }, null] | [null, CookbookOptions]> => {
+  let cookbookToml = { ...cookbookTomlParsed };
   const checkResult = typia.validateEquals<CookbookOptions>(cookbookTomlParsed);
   let error = null;
   if (!checkResult.success) {
@@ -10,12 +11,13 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[Re
     Error.captureStackTrace(error);
     cookbookTomlParsed = null;
   }
-  return [error, cookbookTomlParsed];
+  return [error, cookbookToml];
 };
 
-export const checkCookbookActionParams = async (results: any): Promise<[Record<any, any> & { message: string; stack: string }, null] | [null, CookbookActionParams]> => {
+export const checkCookbookActionParams = async (resultsRaw: any): Promise<[Record<any, any> & { message: string; stack: string }, null] | [null, CookbookActionParams]> => {
+  let results = { ...resultsRaw };
   if (typeof Bun === "undefined") throw new Error("Bun is not defined");
-  const checkResult = typia.misc.validatePrune<CookbookActionParams>(results);
+  const checkResult = typia.misc.validatePrune<CookbookActionParams>(resultsRaw);
   let error = null;
   if (!checkResult.success) {
     const error: any = checkResult.errors.at(0)!;

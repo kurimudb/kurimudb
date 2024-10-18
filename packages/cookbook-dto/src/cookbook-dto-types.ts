@@ -13,14 +13,21 @@ export type CookbookOptions = {
     }
   >;
   general: {
+    start: string;
     cookbookPort: number;
   };
 };
 
-export type CookbookActionParams = {
-  type: "milkio@logger";
-  log: Array<any>;
-};
+export type CookbookActionParams =
+  | {
+      type: "milkio@logger";
+      log: Array<any>;
+    }
+  | {
+      type: "milkio@template";
+      name: string;
+      template: string;
+    };
 
 export type CookbookSubscribeEmits =
   | {

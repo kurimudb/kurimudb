@@ -15,12 +15,17 @@ export type CookbookOptions = {
         insignificant?: Array<string>;
     }>;
     general: {
+        start: string;
         cookbookPort: number;
     };
 };
 export type CookbookActionParams = {
     type: "milkio@logger";
     log: Array<any>;
+} | {
+    type: "milkio@template";
+    name: string;
+    template: string;
 };
 export type CookbookSubscribeEmits = {
     type: "workers@stdout";

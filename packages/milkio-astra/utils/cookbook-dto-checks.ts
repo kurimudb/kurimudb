@@ -15,6 +15,7 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
     null,
     CookbookOptions
 ]> => {
+    let cookbookToml = { ...cookbookTomlParsed };
     const checkResult = (() => { const $join = (typia.validateEquals as any).join; const $io0 = (input: any, _exceptionable: boolean = true): boolean => "object" === typeof input.projects && null !== input.projects && false === Array.isArray(input.projects) && $io1(input.projects, true && _exceptionable) && ("object" === typeof input.general && null !== input.general && $io3(input.general, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
         if (["projects", "general"].some((prop: any) => key === prop))
             return true;
@@ -34,8 +35,8 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
         if (undefined === value)
             return true;
         return false;
-    })); const $io3 = (input: any, _exceptionable: boolean = true): boolean => "number" === typeof input.cookbookPort && (1 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-        if (["cookbookPort"].some((prop: any) => key === prop))
+    })); const $io3 = (input: any, _exceptionable: boolean = true): boolean => "string" === typeof input.start && "number" === typeof input.cookbookPort && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        if (["start", "cookbookPort"].some((prop: any) => key === prop))
             return true;
         const value = input[key];
         if (undefined === value)
@@ -156,12 +157,16 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
                 expected: "undefined",
                 value: value
             });
-        }).every((flag: boolean) => flag))].every((flag: boolean) => flag); const $vo3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["number" === typeof input.cookbookPort || $report(_exceptionable, {
+        }).every((flag: boolean) => flag))].every((flag: boolean) => flag); const $vo3 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["string" === typeof input.start || $report(_exceptionable, {
+            path: _path + ".start",
+            expected: "string",
+            value: input.start
+        }), "number" === typeof input.cookbookPort || $report(_exceptionable, {
             path: _path + ".cookbookPort",
             expected: "number",
             value: input.cookbookPort
-        }), 1 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-            if (["cookbookPort"].some((prop: any) => key === prop))
+        }), 2 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
+            if (["start", "cookbookPort"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)
@@ -204,9 +209,9 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
         Error.captureStackTrace(error);
         cookbookTomlParsed = null;
     }
-    return [error, cookbookTomlParsed];
+    return [error, cookbookToml];
 };
-export const checkCookbookActionParams = async (results: any): Promise<[
+export const checkCookbookActionParams = async (resultsRaw: any): Promise<[
     Record<any, any> & {
         message: string;
         stack: string;
@@ -216,9 +221,17 @@ export const checkCookbookActionParams = async (results: any): Promise<[
     null,
     CookbookActionParams
 ]> => {
+    let results = { ...resultsRaw };
     if (typeof Bun === "undefined")
         throw new Error("Bun is not defined");
-    const checkResult = (() => { const $io0 = (input: any): boolean => "milkio@logger" === input.type && Array.isArray(input.log); const $vo0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["milkio@logger" === input.type || $report(_exceptionable, {
+    const checkResult = (() => { const $throws = (typia.misc.validatePrune as any).throws; const $io0 = (input: any): boolean => "milkio@logger" === input.type && Array.isArray(input.log); const $io1 = (input: any): boolean => "milkio@template" === input.type && "string" === typeof input.name && "string" === typeof input.template; const $iu0 = (input: any): any => (() => {
+        if ("milkio@logger" === input.type)
+            return $io0(input);
+        else if ("milkio@template" === input.type)
+            return $io1(input);
+        else
+            return false;
+    })(); const $vo0 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["milkio@logger" === input.type || $report(_exceptionable, {
             path: _path + ".type",
             expected: "\"milkio@logger\"",
             value: input.type
@@ -226,23 +239,62 @@ export const checkCookbookActionParams = async (results: any): Promise<[
             path: _path + ".log",
             expected: "Array<any>",
             value: input.log
-        })].every((flag: boolean) => flag); const $po0 = (input: any): any => {
+        })].every((flag: boolean) => flag); const $vo1 = (input: any, _path: string, _exceptionable: boolean = true): boolean => ["milkio@template" === input.type || $report(_exceptionable, {
+            path: _path + ".type",
+            expected: "\"milkio@template\"",
+            value: input.type
+        }), "string" === typeof input.name || $report(_exceptionable, {
+            path: _path + ".name",
+            expected: "string",
+            value: input.name
+        }), "string" === typeof input.template || $report(_exceptionable, {
+            path: _path + ".template",
+            expected: "string",
+            value: input.template
+        })].every((flag: boolean) => flag); const $vu0 = (input: any, _path: string, _exceptionable: boolean = true): any => (() => {
+        if ("milkio@logger" === input.type)
+            return $vo0(input, _path, true && _exceptionable);
+        else if ("milkio@template" === input.type)
+            return $vo1(input, _path, true && _exceptionable);
+        else
+            return $report(_exceptionable, {
+                path: _path,
+                expected: "(__type | __type.o1)",
+                value: input
+            });
+    })(); const $po0 = (input: any): any => {
         for (const key of Object.keys(input)) {
             if ("type" === key || "log" === key)
                 continue;
             delete input[key];
         }
-    }; const __is = (input: any): input is CookbookActionParams => "object" === typeof input && null !== input && $io0(input); let errors: any; let $report: any; const __validate = (input: any): typia.IValidation<CookbookActionParams> => {
+    }; const $po1 = (input: any): any => {
+        for (const key of Object.keys(input)) {
+            if ("type" === key || "name" === key || "template" === key)
+                continue;
+            delete input[key];
+        }
+    }; const $pu0 = (input: any): any => (() => {
+        if ("milkio@logger" === input.type)
+            return $po0(input);
+        else if ("milkio@template" === input.type)
+            return $po1(input);
+        else
+            $throws({
+                expected: "(__type | __type.o1)",
+                value: input
+            });
+    })(); const __is = (input: any): input is CookbookActionParams => "object" === typeof input && null !== input && $iu0(input); let errors: any; let $report: any; const __validate = (input: any): typia.IValidation<CookbookActionParams> => {
         if (false === __is(input)) {
             errors = [];
             $report = (typia.misc.validatePrune as any).report(errors);
             ((input: any, _path: string, _exceptionable: boolean = true) => ("object" === typeof input && null !== input || $report(true, {
                 path: _path + "",
-                expected: "CookbookActionParams",
+                expected: "(__type | __type.o1)",
                 value: input
-            })) && $vo0(input, _path + "", true) || $report(true, {
+            })) && $vu0(input, _path + "", true) || $report(true, {
                 path: _path + "",
-                expected: "CookbookActionParams",
+                expected: "(__type | __type.o1)",
                 value: input
             }))(input, "$input", true);
             const success = 0 === errors.length;
@@ -259,13 +311,13 @@ export const checkCookbookActionParams = async (results: any): Promise<[
         } as any;
     }; const __prune = (input: CookbookActionParams): void => {
         if ("object" === typeof input && null !== input)
-            $po0(input);
+            $pu0(input);
     }; return (input: any): typia.IValidation<CookbookActionParams> => {
         const result = __validate(input);
         if (result.success)
             __prune(input);
         return result;
-    }; })()(results);
+    }; })()(resultsRaw);
     let error = null;
     if (!checkResult.success) {
         const error: any = checkResult.errors.at(0)!;

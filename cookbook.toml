@@ -1,4 +1,5 @@
 [general]
+start = "bun run dev"
 cookbookPort = 8000
 
 [projects.__test__]
