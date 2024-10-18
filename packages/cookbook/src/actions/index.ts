@@ -10,6 +10,6 @@ export const actionHandler = async (options: CookbookActionParams) => {
       log: options.log,
     });
   } else if (options.type === "milkio@template") {
-    await $`bun run .templates/${options.template}.template.ts ${options.name}`;
+    await $`bun run .templates/${options.template}.template.ts ${options.name} ${options.fsPath}`;
   } else throw `Unknown cookbook command, please upgrade the version of cookbook.`;
 };

@@ -224,7 +224,7 @@ export const checkCookbookActionParams = async (resultsRaw: any): Promise<[
     let results = { ...resultsRaw };
     if (typeof Bun === "undefined")
         throw new Error("Bun is not defined");
-    const checkResult = (() => { const $throws = (typia.misc.validatePrune as any).throws; const $io0 = (input: any): boolean => "milkio@logger" === input.type && Array.isArray(input.log); const $io1 = (input: any): boolean => "milkio@template" === input.type && "string" === typeof input.name && "string" === typeof input.template; const $iu0 = (input: any): any => (() => {
+    const checkResult = (() => { const $throws = (typia.misc.validatePrune as any).throws; const $io0 = (input: any): boolean => "milkio@logger" === input.type && Array.isArray(input.log); const $io1 = (input: any): boolean => "milkio@template" === input.type && "string" === typeof input.name && "string" === typeof input.fsPath && "string" === typeof input.template; const $iu0 = (input: any): any => (() => {
         if ("milkio@logger" === input.type)
             return $io0(input);
         else if ("milkio@template" === input.type)
@@ -247,6 +247,10 @@ export const checkCookbookActionParams = async (resultsRaw: any): Promise<[
             path: _path + ".name",
             expected: "string",
             value: input.name
+        }), "string" === typeof input.fsPath || $report(_exceptionable, {
+            path: _path + ".fsPath",
+            expected: "string",
+            value: input.fsPath
         }), "string" === typeof input.template || $report(_exceptionable, {
             path: _path + ".template",
             expected: "string",
@@ -270,7 +274,7 @@ export const checkCookbookActionParams = async (resultsRaw: any): Promise<[
         }
     }; const $po1 = (input: any): any => {
         for (const key of Object.keys(input)) {
-            if ("type" === key || "name" === key || "template" === key)
+            if ("type" === key || "name" === key || "fsPath" === key || "template" === key)
                 continue;
             delete input[key];
         }

@@ -5,23 +5,20 @@ await createTemplate(async (tools) => {
   return {
     path: join(tools.directory(), `${tools.hyphen(tools.name())}.action.ts`),
     content: `
-import { action } from "milkio";
+import { stream } from "milkio";
 
 /**
  * ${tools.name()}
  */
-export default action({
-  async handler(
+export default stream({
+  async *handler(
     context,
     params: {
       /* your params.. */
     },
   ) {
-    const message = "hello world!";
-
-    return {
-      say: message,
-    }
+    yield "hello,";
+    yield "world!";
   }
 });`.trim(),
   };

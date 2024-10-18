@@ -25,6 +25,7 @@ export type CookbookActionParams = {
 } | {
     type: "milkio@template";
     name: string;
+    fsPath: string;
     template: string;
 };
 export type CookbookSubscribeEmits = {
