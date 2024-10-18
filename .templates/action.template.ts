@@ -2,37 +2,22 @@ import { createTemplate } from "@milkio/cookbook-template";
 import { join } from "node:path";
 
 await createTemplate(async (tools) => {
-  console.warn("asdasdasdasd", tools.directory());
-
   return {
-    path: join(tools.directory(), `${tools.hyphen(tools.name())}.ts`),
+    path: join(tools.directory(), `${tools.hyphen(tools.name())}.action.ts`),
     content: `
-import { defineApi, defineApiTest } from "milkio"
+import { action } from "milkio"
 
 /**
  * ${tools.name()}
  */
-export const api = defineApi({
-  meta: {},
-  async action(params: { /* your params.. */ }, context) {
+export default action({
+  async action(context, params: { /* your params.. */ }) {
     const message = \`hello world!\`
 
     return {
       say: message
     }
   }
-})
-
-export const test = defineApiTest(api, [
-  {
-    name: "Basic",
-    handler: async (test) => {
-      const result = await test.client.execute({ params: await test.generateParams() })
-      test.log("result", result)
-      if (!result.success) throw test.reject(\`The result was not success\`)
-    }
-  }
-])
-`.trim(),
+})`.trim(),
   };
 });

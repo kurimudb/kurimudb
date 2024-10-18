@@ -4,15 +4,12 @@ import type { CookbookActionParams } from "../utils/cookbook-dto-types";
 
 export const actionHandler = async (options: CookbookActionParams) => {
   if (!options || !options.type) throw `Invalid cookbook command, please upgrade the version of cookbook.`;
-  if (options.type === "milkio@logger") {
+  else if (options.type === "milkio@logger") {
     emitter.emit("data", {
       type: "milkio@logger",
       log: options.log,
     });
-    return;
-  }
-  if (options.type === "milkio@template") {
+  } else if (options.type === "milkio@template") {
     await $`bun run .templates/${options.template}.template.ts ${options.name}`;
-  }
-  if (options) throw `Unknown cookbook command, please upgrade the version of cookbook.`;
+  } else throw `Unknown cookbook command, please upgrade the version of cookbook.`;
 };
