@@ -17,7 +17,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
   let typescriptImports = `/* eslint-disable */\n// route-schema`;
   typescriptImports += `\nimport typia, { type IValidation } from "typia";`;
   let typescriptTypeExports = "export type MilkioRoutes = {";
-  let typescriptRouteExports = "export const routes = new Map<string, any>([";
+  let typescriptRouteExports = "export const routes: any = new Map<string, any>([";
   let keys: Array<string> = [];
 
   for await (let path of files) {
@@ -39,6 +39,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       const name = path
         .slice(0, path.length - 10) // 10 === ".action.ts".length
         .replaceAll("/", "$")
+        .replaceAll("#", "__")
         .replaceAll("-", "_");
       typescriptTypeExports += `\n  "/${key}": { `;
       typescriptRouteExports += `\n  ["/${key}", { `;
@@ -74,6 +75,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       const name = path
         .slice(0, path.length - 10) // 10 === ".stream.ts".length
         .replaceAll("/", "$")
+        .replaceAll("#", "__")
         .replaceAll("-", "_");
       typescriptTypeExports += `\n  "/${key}": { `;
       typescriptRouteExports += `\n  ["/${key}", { `;

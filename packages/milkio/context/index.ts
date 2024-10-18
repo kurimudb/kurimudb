@@ -1,4 +1,4 @@
-import { type MilkioHttpRequest, type MilkioHttpResponse, type $types, type Logger, type Steps, type Execute } from "..";
+import { type MilkioHttpRequest, type MilkioHttpResponse, type $types, type Logger, type Steps, type Mixin, type ExecuteOptions, type Action } from "..";
 
 export interface $context {
   executeId: string;
@@ -6,7 +6,7 @@ export interface $context {
   logger: Logger;
   http?: ContextHttp<Record<any, any>>;
   step: Steps<{}>["step"];
-  execute: Execute;
+  call: <Module extends Promise<{ default: Action<any> }>>(module: Module, params: Parameters<Awaited<Module>["default"]["handler"]>[1]) => Promise<ReturnType<Awaited<Module>["default"]["handler"]>>;
 }
 
 export type ContextHttp<ParamsParsed = any> = {

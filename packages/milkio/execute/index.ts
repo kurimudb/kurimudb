@@ -5,7 +5,7 @@ import { reject, type $context, type $meta, type ExecuteOptions, type Logger, ty
 import { headersToJSON } from "../utils/headers-to-json";
 
 export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRuntimeInit<MilkioInit>> = MilkioRuntimeInit<MilkioInit>>(generated: GeneratedInit, runtime: MilkioRuntime) => {
-  const __call = async (
+  const __execute = async (
     routeSchema: any,
     options: {
       createdExecuteId: string;
@@ -13,7 +13,6 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
       path: string;
       headers: Record<string, string> | Headers;
       mixinContext: Record<any, any> | undefined;
-      extendContext?: $context;
     } & (
       | {
           params: Record<any, any>;
@@ -61,16 +60,14 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
       params = { ...paramsRand, ...params };
     }
     if (options.mixinContext?.http?.params?.string) options.mixinContext.http.params.parsed = params; // listen でパースしたパラメータを渡す
-    const context =
-      options.extendContext ??
-      ({
-        ...(options.mixinContext ? options.mixinContext : {}),
-        path: options.path,
-        logger: options.createdLogger,
-        executeId: options.createdExecuteId,
-        execute: (path: any, options: any) => runtime.runtime.app.execute(path, options, context),
-        step: createStep(),
-      } as unknown as $context);
+    const context = {
+      ...(options.mixinContext ? options.mixinContext : {}),
+      path: options.path,
+      logger: options.createdLogger,
+      executeId: options.createdExecuteId,
+      call: (module: any, options: any) => __call(context, module, options),
+      step: createStep(),
+    } as unknown as $context;
     const results: Results<unknown> = { value: undefined };
 
     if (runtime.develop) {
@@ -85,85 +82,22 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
       if (!validation.success) throw reject("PARAMS_TYPE_INCORRECT", { ...validation.errors[0], message: `The value '${validation.errors[0].path}' is '${validation.errors[0].value}', which does not meet '${validation.errors[0].expected}' requirements.` });
     }
 
-    if (!options.extendContext) await runtime.emit("milkio:executeBefore", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context });
+    await runtime.emit("milkio:executeBefore", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context });
 
     results.value = await module.default.handler(context, params);
 
-    if (!options.extendContext) await runtime.emit("milkio:executeAfter", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context, results });
+    await runtime.emit("milkio:executeAfter", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context, results });
 
     return { executeId, headers, params, results, context, meta, type: module.$milkioType };
   };
 
-  const execute = async (path: string, options?: ExecuteOptions, context?: $context): Promise<any> => {
-    if (!options) options = {};
-
-    const executeId = context?.executeId ?? createId();
-    const logger = context?.logger ?? createLogger(runtime, path, executeId);
-    if (!context?.logger) runtime.runtime.request.set(executeId, { logger: logger });
-
-    try {
-      const routeSchema = generated.routeSchema.routes.get(path);
-      if (routeSchema === undefined) {
-        throw reject("NOT_FOUND", { path: path });
-      }
-
-      const executed = await __call(routeSchema, {
-        createdExecuteId: executeId,
-        createdLogger: logger,
-        path: path,
-        headers: options.headers ?? {},
-        mixinContext: {},
-        params: options.params ?? {},
-        paramsType: "raw",
-        extendContext: context,
-      });
-
-      if (routeSchema.type === "stream") {
-        // stream
-        return [
-          undefined,
-          (async function* () {
-            try {
-              for await (const result of executed.results.value) {
-                yield [null, result];
-              }
-              return undefined;
-            } catch (error) {
-              const reject = exceptionHandler(executeId, logger, error);
-              const result: any = {};
-              result[reject.code] = reject.reject;
-
-              yield [result, null];
-              return undefined;
-            }
-          })(),
-          { executeId: executeId },
-        ];
-      } else {
-        // action
-        return [null, executed.results.value, { executeId: executeId }];
-      }
-    } catch (error) {
-      const reject = exceptionHandler(executeId, logger, error);
-      const result: any = {};
-      result[reject.code] = reject.reject;
-
-      return [result, null, { executeId: executeId }];
-    }
+  const __call = async (context: $context, module: { default: any }, params?: any): Promise<any> => {
+    const moduleAwaited = await module;
+    return await moduleAwaited.default.handler(context, params);
   };
-
-  const ping = async (): Promise<Ping> => [
-    null,
-    {
-      connect: true,
-      delay: 0,
-      serverTimestamp: Date.now(),
-    },
-  ];
 
   return {
     __call,
-    execute,
-    ping,
+    __execute,
   };
 };

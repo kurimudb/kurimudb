@@ -17,12 +17,6 @@ export const testSchema = async (options: CookbookOptions, paths: { cwd: string;
   let typescriptExports = "export default {";
   for await (let path of files) {
     path = path.replaceAll("\\", "/");
-
-    if (!/^[a-z0-9/$/-]+$/.test(path.slice(0, -8))) {
-      consola.error(`Invalid path: "${join(cwd(), path)}". The path can only contain lowercase letters, numbers, and "-".\n`);
-      exit(1);
-    }
-
     let nameWithPath = path.slice(0, path.length - 8); // 8 === ".test.ts".length
     if (nameWithPath.endsWith("/index") || nameWithPath === "index") nameWithPath = nameWithPath.slice(0, nameWithPath.length - 5); // 5 === "index".length
     const name = path

@@ -1,4 +1,4 @@
-import { __initCommander, __initListener, __initExecuter, __initEventManager, type ExecuteId, type Logger, type Mixin, type GeneratedInit, type Execute, type Ping, type ContextCreatedHandler, LoggerSubmittingHandler, LoggerInsertingHandler } from "..";
+import { __initCommander, __initListener, __initExecuter, __initEventManager, type ExecuteId, type Logger, type Mixin, type GeneratedInit, type Ping, type LoggerSubmittingHandler, type LoggerInsertingHandler, type $context } from "..";
 import { defineDefaultExecuteIdGenerator } from "../execute/execute-id-generator";
 
 export type MilkioInit = {
@@ -62,10 +62,6 @@ export const createWorld = async <MilkioOptions extends MilkioInit>(generated: G
     on: eventManager.on,
     off: eventManager.off,
     emit: eventManager.emit,
-    // executer
-    _executer: executer,
-    execute: executer.execute,
-    ping: executer.ping,
     // commander
     commander,
     // listener
@@ -83,9 +79,6 @@ export type MilkioWorld<MilkioOptions extends MilkioInit = MilkioInit> = {
   on: Awaited<ReturnType<typeof __initEventManager>>["on"];
   off: Awaited<ReturnType<typeof __initEventManager>>["off"];
   emit: Awaited<ReturnType<typeof __initEventManager>>["emit"];
-  // executer
-  _executer: Awaited<ReturnType<typeof __initExecuter<MilkioRuntimeInit<MilkioOptions>>>>;
-  execute: Execute;
   ping: (options?: { timeout?: number }) => Promise<Ping>;
   // commander
   commander: Awaited<ReturnType<typeof __initCommander<MilkioRuntimeInit<MilkioOptions>>>>;
