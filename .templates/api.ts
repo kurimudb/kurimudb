@@ -1,4 +1,4 @@
-import { createTemplate } from "milkio-template";
+import { createTemplate } from "@milkio/astra";
 import { join } from "node:path";
 
 await createTemplate(async (tools) => {

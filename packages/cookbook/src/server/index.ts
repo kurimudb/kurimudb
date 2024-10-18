@@ -1,7 +1,7 @@
 import { consola } from "consola";
 import { join } from "node:path";
 import type { BunFile } from "bun";
-import { actionHandler, type MilkioActionResultFail } from "../actions";
+import { actionHandler } from "../actions";
 import { TSON } from "@southern-aurora/tson";
 import { emitter } from "../emitter";
 import type { CookbookOptions } from "@milkio/cookbook/src/utils/cookbook-dto-types";
@@ -19,9 +19,9 @@ export const initServer = async (options: CookbookOptions) => {
             if (error) throw error;
             const result = await actionHandler(options);
             return new Response(TSON.stringify(result));
-          } catch (error) {
+          } catch (error: any) {
             consola.error(error);
-            return new Response(TSON.stringify({ success: false } satisfies MilkioActionResultFail), { headers: { "Content-Type": "application/json", "Cache-Control": "no-cache" }, status: 500 });
+            return new Response(`${error?.message ?? error}`, { headers: { "Content-Type": "application/json", "Cache-Control": "no-cache" }, status: 500 });
           }
         }
         case "/$subscribe": {
