@@ -1,7 +1,9 @@
-import { createTemplate } from "@milkio/astra";
+import { createTemplate } from "@milkio/cookbook-template";
 import { join } from "node:path";
 
 await createTemplate(async (tools) => {
+  console.warn("asdasdasdasd", tools.directory());
+
   return {
     path: join(tools.directory(), `${tools.hyphen(tools.name())}.ts`),
     content: `
