@@ -7,8 +7,5 @@
   },
   "dependencies": {
     "@southern-aurora/tson": "^2.0.2"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
   }
 }
