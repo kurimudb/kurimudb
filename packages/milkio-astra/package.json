@@ -10,7 +10,7 @@
     "typescript": "5.6.0"
   },
   "dependencies": {
-    "@southern-aurora/tson": "^2.0.2",
+    "@southern-aurora/tson": "*",
     "date-fns": "^4.1.0",
     "js-toml": "^1.0.0"
   }
