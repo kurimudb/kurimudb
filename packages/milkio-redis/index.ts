@@ -105,3 +105,5 @@ export const createRedis = async <Options extends RedisClientOptions>(options: O
 
   return milkioRedis;
 };
+
+export type Redis = Awaited<ReturnType<typeof createRedis>>;
