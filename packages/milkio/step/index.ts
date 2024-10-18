@@ -1,5 +1,3 @@
-import type { ToEmptyObject } from "..";
-
 export type Steps<StageT extends Record<any, any>> = {
   step: StepFunction<StageT>;
   run: () => Promise<Remove_<StageT>>;
@@ -8,6 +6,8 @@ export type Steps<StageT extends Record<any, any>> = {
 type Remove_<T> = {
   [K in keyof T as K extends `_${string}` ? never : K]: T[K];
 };
+
+type ToEmptyObject<T> = T extends undefined | null | never ? {} : T extends object ? T : {};
 
 export type StepFunction<StageT extends Record<any, any>> = <HandlerT extends (stage: Readonly<StageT>) => Record<any, any> | Promise<Record<any, any>>>(handler: HandlerT) => Steps<Awaited<StageT> & ToEmptyObject<Awaited<ReturnType<HandlerT>>>>;
 

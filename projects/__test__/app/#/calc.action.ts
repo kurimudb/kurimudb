@@ -9,9 +9,20 @@ export default action({
       throw?: boolean;
     },
   ) {
-    const count = Number(params.a) + params.b;
-    context.logger.info("count", count);
-    if (params.throw) throw reject("FAIL", "Reject this request");
-    return count;
+    const result = await context
+      /**
+       * calc
+       */
+      .step(async (stage) => {
+        const count = Number(params.a) + params.b;
+        context.logger.info("count", count);
+        if (params.throw) throw reject("FAIL", "Reject this request");
+        return {
+          count,
+        };
+      })
+      .run();
+
+    return result.count;
   },
 });
