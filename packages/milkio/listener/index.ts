@@ -16,8 +16,12 @@ export type MilkioHttpResponse = Mixin<
 
 export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRuntimeInit<MilkioInit>> = MilkioRuntimeInit<MilkioInit>>(generated: GeneratedInit, runtime: MilkioRuntime, executer: ReturnType<typeof __initExecuter>) => {
   const port = runtime.port;
-  const fetch = async (request: MilkioHttpRequest): Promise<Response> => {
-    if (request.method === "OPTIONS") {
+  const fetch = async (options: {
+    request: MilkioHttpRequest;
+    envMode?: string;
+    env?: Record<any, any>;
+  }): Promise<Response> => {
+    if (options.request.method === "OPTIONS") {
       return new Response(undefined, {
         headers: {
           "Access-Control-Allow-Methods": runtime.cors?.corsAllowMethods ?? "*",
@@ -27,7 +31,7 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
       });
     }
 
-    if (request.url.endsWith("/generate_204")) {
+    if (options.request.url.endsWith("/generate_204")) {
       return new Response("", {
         status: 204,
         headers: {
@@ -40,12 +44,12 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
       });
     }
 
-    const url = new URL(request.url);
+    const url = new URL(options.request.url);
     let pathArray = url.pathname.substring(1).split("/");
     if (runtime.ignorePathLevel !== undefined && runtime.ignorePathLevel !== 0) pathArray = pathArray.slice(runtime.ignorePathLevel);
     const pathString = `/${pathArray.join("/")}`;
 
-    const executeId = runtime?.executeId ? await runtime.executeId(request) : createId();
+    const executeId = runtime?.executeId ? await runtime.executeId(options.request) : createId();
     const logger = createLogger(runtime, pathString, executeId);
     runtime.runtime.request.set(executeId, { logger: logger });
     const response: MilkioHttpResponse = {
@@ -62,9 +66,9 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
 
     try {
       const http = (await (async () => {
-        const ip = runtime.realIp ? runtime.realIp(request) : "::1";
+        const ip = runtime.realIp ? runtime.realIp(options.request) : "::1";
         const params = {
-          string: await request.text(),
+          string: await options.request.text(),
           parsed: undefined,
         };
 
@@ -73,7 +77,7 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
           ip,
           path: { string: pathString as keyof $types["generated"]["routeSchema"]["$types"], array: pathArray },
           params,
-          request,
+          request: options.request,
           response,
         } as ContextHttp;
       })())!;
@@ -85,7 +89,7 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
         throw reject("NOT_FOUND", { path: http.path.string as string });
       }
 
-      if (!request.headers.get("Accept")?.startsWith("text/event-stream")) {
+      if (!options.request.headers.get("Accept")?.startsWith("text/event-stream")) {
         // action
         const routeSchema = generated.routeSchema.routes.get(http.path.string);
         if (routeSchema === undefined) {
@@ -94,11 +98,11 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
         }
         if (routeSchema.type !== "action") throw reject("UNACCEPTABLE", { expected: "stream", message: `Not acceptable, the Accept in the request header should be "text/event-stream". If you are using the "@milkio/stargate" package, please add \`type: "stream"\` to the execute options.` });
 
-        const executed = await executer.__execute(routeSchema, {
+        const executed = await executer.__execute(options.env, options.envMode, routeSchema, {
           createdExecuteId: executeId,
           createdLogger: logger,
           path: http.path.string as string,
-          headers: request.headers as Headers,
+          headers: options.request.headers as Headers,
           mixinContext: { http },
           params: http.params.string,
           paramsType: "string",
@@ -116,11 +120,11 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
         if (routeSchema === undefined) throw reject("NOT_FOUND", { path: http.path.string as string });
         if (routeSchema.type !== "stream") throw reject("UNACCEPTABLE", { expected: "stream", message: `Not acceptable, the Accept in the request header should be "application/json". If you are using the "@milkio/stargate" package, please remove \`type: "stream"\` to the execute options.` });
 
-        const executed = await executer.__execute(routeSchema, {
+        const executed = await executer.__execute(options.env, options.envMode, routeSchema, {
           createdExecuteId: executeId,
           createdLogger: logger,
           path: http.path.string as string,
-          headers: request.headers as Headers,
+          headers: options.request.headers as Headers,
           mixinContext: { http },
           params: http.params.string,
           paramsType: "string",
@@ -137,7 +141,7 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
               try {
                 controller.write(`data:@${JSON.stringify({ success: true, data: undefined, executeId } satisfies MilkioResponseSuccess<any>)}\n\n`);
                 for await (const value of executed.results.value) {
-                  if (!request.signal.aborted) {
+                  if (!options.request.signal.aborted) {
                     const result: string = JSON.stringify([null, TSON.encode(value)]);
                     controller.write(`data:${result}\n\n`);
                   } else {
@@ -166,7 +170,7 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
               try {
                 controller.enqueue(`data:@${JSON.stringify({ success: true, data: undefined, executeId } satisfies MilkioResponseSuccess<any>)}\n\n`);
                 for await (const value of executed.results.value) {
-                  if (!request.signal.aborted) {
+                  if (!options.request.signal.aborted) {
                     const result: string = JSON.stringify([null, TSON.encode(value)]);
                     controller.enqueue(`data:${result}\n\n`);
                   } else {

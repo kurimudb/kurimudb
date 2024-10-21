@@ -11,7 +11,7 @@
   "trustedDependencies": [],
   "dependencies": {
     "@milkio/cookbook": "./packages/cookbook",
-    "@milkio/cookbook-template": "1.0.0-alpha.3",
+    "@milkio/cookbook-template": "./packages/cookbook-template",
     "@ryoppippi/unplugin-typia": "^1.0.6",
     "@types/fs-extra": "^11.0.4",
     "fs-extra": "^11.2.0",

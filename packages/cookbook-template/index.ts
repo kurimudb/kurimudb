@@ -1,10 +1,12 @@
-import { argv } from "node:process";
+import { relative } from "path";
+import { argv, cwd } from "node:process";
 // @ts-ignore
 import { camel, hump, hyphen } from "@poech/camel-hump-under";
 
 export type CreateTemplateTools = {
   name: () => string;
   directory: () => string;
+  route: () => string;
   src: () => string;
   camel: (str: string) => string;
   hump: (str: string) => string;
@@ -25,6 +27,11 @@ export async function createTemplate(fn: CreateTemplateFn) {
   const tools = {
     name: () => argv[2],
     directory: () => argv[3],
+    route: () => {
+      const path = relative(cwd().replaceAll("\\", "/"), argv[3]).split("/").slice(3).join("/");
+      if (path.length > 0) return `/${path}`;
+      return path;
+    },
     src: () => {
       const patharr = argv[3].split("/");
       const i = patharr.length - patharr.findIndex((str: string) => str.startsWith("src")) - 1;

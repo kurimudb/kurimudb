@@ -1,4 +1,5 @@
 export * from "./types";
+export * from "./config";
 export * from "./execute";
 export * from "./events";
 export * from "./world";

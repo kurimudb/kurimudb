@@ -1,11 +1,12 @@
 import { type IValidation } from "typia";
 import { TSON } from "@southern-aurora/tson";
-import { createId } from "../utils/create-id";
-import { reject, type $context, type $meta, type ExecuteOptions, type Logger, type MilkioRuntimeInit, type Results, type GeneratedInit, type MilkioInit, createLogger, exceptionHandler, Ping, createStep } from "..";
+import { reject, type $context, type $meta, type Logger, type MilkioRuntimeInit, type Results, type GeneratedInit, type MilkioInit, createStep, getConfig } from "..";
 import { headersToJSON } from "../utils/headers-to-json";
 
 export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRuntimeInit<MilkioInit>> = MilkioRuntimeInit<MilkioInit>>(generated: GeneratedInit, runtime: MilkioRuntime) => {
   const __execute = async (
+    env: Record<any, any> | undefined,
+    envMode: string | undefined,
     routeSchema: any,
     options: {
       createdExecuteId: string;
@@ -24,7 +25,9 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
         }
     ),
   ): Promise<{ executeId: string; headers: Headers; params: Record<any, unknown>; results: Results<any>; context: $context; meta: Readonly<$meta>; type: "action" | "stream" }> => {
-    const executeId = options.createdExecuteId;
+    const executeId: string = options.createdExecuteId;
+    env = env ?? {};
+    envMode = envMode ?? "production";
     let headers: Headers;
     if (!(options.headers instanceof Headers)) {
       // @ts-ignore
@@ -62,9 +65,11 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
     if (options.mixinContext?.http?.params?.string) options.mixinContext.http.params.parsed = params; // listen でパースしたパラメータを渡す
     const context = {
       ...(options.mixinContext ? options.mixinContext : {}),
+      envMode,
       path: options.path,
       logger: options.createdLogger,
       executeId: options.createdExecuteId,
+      getConfig: (namespace: string) => getConfig(generated, env, envMode, namespace),
       call: (module: any, options: any) => __call(context, module, options),
       step: createStep(),
     } as unknown as $context;
