@@ -55,8 +55,10 @@ export const execute = async () => {
         });
         if (!confirm) exit(0);
         if (confirm) {
-          await killPort(options.general.cookbookPort);
-          await Bun.sleep(768);
+          try {
+            await killPort(options.general.cookbookPort);
+            await Bun.sleep(768);
+          } catch (error) {}
           if (!(await checkPort(options.general.cookbookPort))) {
             consola.error(`Attempted to kill the process occupying the port number, but this appears to be ineffective.`);
             await exit(0);

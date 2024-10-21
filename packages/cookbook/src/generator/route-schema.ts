@@ -7,10 +7,10 @@ import { checkPath } from "./utils";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const routeSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
-  const scanner = join(paths.cwd, "app");
+  const scanner = join(paths.cwd);
   let files: AsyncIterableIterator<string> | Array<string> = [];
   if (await exists(scanner)) {
-    const glob = new Glob("**/*.{action,stream}.ts");
+    const glob = new Glob("{app,call}/**/*.{action,stream}.ts");
     files = glob.scan({ cwd: scanner, onlyFiles: true });
   }
 
@@ -29,12 +29,14 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       let nameWithPath = path.slice(0, path.length - 10); // 10 === ".action.ts".length
       let key = nameWithPath;
       if (key.endsWith("/index") || key === "index") key = key.slice(0, key.length - 5); // 5 === "index".length
-      if (key.endsWith("/") && key.length > 1) key = key.slice(0, key.length - 1);
+      if (key === "app" && key.length > 1) key = key.slice(0, key.length - 1);
       if (keys.includes(key)) {
         consola.error(`Invalid path: "${join(paths.cwd, "app", path)}". The most common reason for having paths duplicate is that you created a new "${path}.ts" and have a "${path}/index.ts".\n`);
         exit(1);
       }
       key = key.split(".")[0];
+      if (key.startsWith("app/")) key = key.slice(4);
+      if (key.startsWith("call/")) key = `#__${key}`;
       keys.push(key);
       const name = path
         .slice(0, path.length - 10) // 10 === ".action.ts".length
@@ -45,10 +47,10 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       typescriptRouteExports += `\n  ["/${key}", { `;
       typescriptRouteExports += `type: "action", `;
       if (project?.lazyRoutes === undefined || project?.lazyRoutes === true) {
-        typescriptImports += `\nimport type ${name} from "../../../app/${nameWithPath}.action";`;
-        typescriptRouteExports += `module: () => import("../../../app/${nameWithPath}.action"), `;
+        typescriptImports += `\nimport type ${name} from "../../../${nameWithPath}.action";`;
+        typescriptRouteExports += `module: () => import("../../../${nameWithPath}.action"), `;
       } else {
-        typescriptImports += `\nimport ${name} from "../../../app/${nameWithPath}.action";`;
+        typescriptImports += `\nimport ${name} from "../../../${nameWithPath}.action";`;
         typescriptRouteExports += `module: () => ${name}, `;
       }
       typescriptRouteExports += `validateParams: (params: unknown): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
@@ -66,11 +68,14 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       let nameWithPath = path.slice(0, path.length - 10); // 10 === ".stream.ts".length
       let key = nameWithPath;
       if (key.endsWith("/index") || key === "index") key = key.slice(0, key.length - 5); // 5 === "index".length
-      if (key.endsWith("/") && key.length > 1) key = key.slice(0, key.length - 1);
+      if (key === "app" && key.length > 1) key = key.slice(0, key.length - 1);
       if (keys.includes(key)) {
         consola.error(`Invalid path: "${join(paths.cwd, "app", path)}". The most common reason for having paths duplicate is that you created a new "${path}.ts" and have a "${path}/index.ts".\n`);
         exit(1);
       }
+      key = key.split(".")[0];
+      if (key.startsWith("app/")) key = key.slice(4);
+      if (key.startsWith("call/")) key = `#__${key}`;
       keys.push(key);
       const name = path
         .slice(0, path.length - 10) // 10 === ".stream.ts".length
@@ -81,10 +86,10 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       typescriptRouteExports += `\n  ["/${key}", { `;
       typescriptRouteExports += `type: "stream", `;
       if (project?.lazyRoutes === undefined || project.lazyRoutes === true) {
-        typescriptImports += `\nimport type ${name} from "../../../app/${nameWithPath}.stream";`;
-        typescriptRouteExports += `module: () => import("../../../app/${nameWithPath}.stream"), `;
+        typescriptImports += `\nimport type ${name} from "../../../${nameWithPath}.stream";`;
+        typescriptRouteExports += `module: () => import("../../../${nameWithPath}.stream"), `;
       } else {
-        typescriptImports += `\nimport ${name} from "../../../app/${nameWithPath}.stream";`;
+        typescriptImports += `\nimport ${name} from "../../../${nameWithPath}.stream";`;
         typescriptRouteExports += `module: () => ${name}, `;
       }
       typescriptRouteExports += `validateParams: (params: unknown): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
