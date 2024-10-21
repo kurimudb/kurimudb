@@ -9,12 +9,14 @@ import { initServer } from "./server";
 import { generator } from "./generator";
 import { openProgress } from "./progress";
 import { checkCookbookOptions } from "./utils/cookbook-dto-checks";
+import { checkPort } from "./utils/check-port";
+import { killPort } from "./utils/kill-port";
 
 export const execute = async () => {
   switch (process.argv[2]) {
     default: {
       console.log(asciis().join("\n"));
-      const closeProgress = openProgress();
+      let closeProgress = openProgress();
 
       const startTime = new Date();
       const cookbookToml = Bun.file(join(cwd(), "cookbook.toml"));
@@ -42,6 +44,24 @@ export const execute = async () => {
         if (project.type === "milkio" && packageJson.dependencies?.["milkio"] === undefined) {
           consola.error(`Project "${projectName}" does not have "milkio" in its dependencies. If this not a milkio project, modify the type in "cookbook.toml" to change it from "milkio" to "other".`);
           exit(0);
+        }
+      }
+
+      if (!(await checkPort(options.general.cookbookPort))) {
+        await closeProgress();
+        consola.info(`Port number ${options.general.cookbookPort} is already occupied. You may have started Cookbook.`);
+        const confirm = await consola.prompt("Do you want to try to kill the process that is using the port number?", {
+          type: "confirm",
+        });
+        if (!confirm) exit(0);
+        if (confirm) {
+          await killPort(options.general.cookbookPort);
+          await Bun.sleep(768);
+          if (!(await checkPort(options.general.cookbookPort))) {
+            consola.error(`Attempted to kill the process occupying the port number, but this appears to be ineffective.`);
+            await exit(0);
+          }
+          closeProgress = openProgress();
         }
       }
 

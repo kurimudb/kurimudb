@@ -15,6 +15,7 @@
     "@southern-aurora/tson": "*",
     "@types/bun": "latest",
     "@types/cli-progress": "^3.11.6",
+    "@types/kill-port": "^2.0.3",
     "@types/lodash-es": "^4.17.12",
     "@vitest/ui": "^2.0.5",
     "chalk": "^5.3.0",

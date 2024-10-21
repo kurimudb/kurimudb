@@ -7,6 +7,8 @@ import { testSchema } from "./test-schema";
 import { $ } from "bun";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
 import { configSchema } from "./config-schema";
+import { checkPort } from "../utils/check-port";
+import killPort from "kill-port";
 
 export const generator = {
   async significant(options: CookbookOptions) {
@@ -15,6 +17,7 @@ export const generator = {
       const project = options.projects[projectName];
       if (project.type !== "milkio") continue;
       const handler = async () => {
+        if (!(await checkPort(project.port))) await killPort(project.port);
         const paths = {
           cwd: join(cwd(), "projects", projectName),
           milkio: join(cwd(), "projects", projectName, ".milkio"),

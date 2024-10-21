@@ -59,7 +59,8 @@ export const initServer = async (options: CookbookOptions) => {
             response.headers["Content-Type"] = file.type;
           } else {
             file = Bun.file(join(assets, url.pathname, "index.html"));
-            if (!(await file.exists())) file = "404 Not Found ~ UwU";
+            // if (!(await file.exists())) file = "404 Not Found ~ UwU";
+            if (!(await file.exists())) file = "Cookbook in development ~ UwU";
           }
 
           return new Response(file, response);
