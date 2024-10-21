@@ -84,7 +84,7 @@ export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
 
       await runtime.emit("milkio:httpRequest", { executeId, logger, path: http.path.string as string, http });
 
-      if (!runtime.develop && (http.path.string as string).includes("#")) {
+      if (!runtime.develop && ((http.path.string as string).includes("__") || (http.path.string as string).startsWith("/$call/"))) {
         await runtime.emit("milkio:httpNotFound", { executeId, logger, path: http.path.string as string, http });
         throw reject("NOT_FOUND", { path: http.path.string as string });
       }

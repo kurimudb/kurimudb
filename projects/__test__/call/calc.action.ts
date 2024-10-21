@@ -9,8 +9,6 @@ export default action({
       throw?: boolean;
     },
   ) {
-    const a = context.getConfig("app");
-
     const result = await context
       /**
        * calc
