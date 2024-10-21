@@ -43,5 +43,5 @@ for (const writePath of writePaths) {
 }
 
 await $`bun i`;
-await $`chmod +x ./node_modules/.bin/cookbook`;
+if (process.platform !== "win32") await $`chmod +x ./node_modules/.bin/cookbook`;
 await $`cd ./packages/cookbook/ && bun i`;
