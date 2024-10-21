@@ -17,7 +17,6 @@ export const generator = {
       const project = options.projects[projectName];
       if (project.type !== "milkio") continue;
       const handler = async () => {
-        if (!(await checkPort(project.port))) await killPort(project.port);
         const paths = {
           cwd: join(cwd(), "projects", projectName),
           milkio: join(cwd(), "projects", projectName, ".milkio"),
@@ -52,6 +51,12 @@ export const generator = {
           testSchema(options, paths, project),
         ]);
         if (project?.typiaMode !== "bundler") await $`bun x typia generate --input ./.milkio/generated/raw/ --output ./.milkio/generated/typia/ --project ./tsconfig.json`.cwd(join(paths.cwd)).quiet();
+
+        if (!(await checkPort(project.port))) {
+          try {
+            await killPort(project.port);
+          } catch (error) {}
+        }
 
         if (project?.significant && project.significant.length > 0) {
           for (const script of project.significant) {
