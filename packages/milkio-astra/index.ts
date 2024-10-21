@@ -211,12 +211,8 @@ export const createAstra = async <AstraOptions extends AstraOptionsInit, Generat
         const output: Array<any> = ["[REJECT]", ...params];
         console.log(...output);
         for (let index = 1; index < output.length; index++) {
-          if (output[index] !== null && typeof output[index] === "object") {
-            if (output[index] instanceof Error || (output[index].message && output[index].stack)) {
-              output[index] = output[index].toString();
-            } else {
-              output[index] = TSON.stringify(output[index]);
-            }
+          if (typeof output[index] === "object") {
+            output[index] = output[index].toString();
           }
         }
         const message = output.join(" ");
