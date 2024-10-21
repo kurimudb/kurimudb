@@ -90,6 +90,9 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
     await runtime.emit("milkio:executeBefore", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context });
 
     results.value = await module.default.handler(context, params);
+    if (results.value === undefined || results.value === null || results.value === "") results.value = {};
+    else if (Array.isArray(results.value)) throw reject("FAIL", "The return type of the handler must be an object, which is currently an array.");
+    else if (typeof results.value !== "object") throw reject("FAIL", "The return type of the handler must be an object, which is currently a primitive type.");
 
     await runtime.emit("milkio:executeAfter", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context, results });
 
