@@ -6,6 +6,7 @@ import { readFile } from "fs/promises";
 import { exit, cwd } from "node:process";
 import fsExtra from "fs-extra";
 
+await $`bun i`;
 await $`bun run typia generate --input src --output generated --project tsconfig.json`.cwd(join(cwd(), "packages", "cookbook-dto"));
 let cookbookDtoTypes = (await readFile(join(cwd(), "packages", "cookbook-dto", "generated", "cookbook-dto-types.ts"))).toString();
 let cookbookDtoChecks = (await readFile(join(cwd(), "packages", "cookbook-dto", "generated", "cookbook-dto-checks.ts"))).toString();
@@ -42,6 +43,6 @@ for (const writePath of writePaths) {
   if (writePath.checks) await Bun.write(join(writePath.path, "cookbook-dto-checks.ts"), cookbookDtoChecks);
 }
 
-await $`bun i`;
 if (process.platform !== "win32") await $`chmod +x ./node_modules/.bin/cookbook`;
 await $`cd ./packages/cookbook/ && bun i`;
+await $`cd ./packages/milkio/ && bun i`;
