@@ -5,7 +5,7 @@ import { checkPath } from "./utils";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const commandSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
-  const scanner = join(paths.cwd, "commands");
+  const scanner = join(paths.cwd, "command");
   let files: AsyncIterableIterator<string> | Array<string> = [];
   if (await exists(scanner)) {
     const glob = new Glob("*.ts");
