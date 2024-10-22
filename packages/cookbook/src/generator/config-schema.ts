@@ -1,8 +1,6 @@
 import { Glob } from "bun";
-import consola from "consola";
 import { join } from "node:path";
 import { exists } from "node:fs/promises";
-import { exit, cwd } from "node:process";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
 
 export const configSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {

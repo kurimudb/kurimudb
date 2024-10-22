@@ -33,7 +33,7 @@ export async function createTemplate(fn: CreateTemplateFn) {
       else if (pathArr[0] === "call") pathArr[0] = "$call";
       let path = pathArr.join("/");
       if (path.length > 0) return `/${path}/${argv[2]}`;
-      if (path.endsWith("/index")) path = path.slice(0, path.length - 6);
+      if (path !== "/index" && path.endsWith("/index")) path = path.slice(0, path.length - 6);
       return path;
     },
     src: () => {
