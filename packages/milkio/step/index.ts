@@ -11,7 +11,7 @@ type ToEmptyObject<T> = T extends undefined | null | never ? {} : T extends obje
 
 export type StepFunction<StageT extends Record<any, any>> = <HandlerT extends (stage: Readonly<StageT>) => Record<any, any> | Promise<Record<any, any>>>(handler: HandlerT) => Steps<Awaited<StageT> & ToEmptyObject<Awaited<ReturnType<HandlerT>>>>;
 
-export const createStep = (): Steps<{}>["step"] => {
+export const createStep = (): Steps<{}> => {
   const stepController = {
     $milkioType: "step",
     _steps: [] as Array<(stage: any) => Promise<any>>,
@@ -32,5 +32,5 @@ export const createStep = (): Steps<{}>["step"] => {
       return result;
     },
   };
-  return stepController.step as any as Steps<{}>["step"];
+  return stepController as any as Steps<{}>;
 };

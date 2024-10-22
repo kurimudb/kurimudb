@@ -9,6 +9,7 @@ export default action({
     },
   ) {
     return await context
+      .createStep()
       /**
        * computational addition of a and b
        */

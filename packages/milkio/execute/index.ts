@@ -72,7 +72,7 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
       executeId: options.createdExecuteId,
       getConfig: (namespace: string) => getConfig(generated, env, envMode, namespace),
       call: (module: any, options: any) => __call(context, module, options),
-      step: createStep(),
+      createStep: createStep,
     } as unknown as $context;
     const results: Results<unknown> = { value: undefined };
 
