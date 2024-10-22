@@ -65,6 +65,7 @@ export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRun
     if (options.mixinContext?.http?.params?.string) options.mixinContext.http.params.parsed = params; // listen でパースしたパラメータを渡す
     const context = {
       ...(options.mixinContext ? options.mixinContext : {}),
+      develop: runtime.develop,
       envMode,
       path: options.path,
       logger: options.createdLogger,

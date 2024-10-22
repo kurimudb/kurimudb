@@ -1,6 +1,7 @@
 import { type MilkioHttpRequest, type MilkioHttpResponse, type $types, type Logger, type Steps, type Mixin, type ExecuteOptions, type Action } from "..";
 
 export interface $context {
+  develop: boolean;
   executeId: string;
   environment: string;
   path: string;
