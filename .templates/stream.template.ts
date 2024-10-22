@@ -33,7 +33,7 @@ import { astra } from "/.milkio/test";
 
 test.sequential("basic", async () => {
   const [context, reject, world] = await astra.createMirrorWorld(import.meta.url);
-  const [error, results] = await world.execute("${tools.route()}/${tools.hyphen(tools.name())}", {
+  const [error, results] = await world.execute("${tools.route()}", {
     params: {
       //
     },

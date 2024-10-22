@@ -31,8 +31,9 @@ export async function createTemplate(fn: CreateTemplateFn) {
       const pathArr = relative(cwd().replaceAll("\\", "/"), argv[3]).split("/").slice(2);
       if (pathArr[0] === "app") pathArr.shift();
       else if (pathArr[0] === "call") pathArr[0] = "$call";
-      const path = pathArr.join("/");
-      if (path.length > 0) return `/${path}`;
+      let path = pathArr.join("/");
+      if (path.length > 0) return `/${path}/${argv[2]}`;
+      if (path.endsWith("/index")) path = path.slice(0, path.length - 6);
       return path;
     },
     src: () => {

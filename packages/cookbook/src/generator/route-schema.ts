@@ -37,6 +37,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       key = key.split(".")[0];
       if (key.startsWith("app/")) key = key.slice(4);
       if (key.startsWith("call/")) key = `\$${key}`;
+      if (key.endsWith("/")) key = key.slice(0, key.length - 1);
       keys.push(key);
       const name = path
         .slice(0, path.length - 10) // 10 === ".action.ts".length
@@ -76,6 +77,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       key = key.split(".")[0];
       if (key.startsWith("app/")) key = key.slice(4);
       if (key.startsWith("call/")) key = `\$${key}`;
+      if (key.endsWith("/")) key = key.slice(0, key.length - 1);
       keys.push(key);
       const name = path
         .slice(0, path.length - 10) // 10 === ".stream.ts".length
