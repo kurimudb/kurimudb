@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import { cwd, kill } from "node:process";
+import { cwd, exit, kill } from "node:process";
 import { env, type Subprocess } from "bun";
 import { emitter } from "../emitter";
 import consola from "consola";
@@ -66,12 +66,15 @@ export const createWorkers = (key: string, options: { command: Array<string>; cw
   options.env = { ...env, ...options.env } as Record<string, string>;
   options.env.MILKIO_DEVELOP = "ENABLE";
 
+  let firstRun = true;
+
   const worker: Worker = {
     key,
     stdout: [] as Array<string>,
     state: "stopped",
-    kill: () => {
+    kill: async () => {
       if (worker.state === "stopped") return;
+      firstRun = false;
       emitter.emit("data", { type: "workers@state", key, state: "stopped", code: "kill" });
       worker.state = "stopped";
       spawn.kill(1);
@@ -81,6 +84,7 @@ export const createWorkers = (key: string, options: { command: Array<string>; cw
       try {
         kill(spawn.pid, "SIGINT");
       } catch (error) {}
+      await spawn.exited;
     },
     run: () => {
       if (worker.state === "running") return;
@@ -92,9 +96,14 @@ export const createWorkers = (key: string, options: { command: Array<string>; cw
         env: options.env,
         onExit: (_proc, _code, _signalCode, error) => {
           if (_code !== 0 && options.stdout !== "ignore" && options.max !== 0) {
-            const message = `${error?.name} ${error?.message}\n-- code: ${_code}\n`;
+            const message = `\n-- code: ${_code}\n`;
             void process.stdout.write(message);
             emitter.emit("data", { type: "workers@stdout", key, chunk: message });
+          }
+
+          if (firstRun) {
+            consola.error(`\n\n🚨🚨🚨 ABNORMAL PROCESS EXIT (code: ${_code}) 🚨🚨🚨\n\nTo ensure that the command executes normally! you can try to run:\n\`\`\`\`\ncd ${options.cwd}n${options.command.join(" ")}\n\`\`\`\`\n`);
+            exit(1);
           }
 
           emitter.emit("data", { type: "workers@state", key, state: "stopped", code: _code });
