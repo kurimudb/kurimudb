@@ -108,7 +108,7 @@ export const __initListener = (generated: GeneratedInit, runtime: any, executer:
           paramsType: "string",
         });
 
-        if (executed.results.value !== undefined) response.body = TSON.stringify({ success: true, data: executed.results.value, executeId } satisfies MilkioResponseSuccess<any>);
+        if (response.body === "" && executed.results.value !== undefined) response.body = TSON.stringify({ success: true, data: executed.results.value, executeId } satisfies MilkioResponseSuccess<any>);
 
         await runtime.emit("milkio:httpResponse", { executeId, logger, path: http.path.string as string, http, context: executed.context });
 
