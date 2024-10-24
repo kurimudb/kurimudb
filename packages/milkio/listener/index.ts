@@ -14,7 +14,7 @@ export type MilkioHttpResponse = Mixin<
   }
 >;
 
-export const __initListener = <MilkioRuntime extends MilkioRuntimeInit<MilkioRuntimeInit<MilkioInit>> = MilkioRuntimeInit<MilkioInit>>(generated: GeneratedInit, runtime: MilkioRuntime, executer: ReturnType<typeof __initExecuter>) => {
+export const __initListener = (generated: GeneratedInit, runtime: any, executer: ReturnType<typeof __initExecuter>) => {
   const port = runtime.port;
   const fetch = async (options: {
     request: MilkioHttpRequest;

@@ -3,7 +3,7 @@ import { TSON } from "@southern-aurora/tson";
 import { reject, type $context, type $meta, type Logger, type MilkioRuntimeInit, type Results, type GeneratedInit, type MilkioInit, createStep, getConfig } from "..";
 import { headersToJSON } from "../utils/headers-to-json";
 
-export const __initExecuter = <MilkioRuntime extends MilkioRuntimeInit<MilkioRuntimeInit<MilkioInit>> = MilkioRuntimeInit<MilkioInit>>(generated: GeneratedInit, runtime: MilkioRuntime) => {
+export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
   const __execute = async (
     env: Record<any, any> | undefined,
     envMode: string | undefined,

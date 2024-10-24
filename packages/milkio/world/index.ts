@@ -81,7 +81,7 @@ export type MilkioWorld<MilkioOptions extends MilkioInit = MilkioInit> = {
   emit: Awaited<ReturnType<typeof __initEventManager>>["emit"];
   ping: (options?: { timeout?: number }) => Promise<Ping>;
   // commander
-  commander: Awaited<ReturnType<typeof __initCommander<MilkioRuntimeInit<MilkioOptions>>>>;
+  commander: Awaited<ReturnType<typeof __initCommander>>;
   // listener
-  listener: Awaited<ReturnType<typeof __initListener<MilkioRuntimeInit<MilkioOptions>>>>;
+  listener: Awaited<ReturnType<typeof __initListener>>;
 };

@@ -15,7 +15,7 @@ export type Command<CommandInitT extends CommandInit> = {
   handler: CommandInitT["handler"];
 };
 
-export const __initCommander = <MilkioRuntime extends MilkioRuntimeInit<MilkioInit> = MilkioRuntimeInit<MilkioInit>>(generated: GeneratedInit, runtime: MilkioRuntime) => {
+export const __initCommander = (generated: GeneratedInit, runtime: any) => {
   const commander = async (argv: Array<string>, options?: { onNotFound?: () => any }) => {
     const params = {
       path: "index",
