@@ -76,6 +76,9 @@ export const createWorkers = (key: string, options: { command: Array<string>; cw
       worker.state = "stopped";
       spawn.kill(1);
       try {
+        spawn.kill(1);
+      } catch (error) {}
+      try {
         kill(spawn.pid, "SIGINT");
       } catch (error) {}
     },
@@ -87,8 +90,13 @@ export const createWorkers = (key: string, options: { command: Array<string>; cw
         stderr: "ignore",
         stdout: options.stdout !== "ignore" ? "pipe" : "ignore",
         env: options.env,
-        onExit: (_proc, _code, _signalCode, _error) => {
-          if (_code !== 0 && options.stdout !== "ignore" && options.max !== 0) emitter.emit("data", { type: "workers@stdout", key, chunk: `\n-- code: ${_code}\n` });
+        onExit: (_proc, _code, _signalCode, error) => {
+          if (_code !== 0 && options.stdout !== "ignore" && options.max !== 0) {
+            const message = `${error?.name} ${error?.message}\n-- code: ${_code}\n`;
+            void process.stdout.write(message);
+            emitter.emit("data", { type: "workers@stdout", key, chunk: message });
+          }
+
           emitter.emit("data", { type: "workers@state", key, state: "stopped", code: _code });
           worker.state = "stopped";
         },
