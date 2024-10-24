@@ -102,7 +102,7 @@ export const createWorkers = (key: string, options: { command: Array<string>; cw
           }
 
           if (firstRun) {
-            consola.error(`\n\n🚨🚨🚨 ABNORMAL PROCESS EXIT (code: ${_code}) 🚨🚨🚨\n\nTo ensure that the command executes normally! you can try to run:\n\`\`\`\`\ncd ${options.cwd}\n${options.command.join(" ")}\n\`\`\`\`\n`);
+            consola.error(`\n\n🚨🚨🚨 ABNORMAL PROCESS EXIT (code: ${_code}) 🚨🚨🚨\n\nTo ensure that the command executes normally! you can try to run:\n\`\`\`\`\ncd ${options.cwd}\n${options.command.join(" ")}\n\`\`\`\`\nThen, fix any errors you encounter until the program starts correctly.\n`);
             exit(1);
           }
 
