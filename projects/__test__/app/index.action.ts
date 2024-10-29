@@ -10,6 +10,6 @@ export default action({
   ) {
     const count = Number(params.a) + params.b;
     context.logger.info("count", count);
-    return count;
+    return { count };
   },
 });

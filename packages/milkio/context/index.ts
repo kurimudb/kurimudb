@@ -7,7 +7,6 @@ export interface $context {
   path: string;
   logger: Logger;
   http: ContextHttp<Record<any, any>>;
-  createStep: () => Steps<{}>;
   getConfig: <Namespace extends keyof $types["generated"]["configSchema"]>(namespace: Namespace) => Promise<Readonly<Awaited<ReturnType<$types["generated"]["configSchema"][Namespace][0]>>>>;
   call: <Module extends Promise<{ default: Action<any> }>>(module: Module, params: Parameters<Awaited<Module>["default"]["handler"]>[1]) => Promise<ReturnType<Awaited<Module>["default"]["handler"]>>;
 }

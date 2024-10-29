@@ -12,6 +12,6 @@ export default action({
     const count = Number(params.a) + params.b;
     context.logger.info("count", count);
     if (params.throw) throw reject("FAIL", "Reject this request");
-    return count;
+    return { count, foo: "bar-baz" };
   },
 });

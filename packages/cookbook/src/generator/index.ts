@@ -52,10 +52,12 @@ export const generator = {
         ]);
         if (project?.typiaMode !== "bundler") await $`bun x typia generate --input ./.milkio/generated/raw/ --output ./.milkio/generated/typia/ --project ./tsconfig.json`.cwd(join(paths.cwd)).quiet();
 
-        if (!(await checkPort(project.port))) {
-          try {
-            await killPort(project.port);
-          } catch (error) {}
+        if (project?.watch) {
+          if (!(await checkPort(project.port))) {
+            try {
+              await killPort(project.port);
+            } catch (error) {}
+          }
         }
 
         if (project?.significant && project.significant.length > 0) {

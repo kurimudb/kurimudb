@@ -20,7 +20,10 @@ export const initWatcher = async (options: CookbookOptions) => {
     waiting = Promise.withResolvers();
 
     for (const projectName in options.projects) {
-      workers.get(projectName)!.kill();
+      const project = options.projects[projectName];
+      if (project?.watch) {
+        workers.get(projectName)!.kill();
+      }
     }
 
     await generator.significant(options);
@@ -34,9 +37,10 @@ export const initWatcher = async (options: CookbookOptions) => {
     await Bun.sleep(128);
     for (const projectName in options.projects) {
       const project = options.projects[projectName];
-      if (project.type !== "milkio") continue;
-      consola.success(`[cookbook] ${projectName} reloading..`);
-      workers.get(projectName)!.run();
+      if (project?.watch) {
+        consola.success(`[cookbook] ${projectName} reloading..`);
+        workers.get(projectName)!.run();
+      }
     }
     await Promise.all([
       // UwU
@@ -76,14 +80,15 @@ export const initWatcher = async (options: CookbookOptions) => {
         // The reason to make sure that milkio projects are started before starting them is because these projects are usually web projects, and if the backend is not running, there will be an error when starting
         for (const projectName in options.projects) {
           const project = options.projects[projectName];
-          if (project.type === "milkio") continue;
-          consola.success(`[cookbook] ${projectName} reloading..`);
-          workers.get(projectName)!.run();
+          if (project?.watch) {
+            consola.success(`[cookbook] ${projectName} reloading..`);
+            workers.get(projectName)!.run();
+          }
         }
       })(),
     ]);
 
-    consola.success(`[cookbook] all project restarts completed!`);
+    consola.success(`[cookbook] regenerated!`);
     waiting.resolve();
   }, 300);
 

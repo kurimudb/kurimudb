@@ -10,5 +10,5 @@ test.sequential("basic", async () => {
 
   // Check if the return value is as expected
   // In /app/context.ts, the result is actually "fail", but the result was modified in /index.ts, so this test should pass
-  expect(results).toBe("success");
+  expect(results.success).toBe("success");
 });

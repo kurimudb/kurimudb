@@ -12,6 +12,8 @@ declare module "milkio" {
   }
 }
 
+console.log("milkio started");
+
 export const world = await createWorld(generated, {
   port: 9000,
   cookbook: { cookbookPort: 8000 },
@@ -33,7 +35,7 @@ world.on("milkio:executeAfter", async (event) => {
   if (!event.logger) throw reject("FAIL", "Event is not 'logger'");
   if (!event.path) throw reject("FAIL", "Event is not 'path'");
   if (!event.results) throw reject("FAIL", "Event is not'results'");
-  if (event.context.path === "/context") event.results.value = "success";
+  if (event.context.path === "/context") event.results.value = { success: "success" };
 });
 
 world.on("milkio:httpRequest", async (event) => {

@@ -8,6 +8,8 @@ export default action({
     if (!context.path) throw reject("FAIL", "Context is not 'path'");
     if (context.say() !== "hello world") throw reject("FAIL", "Context is not 'say'");
 
-    return "fail";
+    return {
+      success: "fail",
+    };
   },
 });

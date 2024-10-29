@@ -28,8 +28,8 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
         if (undefined === value)
             return true;
         return "object" === typeof value && null !== value && $io2(value, true && _exceptionable);
-    }); const $io2 = (input: any, _exceptionable: boolean = true): boolean => ("milkio" === input.type || "other" === input.type) && "number" === typeof input.port && (Array.isArray(input.start) && input.start.every((elem: any, _index1: number) => "string" === typeof elem)) && (Array.isArray(input.build) && input.build.every((elem: any, _index2: number) => "string" === typeof elem)) && (undefined === input.lazyRoutes || "boolean" === typeof input.lazyRoutes) && (undefined === input.typiaMode || "generation" === input.typiaMode || "bundler" === input.typiaMode) && (undefined === input.significant || Array.isArray(input.significant) && input.significant.every((elem: any, _index3: number) => "string" === typeof elem)) && (undefined === input.insignificant || Array.isArray(input.insignificant) && input.insignificant.every((elem: any, _index4: number) => "string" === typeof elem)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
-        if (["type", "port", "start", "build", "lazyRoutes", "typiaMode", "significant", "insignificant"].some((prop: any) => key === prop))
+    }); const $io2 = (input: any, _exceptionable: boolean = true): boolean => ("milkio" === input.type || "other" === input.type) && "number" === typeof input.port && (Array.isArray(input.start) && input.start.every((elem: any, _index1: number) => "string" === typeof elem)) && (Array.isArray(input.build) && input.build.every((elem: any, _index2: number) => "string" === typeof elem)) && (undefined === input.watch || "boolean" === typeof input.watch) && (undefined === input.lazyRoutes || "boolean" === typeof input.lazyRoutes) && (undefined === input.typiaMode || "generation" === input.typiaMode || "bundler" === input.typiaMode) && (undefined === input.significant || Array.isArray(input.significant) && input.significant.every((elem: any, _index3: number) => "string" === typeof elem)) && (undefined === input.insignificant || Array.isArray(input.insignificant) && input.insignificant.every((elem: any, _index4: number) => "string" === typeof elem)) && (4 === Object.keys(input).length || Object.keys(input).every((key: any) => {
+        if (["type", "port", "start", "build", "watch", "lazyRoutes", "typiaMode", "significant", "insignificant"].some((prop: any) => key === prop))
             return true;
         const value = input[key];
         if (undefined === value)
@@ -114,6 +114,10 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
             path: _path + ".build",
             expected: "Array<string>",
             value: input.build
+        }), undefined === input.watch || "boolean" === typeof input.watch || $report(_exceptionable, {
+            path: _path + ".watch",
+            expected: "(boolean | undefined)",
+            value: input.watch
         }), undefined === input.lazyRoutes || "boolean" === typeof input.lazyRoutes || $report(_exceptionable, {
             path: _path + ".lazyRoutes",
             expected: "(boolean | undefined)",
@@ -147,7 +151,7 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
             expected: "(Array<string> | undefined)",
             value: input.insignificant
         }), 4 === Object.keys(input).length || (false === _exceptionable || Object.keys(input).map((key: any) => {
-            if (["type", "port", "start", "build", "lazyRoutes", "typiaMode", "significant", "insignificant"].some((prop: any) => key === prop))
+            if (["type", "port", "start", "build", "watch", "lazyRoutes", "typiaMode", "significant", "insignificant"].some((prop: any) => key === prop))
                 return true;
             const value = input[key];
             if (undefined === value)

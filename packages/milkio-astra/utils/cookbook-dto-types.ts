@@ -9,6 +9,7 @@ export type CookbookOptions = {
         port: number;
         start: Array<string>;
         build: Array<string>;
+        watch?: boolean;
         lazyRoutes?: boolean;
         typiaMode?: "generation" | "bundler";
         significant?: Array<string>;
