@@ -40,7 +40,7 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
   const $fetch = stargateOptions.fetch ?? fetch;
   const $abort = stargateOptions.abort ?? AbortController;
 
-  interface $events {
+  interface StargateEvents {
     "milkio:executeBefore": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }> };
     "milkio:fetchBefore": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string; body: string }> };
     "milkio:executeError": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }>; error: Partial<Generated["rejectCode"]> };
@@ -51,7 +51,7 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
     const indexed = new Map<string, Set<(event: any) => void>>();
 
     const eventManager = {
-      on: <Key extends keyof $events, Handler extends (event: $events[Key]) => void>(key: Key, handler: Handler) => {
+      on: <Key extends keyof StargateEvents, Handler extends (event: StargateEvents[Key]) => void>(key: Key, handler: Handler) => {
         handlers.set(handler, key as string);
         if (indexed.has(key as string) === false) {
           indexed.set(key as string, new Set());
@@ -65,13 +65,13 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
           set.delete(handler);
         };
       },
-      off: <Key extends keyof $events, Handler extends (event: $events[Key]) => void>(key: Key, handler: Handler) => {
+      off: <Key extends keyof StargateEvents, Handler extends (event: StargateEvents[Key]) => void>(key: Key, handler: Handler) => {
         const set = indexed.get(key as string);
         if (!set) return;
         handlers.delete(handler);
         set.delete(handler);
       },
-      emit: async <Key extends keyof $events, Value extends $events[Key]>(key: Key, value: Value): Promise<void> => {
+      emit: async <Key extends keyof StargateEvents, Value extends StargateEvents[Key]>(key: Key, value: Value): Promise<void> => {
         const h = indexed.get(key as string);
         if (h) {
           for (const handler of h) {
