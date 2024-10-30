@@ -40,6 +40,51 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
   const $fetch = stargateOptions.fetch ?? fetch;
   const $abort = stargateOptions.abort ?? AbortController;
 
+  interface $events {
+    "milkio:executeBefore": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }> };
+    "milkio:executeError": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }>; error: Partial<Generated["rejectCode"]> };
+  }
+
+  const __initEventManager = () => {
+    const handlers = new Map<(event: any) => void, string>();
+    const indexed = new Map<string, Set<(event: any) => void>>();
+
+    const eventManager = {
+      on: <Key extends keyof $events, Handler extends (event: $events[Key]) => void>(key: Key, handler: Handler) => {
+        handlers.set(handler, key as string);
+        if (indexed.has(key as string) === false) {
+          indexed.set(key as string, new Set());
+        }
+        const set = indexed.get(key as string)!;
+        set.add(handler);
+        handlers.set(handler, key as string);
+
+        return () => {
+          handlers.delete(handler);
+          set.delete(handler);
+        };
+      },
+      off: <Key extends keyof $events, Handler extends (event: $events[Key]) => void>(key: Key, handler: Handler) => {
+        const set = indexed.get(key as string);
+        if (!set) return;
+        handlers.delete(handler);
+        set.delete(handler);
+      },
+      emit: async <Key extends keyof $events, Value extends $events[Key]>(key: Key, value: Value): Promise<void> => {
+        const h = indexed.get(key as string);
+        if (h) {
+          for (const handler of h) {
+            await handler(value);
+          }
+        }
+      },
+    };
+
+    return eventManager;
+  };
+
+  const eventManager = __initEventManager();
+
   const bootstrap = async () => {
     let baseUrl = stargateOptions.baseUrl;
     if (typeof baseUrl === "function") baseUrl = await baseUrl();
@@ -51,6 +96,7 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
   const baseUrl: Promise<string> = bootstrap();
 
   const stargate = {
+    ...eventManager,
     $types: {
       generated: void 0 as unknown as Generated,
     },
@@ -81,6 +127,8 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
         url = baseUrl + (path as string);
       } else url = (await baseUrl) + (path as string);
 
+      await eventManager.emit("milkio:executeBefore", { path: path as string, options: options as any });
+
       if (options.type !== "stream") {
         // action
         if (options.headers["Accept"] === undefined) options.headers["Accept"] = "application/json";
@@ -106,12 +154,18 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
           });
           result = { value: TSON.parse(response) };
         } catch (error: any) {
-          if (error?.[0]?.REQUEST_TIMEOUT) return error;
-          return [{ REQUEST_FAIL: error }, null, { executeId: "unknown" }];
+          if (error?.[0]?.REQUEST_TIMEOUT) {
+            await eventManager.emit("milkio:executeError", { path: path as string, options: options as any, error: error });
+            return error;
+          }
+          let errorPined = { REQUEST_FAIL: error };
+          await eventManager.emit("milkio:executeError", { path: path as string, options: options as any, error: errorPined });
+          return [errorPined, null, { executeId: "unknown" }];
         }
         if (result.value.success !== true) {
           const error: any = {};
           error[result.value.code] = result.value.reject ?? null;
+          await eventManager.emit("milkio:executeError", { path: path as string, options: options as any, error: error[result.value.code] });
           return [error, null, { executeId: "unknown" }];
         }
 
@@ -195,8 +249,10 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
             await iterator.return();
           } catch (err) {
             if (!curRequestController.signal.aborted) curRequestController.abort();
+            const error = { REQUEST_FAIL: err };
+            await eventManager.emit("milkio:executeError", { path: path as string, options: options as any, error: error });
             await iterator.throw(err);
-            streamResultFetched.reject([{ REQUEST_FAIL: err }, null, { executeId: "unknown" }]);
+            streamResultFetched.reject([error, null, { executeId: "unknown" }]);
           }
         }
 
