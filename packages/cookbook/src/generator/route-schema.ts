@@ -16,6 +16,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
 
   let typescriptImports = `/* eslint-disable */\n// route-schema`;
   typescriptImports += `\nimport typia, { type IValidation } from "typia";`;
+  typescriptImports += `\nimport { TSON, type TSONEncode } from "@southern-aurora/tson";`;
   let typescriptTypeExports = "export type MilkioRoutes = {";
   let typescriptRouteExports = "export const routes: any = new Map<string, any>([";
   let keys: Array<string> = [];
@@ -54,9 +55,10 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
         typescriptImports += `\nimport ${name} from "../../../${nameWithPath}.action";`;
         typescriptRouteExports += `module: () => ${name}, `;
       }
-      typescriptRouteExports += `validateParams: (params: unknown): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
-      typescriptRouteExports += `validateResults: (results: unknown): IValidation<Awaited<ReturnType<typeof ${name}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${name}["handler"]>>>(results), `;
+      typescriptRouteExports += `validateParams: (params: any): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
       typescriptRouteExports += `randomParams: (): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.random<Parameters<typeof ${name}["handler"]>[1]>() as any, `;
+      typescriptRouteExports += `validateResults: (results: any): IValidation<Awaited<ReturnType<typeof ${name}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${name}["handler"]>>>(results), `;
+      typescriptRouteExports += `resultsToJSON: (results: any): Awaited<ReturnType<typeof ${name}["handler"]>> => typia.json.stringify<TSONEncode<Awaited<ReturnType<typeof ${name}["handler"]>>>>(TSON.encode(results)) as any, `;
       typescriptRouteExports += `}],`;
       typescriptTypeExports += `"🐣": boolean, `;
       typescriptTypeExports += `meta: typeof ${name}["meta"], `;
@@ -94,8 +96,8 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
         typescriptImports += `\nimport ${name} from "../../../${nameWithPath}.stream";`;
         typescriptRouteExports += `module: () => ${name}, `;
       }
-      typescriptRouteExports += `validateParams: (params: unknown): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
-      typescriptRouteExports += `validateResults: (results: unknown): IValidation<Awaited<ReturnType<typeof ${name}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${name}["handler"]>>>(results), `;
+      typescriptRouteExports += `validateParams: (params: any): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
+      typescriptRouteExports += `validateResults: (results: any): IValidation<Awaited<ReturnType<typeof ${name}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${name}["handler"]>>>(results), `;
       typescriptRouteExports += `randomParams: (): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.random<Parameters<typeof ${name}["handler"]>[1]>() as any, `;
       typescriptRouteExports += `}],`;
       typescriptTypeExports += `"🐣": number, `;

@@ -1,3 +1,4 @@
+export * from "./type-safety";
 export * from "@southern-aurora/tson";
 export * from "./types";
 export * from "./config";

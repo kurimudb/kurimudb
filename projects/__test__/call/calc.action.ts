@@ -15,4 +15,4 @@ export default action({
 
     return { count };
   },
-});
+}).output<{ count: number }>();

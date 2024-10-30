@@ -13,6 +13,7 @@ test.sequential("basic", async () => {
 
   // Check if the return value is as expected
   expect(results.count).toBe(4);
+  expect("say" in results).toBe(false);
 });
 
 test.sequential("reject", async () => {

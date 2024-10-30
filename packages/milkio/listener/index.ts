@@ -108,7 +108,15 @@ export const __initListener = (generated: GeneratedInit, runtime: any, executer:
           paramsType: "string",
         });
 
-        if (response.body === "" && executed.results.value !== undefined) response.body = TSON.stringify({ success: true, data: executed.results.value, executeId } satisfies MilkioResponseSuccess<any>);
+        if (response.body === "" && executed.results.value !== undefined) {
+          if (executed.emptyResult) {
+            response.body = `{"data":{},"executeId":"${executeId}","success":true}`;
+          } else if (executed.resultsTypeSafety) {
+            response.body = `{"data":${routeSchema.resultsToJSON(executed.results.value)},"executeId":"${executeId}","success":true}`;
+          } else {
+            response.body = `{"data":${TSON.stringify(executed.results.value)},"executeId":"${executeId}","success":true}`;
+          }
+        }
 
         await runtime.emit("milkio:httpResponse", { executeId, logger, path: http.path.string as string, http, context: executed.context });
 

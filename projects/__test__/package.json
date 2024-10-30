@@ -7,7 +7,7 @@
   "trustedDependencies": [],
   "dependencies": {
     "@ryoppippi/unplugin-typia": "^1.0.6",
-    "typia": "^6.11.2",
+    "typia": "^6.11.3",
     "yaml": "^2.6.0",
     "@milkio/astra": "workspace:*",
     "@milkio/stargate": "workspace:*",

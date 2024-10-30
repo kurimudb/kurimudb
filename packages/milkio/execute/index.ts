@@ -1,4 +1,4 @@
-import { type IValidation } from "typia";
+import typia, { type IValidation } from "typia";
 import { TSON } from "@southern-aurora/tson";
 import { reject, type $context, type $meta, type Logger, type Results, type GeneratedInit, getConfig } from "..";
 import { headersToJSON } from "../utils/headers-to-json";
@@ -24,7 +24,7 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
           paramsType: "string";
         }
     ),
-  ): Promise<{ executeId: string; headers: Headers; params: Record<any, unknown>; results: Results<any>; context: $context; meta: Readonly<$meta>; type: "action" | "stream" }> => {
+  ): Promise<{ executeId: string; headers: Headers; params: Record<any, unknown>; results: Results<any>; context: $context; meta: Readonly<$meta>; type: "action" | "stream"; emptyResult: boolean; resultsTypeSafety: boolean }> => {
     const executeId: string = options.createdExecuteId;
     env = env ?? {};
     envMode = envMode ?? "production";
@@ -73,7 +73,7 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
       getConfig: (namespace: string) => getConfig(generated, env, envMode, namespace),
       call: (module: any, options: any) => __call(context, module, options),
     } as unknown as $context;
-    const results: Results<unknown> = { value: undefined };
+    const results: Results<any> = { value: undefined };
 
     if (runtime.develop) {
       options.createdLogger.request(`headers - ${TSON.stringify(headers.toJSON())}`, `\nparams - ${TSON.stringify(params)}`);
@@ -82,7 +82,7 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
     const module = await routeSchema.module();
     let meta = (module.meta ? module.meta : {}) as unknown as Readonly<$meta>;
 
-    if (!meta.typeSafety || meta.typeSafety === true) {
+    if (meta.typeSafety === undefined || meta.typeSafety === true) {
       const validation = routeSchema.validateParams(params) as IValidation<any>;
       if (!validation.success) throw reject("PARAMS_TYPE_INCORRECT", { ...validation.errors[0], message: `The value '${validation.errors[0].path}' is '${validation.errors[0].value}', which does not meet '${validation.errors[0].expected}' requirements.` });
     }
@@ -90,13 +90,25 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
     await runtime.emit("milkio:executeBefore", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context });
 
     results.value = await module.default.handler(context, params);
-    if (results.value === undefined || results.value === null || results.value === "") results.value = {};
-    else if (Array.isArray(results.value)) throw reject("FAIL", "The return type of the handler must be an object, which is currently an array.");
+
+    let resultsTypeSafety = false;
+    if (results?.value?.$milkioType === "type-safety") {
+      resultsTypeSafety = true;
+      const validation = routeSchema.validateResults(results.value.value) as IValidation<any>;
+      if (!validation.success) throw reject("RESULTS_TYPE_INCORRECT", { ...validation.errors[0], message: `The value '${validation.errors[0].path}' is '${validation.errors[0].value}', which does not meet '${validation.errors[0].expected}' requirements.` });
+      results.value = results.value.value;
+    }
+
+    let emptyResult = false;
+    if (results.value === undefined || results.value === null || results.value === "") {
+      emptyResult = true;
+      results.value = {};
+    } else if (Array.isArray(results.value)) throw reject("FAIL", "The return type of the handler must be an object, which is currently an array.");
     else if (typeof results.value !== "object") throw reject("FAIL", "The return type of the handler must be an object, which is currently a primitive type.");
 
     await runtime.emit("milkio:executeAfter", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context, results });
 
-    return { executeId, headers, params, results, context, meta, type: module.$milkioType };
+    return { executeId, headers, params, results, context, meta, type: module.$milkioType, emptyResult, resultsTypeSafety };
   };
 
   const __call = async (context: $context, module: { default: any }, params?: any): Promise<any> => {

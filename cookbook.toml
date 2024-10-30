@@ -6,5 +6,5 @@ cookbookPort = 8000
 port = 9000
 type = "milkio"
 typiaMode = "bundler"
-start = ["bun", "run", "--hot", "index.ts"]
+start = ["bun", "run", "--watch", "index.ts"]
 build = ["bun", "run", ".milkio/bun-build.ts"]

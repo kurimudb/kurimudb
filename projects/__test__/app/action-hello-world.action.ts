@@ -1,6 +1,9 @@
-import { action, reject } from "milkio";
+import { action, reject, typeSafety } from "milkio";
 
 export default action({
+  meta: {
+    typeSafety: false,
+  },
   async handler(
     context,
     params: {
@@ -9,9 +12,12 @@ export default action({
       throw?: boolean;
     },
   ) {
-    const count = Number(params.a) + params.b;
-    context.logger.info("count", count);
+    const results = {
+      count: 2 + params.b,
+      say: "hello world",
+    };
     if (params.throw) throw reject("FAIL", "Reject this request");
-    return { count, foo: "bar-baz" };
+
+    return typeSafety(results).type<{ count: number }>();
   },
 });
