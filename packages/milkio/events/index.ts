@@ -1,11 +1,11 @@
-import { type $context, type ContextHttp, type Results, type Logger } from "..";
+import { type $context, type ContextHttp, type Results, type Logger, type $meta } from "..";
 
 export interface $events {
   "milkio:httpRequest": { executeId: string; path: string; logger: Logger; http: ContextHttp<Record<string, any>> };
   "milkio:httpResponse": { executeId: string; path: string; logger: Logger; http: ContextHttp<Record<string, any>>; context: $context };
   "milkio:httpNotFound": { executeId: string; path: string; logger: Logger; http: ContextHttp<Record<string, any>> };
-  "milkio:executeBefore": { executeId: string; path: string; logger: Logger; context: $context };
-  "milkio:executeAfter": { executeId: string; path: string; logger: Logger; context: $context; results: Results<any> };
+  "milkio:executeBefore": { executeId: string; path: string; logger: Logger; meta: $meta; context: $context };
+  "milkio:executeAfter": { executeId: string; path: string; logger: Logger; meta: $meta; context: $context; results: Results<any> };
 }
 
 export const __initEventManager = () => {

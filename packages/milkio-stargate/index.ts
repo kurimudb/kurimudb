@@ -242,10 +242,6 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
 
             await getBytes(response.body!, getLines(getMessages(onmessage)));
 
-            // for (const m of _afterExecuteMiddlewares) {
-            //   await m.middleware({ path: path as string, storage: options.storage as ClientStorage, result: { value: undefined } });
-            // }
-
             await iterator.return();
           } catch (err) {
             if (!curRequestController.signal.aborted) curRequestController.abort();

@@ -87,7 +87,7 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
       if (!validation.success) throw reject("PARAMS_TYPE_INCORRECT", { ...validation.errors[0], message: `The value '${validation.errors[0].path}' is '${validation.errors[0].value}', which does not meet '${validation.errors[0].expected}' requirements.` });
     }
 
-    await runtime.emit("milkio:executeBefore", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context });
+    await runtime.emit("milkio:executeBefore", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, meta, context });
 
     results.value = await module.default.handler(context, params);
 
@@ -106,7 +106,7 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
     } else if (Array.isArray(results.value)) throw reject("FAIL", "The return type of the handler must be an object, which is currently an array.");
     else if (typeof results.value !== "object") throw reject("FAIL", "The return type of the handler must be an object, which is currently a primitive type.");
 
-    await runtime.emit("milkio:executeAfter", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, context, results });
+    await runtime.emit("milkio:executeAfter", { executeId: options.createdExecuteId, logger: options.createdLogger, path: options.path, meta, context, results });
 
     return { executeId, headers, params, results, context, meta, type: module.$milkioType, emptyResult, resultsTypeSafety };
   };
