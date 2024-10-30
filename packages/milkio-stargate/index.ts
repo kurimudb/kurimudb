@@ -42,7 +42,7 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
 
   type StargateEvents = {
     "milkio:executeBefore": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }> };
-    "milkio:fetchBefore": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string; body: string }> };
+    "milkio:fetchBefore": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }>; body: string };
     "milkio:executeError": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }>; error: Partial<Generated["rejectCode"]> };
   };
 
