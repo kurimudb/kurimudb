@@ -42,6 +42,7 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
 
   interface $events {
     "milkio:executeBefore": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }> };
+    "milkio:fetchBefore": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string; body: string }> };
     "milkio:executeError": { path: string; options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }>; error: Partial<Generated["rejectCode"]> };
   }
 
@@ -127,17 +128,18 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
         url = baseUrl + (path as string);
       } else url = (await baseUrl) + (path as string);
 
-      await eventManager.emit("milkio:executeBefore", { path: path as string, options: options as any });
-
       if (options.type !== "stream") {
         // action
         if (options.headers["Accept"] === undefined) options.headers["Accept"] = "application/json";
         if (options.headers["Content-Type"] === undefined) options.headers["Content-Type"] = "application/json";
-
-        const body = TSON.stringify(options.params) ?? "";
-
         let result: { value: Record<any, any> };
+
         try {
+          await eventManager.emit("milkio:executeBefore", { path: path as string, options: options as any });
+
+          const body = TSON.stringify(options.params) ?? "";
+          await eventManager.emit("milkio:fetchBefore", { path: path as string, options: options as any, body: body });
+
           const response = await new Promise<string>(async (resolve, reject) => {
             const timeout = options?.timeout ?? options?.timeout ?? 6000;
             const timer = setTimeout(() => {
@@ -175,7 +177,6 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
         if (options.headers["Accept"] === undefined) options.headers["Accept"] = "text/event-stream";
         if (options.headers["Content-Type"] === undefined) options.headers["Content-Type"] = "application/json";
 
-        const body = TSON.stringify(options.params) ?? "";
         const stacks: Map<
           number,
           {
@@ -228,6 +229,11 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
             iterator.return();
           });
           try {
+            await eventManager.emit("milkio:executeBefore", { path: path as string, options: options as any });
+
+            const body = TSON.stringify(options!.params) ?? "";
+            await eventManager.emit("milkio:fetchBefore", { path: path as string, options: options as any, body: body });
+
             const response = await $fetch(url, {
               method: "POST",
               headers: options!.headers,
