@@ -111,7 +111,7 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
         }
         if (result.value.success !== true) {
           const error: any = {};
-          error[result.value.code] = result.value.reject;
+          error[result.value.code] = result.value.reject ?? null;
           return [error, null, { executeId: "unknown" }];
         }
 

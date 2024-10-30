@@ -10,7 +10,7 @@ export type Mixin<T, U> = U & Omit<T, keyof U>;
 
 export type GeneratorGeneric<T> = T extends AsyncGenerator<infer I> ? I : never;
 
-export type DBSelect<T, K> = Exclude<T, K>;
+export type DBSelect<T extends Record<any, any>, K extends keyof T> = Omit<T, K>;
 
 export type DBCreate<T, KO extends keyof T | never = never, TO extends Omit<T, KO> = Omit<T, KO>> = {
   [K in keyof TO]?: TO[K] extends null ? undefined : Exclude<TO[K], null>;
