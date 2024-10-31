@@ -80,7 +80,7 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
     }
 
     const module = await routeSchema.module();
-    let meta = (module.meta ? module.meta : {}) as unknown as Readonly<$meta>;
+    let meta = (module.default?.meta ? module.default?.meta : {}) as unknown as Readonly<$meta>;
 
     if (meta.typeSafety === undefined || meta.typeSafety === true) {
       const validation = routeSchema.validateParams(params) as IValidation<any>;
