@@ -13,7 +13,7 @@ export const openProgress = (speed = 6400) => {
   const timeStart = Date.now();
   let progress = 0;
   let intervalFrequency = 1000 / 60;
-  const staticPercentage = 0.64;
+  const staticPercentage = 0.4;
   let timeWaste = 0;
   let time = 0;
 
