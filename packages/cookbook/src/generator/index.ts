@@ -10,15 +10,19 @@ import { configSchema } from "./config-schema";
 import { checkPort } from "../utils/check-port";
 import killPort from "kill-port";
 
+let firstGenerate = true;
+
 export const generator = {
   async significant(options: CookbookOptions) {
     const tasks: Array<Promise<void>> = [];
     for (const projectName in options.projects) {
       const project = options.projects[projectName];
-      if (!(await checkPort(project.port))) {
-        try {
-          await killPort(project.port);
-        } catch (error) {}
+      if (project.watch || firstGenerate) {
+        if (!(await checkPort(project.port))) {
+          try {
+            await killPort(project.port);
+          } catch (error) {}
+        }
       }
       if (project.type !== "milkio") continue;
       const handler = async () => {
@@ -66,6 +70,7 @@ export const generator = {
       tasks.push(handler());
     }
     await Promise.all(tasks);
+    firstGenerate = false;
   },
   async insignificant(options: CookbookOptions) {
     const tasks: Array<Promise<void>> = [];
