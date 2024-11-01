@@ -7,7 +7,7 @@ const _progress = new CliProgress.Bar({
   barIncompleteChar: " ",
 });
 
-export const openProgress = (speed = 3200) => {
+export const openProgress = (speed = 6400) => {
   console.log("");
   _progress.start(1000, 0);
   const timeStart = Date.now();

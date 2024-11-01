@@ -70,7 +70,7 @@ export const createAstra = async <AstraOptions extends AstraOptionsInit, Generat
               return projectStatus.get(projectName)!.resolve(undefined);
             }
           } catch (error) {}
-        }, 42);
+        }, 100);
       }
       return Array.from(projectStatus.values()).map((v) => v.promise);
     })(),

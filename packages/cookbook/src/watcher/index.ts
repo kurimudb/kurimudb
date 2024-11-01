@@ -72,7 +72,7 @@ export const initWatcher = async (options: CookbookOptions) => {
                     return projectStatus.get(projectName)!.resolve(undefined);
                   }
                 } catch (error) {}
-              }, 42);
+              }, 100);
             }
             return Array.from(projectStatus.values()).map((v) => v.promise);
           })(),
