@@ -47,11 +47,11 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
       path: string;
       options: Mixin<ExecuteOptions, { headers: Record<string, string>; baseUrl: string }>;
       error: Partial<Generated["rejectCode"]>;
-      handleError: <K extends keyof Partial<Generated["rejectCode"]>>(error: any, key: K, handler: (error: Partial<Generated["rejectCode"][K]>) => void | boolean | Promise<void | boolean>) => Promise<void>;
+      handleError: <K extends keyof Partial<Generated["rejectCode"]>>(error: any, key: K, handler: (error: Partial<Generated["rejectCode"][K]>) => boolean | Promise<boolean>) => Promise<void>;
     };
   };
 
-  const handleError: any = async (error: any, key: string, handler: (error: any) => void | boolean | Promise<void | boolean>) => {
+  const handleError: any = async (error: any, key: string, handler: (error: any) => boolean | Promise<boolean>) => {
     if (key in error) {
       const handled = await handler(error[key]);
       if (handled) delete error[key];
