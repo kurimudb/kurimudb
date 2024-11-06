@@ -1,6 +1,6 @@
 import typia, { type IValidation } from "typia";
 import { TSON } from "@southern-aurora/tson";
-import { reject, type $context, type $meta, type Logger, type Results, type GeneratedInit, getConfig } from "..";
+import { reject, type $context, type $meta, type Logger, type Results, type GeneratedInit, __getConfig } from "..";
 import { headersToJSON } from "../utils/headers-to-json";
 
 export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
@@ -70,7 +70,7 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
       path: options.path,
       logger: options.createdLogger,
       executeId: options.createdExecuteId,
-      getConfig: (namespace: string) => getConfig(generated, env, envMode, namespace),
+      getConfig: (namespace: string) => __getConfig(generated, env, envMode, namespace),
       call: (module: any, options: any) => __call(context, module, options),
     } as unknown as $context;
     const results: Results<any> = { value: undefined };

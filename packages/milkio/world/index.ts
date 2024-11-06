@@ -1,4 +1,4 @@
-import { __initCommander, __initListener, __initExecuter, __initEventManager, type ExecuteId, type Logger, type Mixin, type GeneratedInit, type Ping, type LoggerSubmittingHandler, type LoggerInsertingHandler, type $context } from "..";
+import { __initCommander, __initListener, __initExecuter, __initEventManager, type ExecuteId, type Logger, type Mixin, type GeneratedInit, type Ping, type LoggerSubmittingHandler, type LoggerInsertingHandler, type $context, $types, __getConfig } from "..";
 import { defineDefaultExecuteIdGenerator } from "../execute/execute-id-generator";
 
 export type MilkioInit = {
@@ -54,6 +54,8 @@ export const createWorld = async <MilkioOptions extends MilkioInit>(generated: G
   const executer = __initExecuter(generated, _);
   const commander = __initCommander(generated, _);
   const listener = __initListener(generated, _, executer);
+  // functions
+  const getConfig = (namespace: keyof $types["generated"]["configSchema"], env: Record<any, any>, envMode: string) => __getConfig(generated, env, envMode, namespace);
 
   // Initialize the app
   const app = {
@@ -66,6 +68,8 @@ export const createWorld = async <MilkioOptions extends MilkioInit>(generated: G
     commander,
     // listener
     listener,
+    // functions
+    getConfig,
   };
 
   runtime.app = app;
@@ -84,4 +88,5 @@ export type MilkioWorld<MilkioOptions extends MilkioInit = MilkioInit> = {
   commander: Awaited<ReturnType<typeof __initCommander>>;
   // listener
   listener: Awaited<ReturnType<typeof __initListener>>;
+  getConfig: <Namespace extends keyof $types["generated"]["configSchema"]>(namespace: Namespace, env: Record<any, any>, envMode: string) => Promise<Readonly<Awaited<ReturnType<$types["generated"]["configSchema"][Namespace][0]>>>>;
 };

@@ -4,7 +4,7 @@ export const config = <ConfigDefaultT extends ConfigDefault, ConfigEnvironmentsT
   return [def, envs];
 };
 
-export const getConfig = async <Namespace extends keyof $types["generated"]["configSchema"]>(generated: GeneratedInit, env: Record<any, any>, envMode: string, namespace: Namespace) => {
+export const __getConfig = async <Namespace extends keyof $types["generated"]["configSchema"]>(generated: GeneratedInit, env: Record<any, any>, envMode: string, namespace: Namespace) => {
   if (generated.configSchema[namespace][1] && envMode in generated.configSchema[namespace][1]) {
     return {
       ...(await generated.configSchema[namespace][0](env)),
