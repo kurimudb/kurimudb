@@ -17,6 +17,7 @@ export type MilkioInit = {
   executeId?: (request: Request) => string | Promise<string>;
   onLoggerSubmitting?: LoggerSubmittingHandler;
   onLoggerInserting?: LoggerInsertingHandler;
+  bootstraps?: Array<(world: MilkioWorld<any>) => Promise<void>>;
 };
 
 export type MilkioRuntimeInit<T extends MilkioInit> = Mixin<
@@ -58,7 +59,7 @@ export const createWorld = async <MilkioOptions extends MilkioInit>(generated: G
   const getConfig = (namespace: keyof $types["generated"]["configSchema"], env: Record<any, any>, envMode: string) => __getConfig(generated, env, envMode, namespace);
 
   // Initialize the app
-  const app = {
+  const world = {
     _: _,
     // event manager
     on: eventManager.on,
@@ -72,9 +73,15 @@ export const createWorld = async <MilkioOptions extends MilkioInit>(generated: G
     getConfig,
   };
 
-  runtime.app = app;
+  runtime.app = world;
 
-  return app as MilkioWorld<MilkioOptions>;
+  if (Array.isArray(options.bootstraps)) {
+    for (const bootstrap of options.bootstraps) {
+      await bootstrap(world as MilkioWorld<MilkioOptions>);
+    }
+  }
+
+  return world as MilkioWorld<MilkioOptions>;
 };
 
 export type MilkioWorld<MilkioOptions extends MilkioInit = MilkioInit> = {
