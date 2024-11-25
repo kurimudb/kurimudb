@@ -1,7 +1,7 @@
 {
   "type": "module",
   "private": true,
-  "workspaces": ["projects/*", "packages/milkio-astra", "packages/milkio-stargate"],
+  "workspaces": [".commands", "projects/*", "packages/milkio-astra", "packages/milkio-stargate"],
   "module": "index.ts",
   "scripts": {
     "dev": "bun run ./develop.ts && cookbook",
