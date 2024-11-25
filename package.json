@@ -4,7 +4,7 @@
   "workspaces": [".commands", "projects/*", "packages/milkio-astra", "packages/milkio-stargate"],
   "module": "index.ts",
   "scripts": {
-    "dev": "bun run ./develop.ts && cookbook",
+    "dev": "bun run ./.commands/develop.ts && cookbook",
     "build": "bun run ./develop.ts && cookbook build",
     "test": "vitest --max-concurrency=1"
   },

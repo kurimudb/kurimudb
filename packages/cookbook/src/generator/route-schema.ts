@@ -91,7 +91,11 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
         await Promise.all(deleteTasks);
 
         if (project?.typiaMode !== "bundler") {
-          await $`bun run ${typiaPath} generate --input ${routeSchemaFolderPath} --output ${routeGeneratedSchemaFolderPath} --project ${join(paths.cwd, "tsconfig.json")}`.cwd(join(paths.cwd)).quiet();
+          try {
+            await $`bun run --bun ${typiaPath} generate --input ${routeSchemaFolderPath} --output ${routeGeneratedSchemaFolderPath} --project ${join(paths.cwd, "tsconfig.json")}`.cwd(join(paths.cwd)).quiet();
+          } catch (error) {
+            await $`node ${typiaPath} generate --input ${routeSchemaFolderPath} --output ${routeGeneratedSchemaFolderPath} --project ${join(paths.cwd, "tsconfig.json")}`.cwd(join(paths.cwd)).quiet();
+          }
         }
       }
     };
