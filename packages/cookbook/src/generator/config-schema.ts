@@ -8,7 +8,7 @@ export const configSchema = async (options: CookbookOptions, paths: { cwd: strin
   const scanner = join(paths.cwd);
   let files: AsyncIterableIterator<string> | Array<string> = [];
   if (await exists(scanner)) {
-    const glob = new Glob(`{config,configs,app}/**/{${mode},*.${mode}}.config.ts`);
+    const glob = new Glob(`{config,configs,app,call}/**/{${mode},*.${mode}}.config.ts`);
     files = glob.scan({ cwd: scanner, onlyFiles: true });
   }
 
