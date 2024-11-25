@@ -98,7 +98,7 @@ export const __initListener = (generated: GeneratedInit, runtime: any, executer:
         }
         if (routeSchema.type !== "action") throw reject("UNACCEPTABLE", { expected: "stream", message: `Not acceptable, the Accept in the request header should be "text/event-stream". If you are using the "@milkio/stargate" package, please add \`type: "stream"\` to the execute options.` });
 
-        const executed = await executer.__execute(options.env, options.envMode, routeSchema, {
+        const executed = await executer.__execute(routeSchema, {
           createdExecuteId: executeId,
           createdLogger: logger,
           path: http.path.string as string,
@@ -128,7 +128,7 @@ export const __initListener = (generated: GeneratedInit, runtime: any, executer:
         if (routeSchema === undefined) throw reject("NOT_FOUND", { path: http.path.string as string });
         if (routeSchema.type !== "stream") throw reject("UNACCEPTABLE", { expected: "stream", message: `Not acceptable, the Accept in the request header should be "application/json". If you are using the "@milkio/stargate" package, please remove \`type: "stream"\` to the execute options.` });
 
-        const executed = await executer.__execute(options.env, options.envMode, routeSchema, {
+        const executed = await executer.__execute(routeSchema, {
           createdExecuteId: executeId,
           createdLogger: logger,
           path: http.path.string as string,

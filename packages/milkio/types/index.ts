@@ -28,7 +28,6 @@ export type ExecuteId = string | "global";
 export type GeneratedInit = {
   routeSchema: any;
   commandSchema: any;
-  configSchema: any;
 };
 
 export type Results<T extends unknown> = {

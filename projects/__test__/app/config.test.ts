@@ -9,5 +9,5 @@ test.sequential("basic", async () => {
   if (error) throw reject("Milkio did not execute successfully", error);
 
   // Check if the return value is as expected
-  expect(results.foo).toBe("dev");
+  expect(results.foo).toBe("development");
 });

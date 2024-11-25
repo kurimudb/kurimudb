@@ -37,14 +37,12 @@ export const generator = {
           let indexFile = "// index";
           indexFile += `\nimport routeSchema from "./route-schema.ts";`;
           indexFile += `\nimport commandSchema from "./command-schema.ts";`;
-          indexFile += `\nimport configSchema from "./config-schema.ts";`;
           indexFile += `\nimport type { $rejectCode } from "milkio";`;
           indexFile += "\n";
           indexFile += "\nexport const generated = {";
           indexFile += "\n  rejectCode: undefined as unknown as $rejectCode,";
           indexFile += "\n  routeSchema,";
           indexFile += "\n  commandSchema,";
-          indexFile += "\n  configSchema,";
           indexFile += "\n};";
           Bun.write(join(paths.milkio, "generated", "index.ts"), indexFile);
         })();

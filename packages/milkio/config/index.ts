@@ -1,25 +1,10 @@
-import { type $types, type GeneratedInit } from "../types";
-
-export const config = <ConfigDefaultT extends ConfigDefault, ConfigEnvironmentsT extends ConfigEnvironments<ConfigDefaultT>>(def: ConfigDefaultT, envs: ConfigEnvironmentsT = {} as Record<any, any>): [ConfigDefaultT, ConfigEnvironmentsT] => {
-  return [def, envs];
+export const config = <ConfigT extends Config>(config: ConfigT): ConfigT => {
+  return config;
 };
 
-export const __getConfig = async <Namespace extends keyof $types["generated"]["configSchema"]>(generated: GeneratedInit, env: Record<any, any>, envMode: string, namespace: Namespace) => {
-  if (generated.configSchema[namespace][1] && envMode in generated.configSchema[namespace][1]) {
-    return {
-      ...(await generated.configSchema[namespace][0](env)),
-      ...(await generated.configSchema[namespace][1][envMode](env)),
-    };
-  } else {
-    return {
-      ...(await generated.configSchema[namespace][0](env)),
-    };
-  }
-};
+export type Config = (mode: string) => Promise<Record<string, unknown>> | Record<string, unknown>;
 
-export type ConfigDefault = (env: Record<string, string>) => Promise<Record<string, unknown>> | Record<string, unknown>;
-
-export type ConfigEnvironments<T extends ConfigDefault> = {
+export type ConfigEnvironments<T extends Config> = {
   [key: string]: (env: Record<string, string>) => Partial<Awaited<ReturnType<T>>> | Promise<Partial<Awaited<ReturnType<T>>>>;
 };
 

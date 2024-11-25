@@ -23,6 +23,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
+    "strictNullChecks": true,
     "allowJs": true,
     "paths": {
       "/*": [

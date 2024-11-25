@@ -1,10 +1,12 @@
 import { env, argv } from "node:process";
 import { createWorld, reject } from "milkio";
 import { generated } from "./.milkio/generated";
+import { configSchema } from "./.milkio/generated/config-schema";
 
 declare module "milkio" {
   interface $types {
     generated: typeof generated;
+    configSchema: typeof configSchema;
   }
   interface $context {
     say(): string;
@@ -13,7 +15,7 @@ declare module "milkio" {
 
 console.log("milkio started");
 
-export const world = await createWorld(generated, {
+export const world = await createWorld(generated, configSchema, {
   port: 9000,
   cookbook: { cookbookPort: 8000 },
   develop: env.MILKIO_DEVELOP === "ENABLE",
