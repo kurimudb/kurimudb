@@ -132,7 +132,9 @@ try {
   }
 }
 
-console.log("🧊 如果版本是修复 bug 版本 (仅最小版本号增加) 则无需编写发行说明");
+consola.success(`所有的包均发布完成：${[mainPackage, ...childPackages].join(", ")}`);
+
+console.log("\n🧊 如果版本是修复 bug 版本 (仅最小版本号增加) 则无需编写发行说明");
 if ((await cli.select("要编写发行说明吗？", ["否", "是"])) === "是") {
   console.clear();
   if (await exists(join(cwd, ".commands", "publish", "releases", `${newVersion}.md`))) {
