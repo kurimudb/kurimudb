@@ -90,7 +90,7 @@ try {
   await $`npm view ${packageJson.name}@${newVersion} --json`.quiet();
   console.log("该版本已存在，跳过 npm 发布");
 } catch (error) {
-  if ((await cli.select("\n提交 git 并推送至 npm 吗？", ["是，继续", "否，我只是想预创建版本说明"])) === "是，继续") {
+  if ((await cli.select("\n修改版本号并推送至 npm 吗？", ["是，继续", "否，我只是想预创建版本说明"])) === "是，继续") {
     // 更新 package.json 中的版本号并保存
     packageJson.version = newVersion;
     await writeFile(join(cwd, "packages", mainPackage, "package.json"), JSON.stringify(packageJson, null, 2));
