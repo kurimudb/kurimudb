@@ -1,117 +1,148 @@
-import { Glob } from "bun";
+import { $, Glob } from "bun";
 import consola from "consola";
 import { join } from "node:path";
-import { exists } from "node:fs/promises";
-import { exit, cwd } from "node:process";
-import { checkPath } from "./utils";
+import { exists, mkdir, readdir, readFile, unlink, writeFile } from "node:fs/promises";
+import { exit } from "node:process";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
+import { checkPath } from "./utils";
+import { calcHash } from "../utils/calc-hash";
 
 export const routeSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
-  const scanner = join(paths.cwd);
-  let files: AsyncIterableIterator<string> | Array<string> = [];
-  if (await exists(scanner)) {
-    const glob = new Glob("{app,call}/**/*.{action,stream}.ts");
-    files = glob.scan({ cwd: scanner, onlyFiles: true });
+  if (!paths.milkio) return;
+  const milkioRawPath = join(paths.cwd, ".milkio", "generated", "raw");
+  const milkioRawRoutesPath = join(milkioRawPath, "routes");
+  if (!(await exists(milkioRawPath))) await mkdir(milkioRawPath);
+  if (!(await exists(milkioRawRoutesPath))) await mkdir(milkioRawRoutesPath);
+
+  let typiaPath = join(paths.cwd, "./node_modules/typia/lib/executable/typia.js");
+  if (!(await exists(typiaPath))) typiaPath = join(paths.cwd, "../../node_modules/typia/lib/executable/typia.js");
+  if (!(await exists(typiaPath))) {
+    consola.error("Typia is not installed, so it cannot be found in the following path: " + typiaPath);
+    exit(1);
   }
 
-  let typescriptImports = `/* eslint-disable */\n// route-schema`;
-  typescriptImports += `\nimport typia, { type IValidation } from "typia";`;
-  typescriptImports += `\nimport { TSON, type TSONEncode } from "@southern-aurora/tson";`;
-  let typescriptTypeExports = "export type MilkioRoutes = {";
-  let typescriptRouteExports = "export const routes: any = new Map<string, any>([";
-  let keys: Array<string> = [];
+  const scanner = paths.cwd;
+  if (!(await exists(scanner))) {
+    consola.error("The directory does not exist: " + scanner);
+    exit(1);
+  }
+  const glob = new Glob("{app,call}/**/*.{action,stream}.ts");
+  const filesAsyncGenerator = glob.scan({ cwd: scanner, onlyFiles: true });
+  const files: Array<string> = [];
 
-  for await (let path of files) {
-    path = path.replaceAll("\\", "/");
-    // const file = Bun.file(join(scanner, path));
-    if (path.endsWith(".action.ts")) {
-      // action
-      checkPath(paths, path, "action");
-      let nameWithPath = path.slice(0, path.length - 10); // 10 === ".action.ts".length
-      let key = nameWithPath;
-      if (key.endsWith("/index") || key === "index") key = key.slice(0, key.length - 5); // 5 === "index".length
-      if (key === "app" && key.length > 1) key = key.slice(0, key.length - 1);
-      if (keys.includes(key)) {
-        consola.error(`Invalid path: "${join(paths.cwd, "app", path)}". The most common reason for having paths duplicate is that you created a new "${path}.ts" and have a "${path}/index.ts".\n`);
-        exit(1);
-      }
-      key = key.split(".")[0];
-      if (key.startsWith("app/")) key = key.slice(4);
-      if (key.startsWith("call/")) key = `\$${key}`;
-      if (key !== "/" && key.endsWith("/")) key = key.slice(0, key.length - 1);
-      keys.push(key);
-      const name = path
-        .slice(0, path.length - 10) // 10 === ".action.ts".length
+  const tasks: Array<Promise<any>> = [];
+  let changeType: "file-change" | "file-create-or-delete" | null = null;
+  const hashes: Map<string, { importName: string; fileHash: string }> = new Map();
+  for await (const file of filesAsyncGenerator) {
+    files.push(file);
+    const runner = async () => {
+      const fileHash = calcHash(await readFile(join(scanner, file)));
+
+      const type = file.endsWith(".stream.ts") ? "stream" : "action";
+      checkPath(paths, file, type);
+      let importName = file
+        .slice(0, file.length - 10) // 10 === ".ts".length
         .replaceAll("/", "$")
         .replaceAll("#", "__")
         .replaceAll("-", "_");
-      typescriptTypeExports += `\n  "/${key}": { `;
-      typescriptRouteExports += `\n  ["/${key}", { `;
-      typescriptRouteExports += `type: "action", `;
-      if (project?.lazyRoutes === undefined || project?.lazyRoutes === true) {
-        typescriptImports += `\nimport type ${name} from "../../../${nameWithPath}.action";`;
-        typescriptRouteExports += `module: () => import("../../../${nameWithPath}.action"), `;
-      } else {
-        typescriptImports += `\nimport ${name} from "../../../${nameWithPath}.action";`;
-        typescriptRouteExports += `module: () => ${name}, `;
+      const routeSchemaFolderPath = join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`);
+      const routeGeneratedSchemaFolderPath = join(paths.cwd, ".milkio", "generated", "generated", "routes", `${importName}`);
+      const routeSchemaPath = join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`, `${fileHash}.ts`);
+      hashes.set(file, { importName, fileHash });
+      if (!(await exists(routeSchemaFolderPath))) {
+        await mkdir(routeSchemaFolderPath);
+        changeType = "file-create-or-delete";
       }
-      typescriptRouteExports += `validateParams: (params: any): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
-      typescriptRouteExports += `randomParams: (): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.random<Parameters<typeof ${name}["handler"]>[1]>() as any, `;
-      typescriptRouteExports += `validateResults: (results: any): IValidation<Awaited<ReturnType<typeof ${name}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${name}["handler"]>>>(results), `;
-      typescriptRouteExports += `resultsToJSON: (results: any): Awaited<ReturnType<typeof ${name}["handler"]>> => typia.json.stringify<TSONEncode<Awaited<ReturnType<typeof ${name}["handler"]>>>>(TSON.encode(results)) as any, `;
-      typescriptRouteExports += `}],`;
-      typescriptTypeExports += `"🐣": boolean, `;
-      typescriptTypeExports += `meta: typeof ${name}["meta"], `;
-      typescriptTypeExports += `params: Parameters<typeof ${name}["handler"]>[1], `;
-      typescriptTypeExports += `result: Awaited<ReturnType<typeof ${name}["handler"]>> `;
-      typescriptTypeExports += `},`;
-    } else if (path.endsWith(".stream.ts")) {
-      // stream
-      checkPath(paths, path, "stream");
-      let nameWithPath = path.slice(0, path.length - 10); // 10 === ".stream.ts".length
-      let key = nameWithPath;
-      if (key.endsWith("/index") || key === "index") key = key.slice(0, key.length - 5); // 5 === "index".length
-      if (key === "app" && key.length > 1) key = key.slice(0, key.length - 1);
-      if (keys.includes(key)) {
-        consola.error(`Invalid path: "${join(paths.cwd, "app", path)}". The most common reason for having paths duplicate is that you created a new "${path}.ts" and have a "${path}/index.ts".\n`);
+      if (!(await exists(routeSchemaPath))) {
+        if (changeType !== "file-create-or-delete") changeType = "file-change";
+
+        let routeFileImports = `/* eslint-disable */\n// route-schema`;
+        routeFileImports += `\nimport typia, { type IValidation } from "typia";`;
+        routeFileImports += `\nimport { TSON, type TSONEncode } from "@southern-aurora/tson";`;
+        let routeFileExports = "export default { ";
+        routeFileExports += `type: "${type}", `;
+        routeFileExports += `types: undefined as any as { `;
+        routeFileExports += `"🐣": boolean, `;
+        routeFileExports += `meta: typeof ${importName}["meta"], `;
+        routeFileExports += `params: Parameters<typeof ${importName}["handler"]>[1], `;
+        routeFileExports += `result: Awaited<ReturnType<typeof ${importName}["handler"]>> `;
+        routeFileExports += `},`;
+        if (project?.lazyRoutes === undefined || project?.lazyRoutes === true) {
+          routeFileImports += `\nimport type ${importName} from "../../../../../${file}";`;
+          routeFileExports += `module: () => import("../../../../../${file}"), `;
+        } else {
+          routeFileImports += `\nimport ${importName} from "../../../../../${file}";`;
+          routeFileExports += `module: () => ${importName}, `;
+        }
+        routeFileExports += `validateParams: (params: any): IValidation<Parameters<typeof ${importName}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${importName}["handler"]>[1]>(params) as any, `;
+        routeFileExports += `randomParams: (): IValidation<Parameters<typeof ${importName}["handler"]>[1]> => typia.random<Parameters<typeof ${importName}["handler"]>[1]>() as any, `;
+        routeFileExports += `validateResults: (results: any): IValidation<Awaited<ReturnType<typeof ${importName}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${importName}["handler"]>>>(results) as any, `;
+        routeFileExports += `resultsToJSON: (results: any): Awaited<ReturnType<typeof ${importName}["handler"]>> => typia.json.stringify<TSONEncode<Awaited<ReturnType<typeof ${importName}["handler"]>>>>(TSON.encode(results)) as any, `;
+        routeFileExports += `};`;
+
+        const oldFiles = await readdir(routeSchemaFolderPath);
+        await writeFile(routeSchemaPath, `${routeFileImports}\n\n${routeFileExports}`);
+
+        const deleteTasks: Array<Promise<any>> = [];
+        for (const oldFile of oldFiles) {
+          deleteTasks.push(unlink(join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`, oldFile)));
+          deleteTasks.push(unlink(join(paths.cwd, ".milkio", "generated", "generated", "routes", `${importName}`, oldFile)));
+        }
+        await Promise.all(deleteTasks);
+
+        if (project?.typiaMode !== "bundler") {
+          await $`bun run ${typiaPath} generate --input ${routeSchemaFolderPath} --output ${routeGeneratedSchemaFolderPath} --project ${join(paths.cwd, "tsconfig.json")}`.cwd(join(paths.cwd)).quiet();
+        }
+      }
+    };
+    tasks.push(runner());
+  }
+  await Promise.all(tasks);
+
+  if (changeType) {
+    const routeSchemaPath = join(paths.cwd, ".milkio", "generated", "route-schema.ts");
+
+    let routeSchemaFileImports = `/* eslint-disable */\n// route-schema`;
+    let routeSchemaFileExports = "export default {";
+
+    const routePaths: Array<string> = [];
+    for await (const file of files) {
+      let { importName, fileHash } = hashes.get(file) ?? {};
+
+      let routePath = file.slice(0, file.length - 10); // 10 === ".stream.ts".length && 10 === ".action.ts".length
+      if (routePath.endsWith("/index") || routePath === "index") routePath = routePath.slice(0, routePath.length - 5); // 5 === "index".length
+      if (routePath === "app" && routePath.length > 1) routePath = routePath.slice(0, routePath.length - 1);
+      if (routePaths.includes(routePath)) {
+        consola.error(`Invalid path: "${join(paths.cwd, "app", file)}". The most common reason for having paths duplicate is that you created a new "${file}" and have a "${file}/index.ts".\n`);
         exit(1);
       }
-      key = key.split(".")[0];
-      if (key.startsWith("app/")) key = key.slice(4);
-      if (key.startsWith("call/")) key = `\$${key}`;
-      if (key !== "/" && key.endsWith("/")) key = key.slice(0, key.length - 1);
-      keys.push(key);
-      const name = path
-        .slice(0, path.length - 10) // 10 === ".stream.ts".length
-        .replaceAll("/", "$")
-        .replaceAll("#", "__")
-        .replaceAll("-", "_");
-      typescriptTypeExports += `\n  "/${key}": { `;
-      typescriptRouteExports += `\n  ["/${key}", { `;
-      typescriptRouteExports += `type: "stream", `;
-      if (project?.lazyRoutes === undefined || project.lazyRoutes === true) {
-        typescriptImports += `\nimport type ${name} from "../../../${nameWithPath}.stream";`;
-        typescriptRouteExports += `module: () => import("../../../${nameWithPath}.stream"), `;
-      } else {
-        typescriptImports += `\nimport ${name} from "../../../${nameWithPath}.stream";`;
-        typescriptRouteExports += `module: () => ${name}, `;
+      routePath = routePath.split(".")[0];
+      if (routePath.startsWith("app/")) routePath = routePath.slice(4); // 4 === "app/".length
+      if (routePath.startsWith("call/")) routePath = `\$${routePath}`;
+      if (routePath !== "/" && routePath.endsWith("/")) routePath = routePath.slice(0, routePath.length - 1);
+      routePaths.push(routePath);
+
+      if (!importName)
+        importName = file
+          .slice(0, file.length - 10) // 10 === ".ts".length
+          .replaceAll("/", "$")
+          .replaceAll("#", "__")
+          .replaceAll("-", "_");
+      if (!fileHash) {
+        try {
+          fileHash = (await readdir(join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`)))[0].slice(0, -3); // 3 === ".ts".length
+        } catch (error) {
+          consola.error(`Generation failed, cache file is incomplete, please manually delete your ${join(paths.cwd, ".milkio", "generated")} directory and try again.`);
+          exit(1);
+        }
       }
-      typescriptRouteExports += `validateParams: (params: any): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${name}["handler"]>[1]>(params), `;
-      typescriptRouteExports += `validateResults: (results: any): IValidation<Awaited<ReturnType<typeof ${name}["handler"]>>> => typia.misc.validatePrune<Awaited<ReturnType<typeof ${name}["handler"]>>>(results), `;
-      typescriptRouteExports += `randomParams: (): IValidation<Parameters<typeof ${name}["handler"]>[1]> => typia.random<Parameters<typeof ${name}["handler"]>[1]>() as any, `;
-      typescriptRouteExports += `}],`;
-      typescriptTypeExports += `"🐣": number, `;
-      typescriptTypeExports += `meta: typeof ${name}["meta"], `;
-      typescriptTypeExports += `params: Parameters<typeof ${name}["handler"]>[1], `;
-      typescriptTypeExports += `result: Awaited<ReturnType<typeof ${name}["handler"]>> `;
-      typescriptTypeExports += `},`;
-    } else {
-      continue;
+
+      if (project?.typiaMode !== "bundler") routeSchemaFileImports += `\nimport ${importName} from "./generated/routes/${importName}/${fileHash}.ts";`;
+      else routeSchemaFileImports += `\nimport ${importName} from "./raw/routes/${importName}/${fileHash}.ts";`;
+      routeSchemaFileExports += `\n  "/${routePath}": ${importName},`;
     }
-  }
+    routeSchemaFileExports += `\n};`;
 
-  typescriptTypeExports += "\n}";
-  typescriptRouteExports += "\n]);";
-  const typescript = `${typescriptImports}\n\n${typescriptTypeExports}\n\n${typescriptRouteExports}`;
-  await Bun.write(join(paths.cwd, ".milkio", "generated", "raw", "route-schema.ts"), typescript);
+    await writeFile(routeSchemaPath, `${routeSchemaFileImports}\n\n${routeSchemaFileExports}`);
+  }
 };

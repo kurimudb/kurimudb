@@ -1,4 +1,4 @@
-import { type MilkioRuntimeInit, type MilkioInit, type GeneratedInit } from "..";
+import { type GeneratedInit } from "..";
 
 export const command = <CommandInitT extends CommandInit>(init: CommandInitT): Command<CommandInitT> => {
   const command = init as unknown as Command<CommandInitT>;

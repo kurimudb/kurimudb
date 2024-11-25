@@ -114,20 +114,20 @@ export async function createStargate<Generated extends { routeSchema: any; rejec
       generated: void 0 as unknown as Generated,
     },
     options: stargateOptions,
-    async execute<Path extends keyof Generated["routeSchema"]["$types"]>(
+    async execute<Path extends keyof Generated["routeSchema"]>(
       path: Path,
       options?: Mixin<
         ExecuteOptions,
         {
-          params?: Generated["routeSchema"]["$types"][Path]["params"];
+          params?: Generated["routeSchema"][Path]["types"]["params"];
         }
       >,
     ): Promise<
-      Generated["routeSchema"]["$types"][Path]["🐣"] extends boolean
+      Generated["routeSchema"][Path]["types"]["🐣"] extends boolean
         ? // action
-          [Partial<Generated["rejectCode"]>, null, ExecuteResultsOption] | [null, Generated["routeSchema"]["$types"][Path]["result"], ExecuteResultsOption]
+          [Partial<Generated["rejectCode"]>, null, ExecuteResultsOption] | [null, Generated["routeSchema"][Path]["types"]["result"], ExecuteResultsOption]
         : // stream
-          [Partial<Generated["rejectCode"]>, null, ExecuteResultsOption] | [null, AsyncGenerator<[Partial<Generated["rejectCode"]>, null] | [null, GeneratorGeneric<Generated["routeSchema"]["$types"][Path]["result"]>], ExecuteResultsOption>]
+          [Partial<Generated["rejectCode"]>, null, ExecuteResultsOption] | [null, AsyncGenerator<[Partial<Generated["rejectCode"]>, null] | [null, GeneratorGeneric<Generated["routeSchema"][Path]["types"]["result"]>], ExecuteResultsOption>]
     > {
       if (!options) options = {};
       if (options.headers === undefined) options.headers = {};

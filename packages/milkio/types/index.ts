@@ -29,7 +29,6 @@ export type GeneratedInit = {
   routeSchema: any;
   commandSchema: any;
   configSchema: any;
-  testSchema: any;
 };
 
 export type Results<T extends unknown> = {
@@ -61,10 +60,10 @@ export type Ping =
 
 export type ExecuteResultsOption = { executeId: string };
 
-export type ExecuteActionResults<Path extends keyof Generated["routeSchema"]["$types"], Generated extends $types["generated"] = $types["generated"]> = Generated["routeSchema"]["$types"][Path]["result"];
+export type ExecuteActionResults<Path extends keyof Generated["routeSchema"], Generated extends $types["generated"] = $types["generated"]> = Generated["routeSchema"][Path]["result"];
 
-export type ExecuteStreamResults<Path extends keyof Generated["routeSchema"]["$types"], Generated extends $types["generated"] = $types["generated"]> = GeneratorGeneric<Generated["routeSchema"]["$types"][Path]["result"]>;
+export type ExecuteStreamResults<Path extends keyof Generated["routeSchema"], Generated extends $types["generated"] = $types["generated"]> = GeneratorGeneric<Generated["routeSchema"][Path]["result"]>;
 
 export type MilkioResponseReject<Code extends keyof $rejectCode = keyof $rejectCode> = { success: false; code: Code; reject: $rejectCode[Code]; executeId: string };
 
-export type MilkioResponseSuccess<Path extends keyof Generated["routeSchema"]["$types"], Generated extends $types["generated"] = $types["generated"]> = { success: true; data: Generated["routeSchema"]["$types"][Path]["result"]; executeId: string };
+export type MilkioResponseSuccess<Path extends keyof Generated["routeSchema"], Generated extends $types["generated"] = $types["generated"]> = { success: true; data: Generated["routeSchema"][Path]["result"]; executeId: string };

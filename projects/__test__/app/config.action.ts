@@ -5,10 +5,9 @@ import { action } from "milkio";
  */
 export default action({
   async handler(context, params: {}) {
-    const appConfig = await context.getConfig("app");
-
-    return {
-      ...appConfig,
-    };
+    // const appConfig = await context.getConfig("app");
+    // return {
+    //   ...appConfig,
+    // };
   },
 });

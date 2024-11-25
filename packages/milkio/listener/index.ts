@@ -75,7 +75,7 @@ export const __initListener = (generated: GeneratedInit, runtime: any, executer:
         return {
           url,
           ip,
-          path: { string: pathString as keyof $types["generated"]["routeSchema"]["$types"], array: pathArray },
+          path: { string: pathString as keyof $types["generated"]["routeSchema"], array: pathArray },
           params,
           request: options.request,
           response,
@@ -91,7 +91,7 @@ export const __initListener = (generated: GeneratedInit, runtime: any, executer:
 
       if (!options.request.headers.get("Accept")?.startsWith("text/event-stream")) {
         // action
-        const routeSchema = generated.routeSchema.routes.get(http.path.string);
+        const routeSchema = generated.routeSchema[http.path.string];
         if (routeSchema === undefined) {
           await runtime.emit("milkio:httpNotFound", { executeId, logger, path: http.path.string as string, http });
           throw reject("NOT_FOUND", { path: http.path.string as string });
@@ -124,7 +124,7 @@ export const __initListener = (generated: GeneratedInit, runtime: any, executer:
         return new Response(response.body, response);
       } else {
         // stream
-        const routeSchema = generated.routeSchema.routes.get(http.path.string);
+        const routeSchema = generated.routeSchema[http.path.string];
         if (routeSchema === undefined) throw reject("NOT_FOUND", { path: http.path.string as string });
         if (routeSchema.type !== "stream") throw reject("UNACCEPTABLE", { expected: "stream", message: `Not acceptable, the Accept in the request header should be "application/json". If you are using the "@milkio/stargate" package, please remove \`type: "stream"\` to the execute options.` });
 

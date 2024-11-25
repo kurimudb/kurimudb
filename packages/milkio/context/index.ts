@@ -14,7 +14,7 @@ export interface $context {
 export type ContextHttp<ParamsParsed = any> = {
   url: URL;
   ip: string;
-  path: { string: keyof $types["generated"]["routeSchema"]["$types"]; array: Array<string> };
+  path: { string: keyof $types["generated"]["routeSchema"]; array: Array<string> };
   params: {
     string: string;
     parsed: ParamsParsed;

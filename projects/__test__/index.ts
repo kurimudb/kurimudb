@@ -1,7 +1,6 @@
 import { env, argv } from "node:process";
 import { createWorld, reject } from "milkio";
 import { generated } from "./.milkio/generated";
-export type { generated } from "./.milkio/generated";
 
 declare module "milkio" {
   interface $types {

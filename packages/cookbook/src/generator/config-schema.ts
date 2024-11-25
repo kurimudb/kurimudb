@@ -31,10 +31,10 @@ export const configSchema = async (options: CookbookOptions, paths: { cwd: strin
       .replaceAll(".config.ts", "")
       .split("/")
       .at(-1);
-    typescriptImports += `\nimport ${name} from "../../../${nameWithPath}.config";`;
+    typescriptImports += `\nimport ${name} from "../../${nameWithPath}.config";`;
     typescriptExports += `\n  "${namespace}": ${name},`;
   }
   typescriptExports += "\n}";
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
-  await Bun.write(join(paths.cwd, ".milkio", "generated", "raw", "config-schema.ts"), typescript);
+  await Bun.write(join(paths.cwd, ".milkio", "generated", "config-schema.ts"), typescript);
 };
