@@ -77,7 +77,7 @@ const packageJson = JSON.parse(await readFile(join(cwd, "packages", mainPackage,
 const publishJson = JSON.parse(await readFile(join(cwd, ".commands", "publish", "publish.json"), "utf-8"));
 
 let lastVersion = packageJson.version;
-console.log("上个版本号:", lastVersion);
+consola.success("上个版本号:", lastVersion);
 
 const newVersion = (await cli.input("要发布的新版本号是")) ?? "";
 if (!/^(\d+)\.(\d+)\.(\d+)((-rc|-beta|-alpha)\.(\d+))?$/.test(newVersion)) {
