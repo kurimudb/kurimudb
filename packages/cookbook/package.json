@@ -2,7 +2,7 @@
   "name": "@milkio/cookbook",
   "type": "module",
   "module": "./exports.ts",
-  "version": "1.0.0-alpha.27",
+  "version": "1.0.0-alpha.33",
   "scripts": {
     "typia": "typia"
   },

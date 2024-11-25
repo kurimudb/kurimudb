@@ -1,7 +1,7 @@
 {
   "name": "@milkio/cookbook-template",
   "module": "index.ts",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-alpha.33",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest"
