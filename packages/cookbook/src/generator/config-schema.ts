@@ -21,7 +21,7 @@ export const configSchema = async (options: CookbookOptions, paths: { cwd: strin
     if (nameWithPath.endsWith("/index") || nameWithPath === "index") nameWithPath = nameWithPath.slice(0, nameWithPath.length - 5); // 5 === "index".length
     const name = path
       .slice(0, path.length - 10)
-      .replaceAll("/", "$")
+      .replaceAll("/", "__")
       .replaceAll("-", "_")
       .replaceAll(".config.ts", "")
       .split("/")

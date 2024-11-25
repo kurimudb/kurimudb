@@ -42,7 +42,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       checkPath(paths, file, type);
       let importName = file
         .slice(0, file.length - 10) // 10 === ".ts".length
-        .replaceAll("/", "$")
+        .replaceAll("/", "__")
         .replaceAll("#", "__")
         .replaceAll("-", "_");
       const routeSchemaFolderPath = join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`);
@@ -125,7 +125,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
       if (!importName)
         importName = file
           .slice(0, file.length - 10) // 10 === ".ts".length
-          .replaceAll("/", "$")
+          .replaceAll("/", "__")
           .replaceAll("#", "__")
           .replaceAll("-", "_");
       if (!fileHash) {

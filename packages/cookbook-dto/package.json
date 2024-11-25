@@ -1,6 +1,5 @@
 {
   "name": "@milkio/cookbook-dto",
-  "version": "1.0.0",
   "type": "module",
   "devDependencies": {
     "@types/bun": "latest"

@@ -21,7 +21,7 @@ export const testSchema = async (options: CookbookOptions, paths: { cwd: string;
     if (nameWithPath.endsWith("/index") || nameWithPath === "index") nameWithPath = nameWithPath.slice(0, nameWithPath.length - 5); // 5 === "index".length
     const name = path
       .slice(0, path.length - 8)
-      .replaceAll("/", "$")
+      .replaceAll("/", "__")
       .replaceAll("-", "_")
       .replaceAll(".test.ts", "");
     typescriptExports += `\n  "/${nameWithPath}": {},`;

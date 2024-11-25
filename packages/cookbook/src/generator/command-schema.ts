@@ -24,7 +24,7 @@ export const commandSchema = async (options: CookbookOptions, paths: { cwd: stri
     checkPath(paths, path);
 
     const nameWithPath = path.slice(0, path.length - 3); // 3 === ".ts".length
-    const name = nameWithPath.replaceAll("/", "$").replaceAll("-", "_");
+    const name = nameWithPath.replaceAll("/", "__").replaceAll("-", "_");
     typescriptImports += `\nimport ${name} from "../../command/${nameWithPath}";`;
     typescriptExports += `\n    "${nameWithPath}": { module: ${name} },`;
     ++len;
