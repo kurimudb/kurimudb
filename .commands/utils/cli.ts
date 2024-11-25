@@ -15,17 +15,6 @@ export const cli = {
       process.exit(0);
     }
   },
-  async confirm(message: string): Promise<boolean> {
-    try {
-      const result = await consola.prompt(message, {
-        type: "confirm",
-      });
-      if (typeof result === "symbol") exit(0);
-      return result;
-    } catch (error) {
-      process.exit(0);
-    }
-  },
   async select(message: string, choices: Array<string>): Promise<string> {
     try {
       const result = await consola.prompt(message, {

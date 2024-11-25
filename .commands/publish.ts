@@ -1,9 +1,11 @@
 import { $ } from "bun";
 import OpenAI from "openai";
 import { join } from "node:path";
+import { homedir } from "os";
 import { exists, mkdir, readFile, writeFile } from "node:fs/promises";
 import { Octokit } from "@octokit/core";
 import { cli } from "./utils/cli.ts";
+import consola from "consola";
 
 const mainPackage = "milkio";
 const childPackages = ["cookbook", "cookbook-template", "milkio-astra", "milkio-redis", "milkio-stargate"];
@@ -15,7 +17,28 @@ console.log("");
 
 let cwd = join(process.cwd());
 
-const config: any = (await import(join(process.cwd(), ".commands", "utils", "config.ts"))).config;
+let config: any = undefined;
+try {
+  config = (await import(join(homedir(), ".commands", "utils", "config.ts"))).config;
+} catch (error) {
+  consola.error(`未找到配置文件，请在 ${join(homedir(), ".commands", "utils", "config.ts")} 中编写你的配置`);
+  console.log(`export const config = {
+  github: {
+    token: "<YOUR_TOKEN>",
+  },
+  gitee: {
+    token: "<YOUR_TOKEN>",
+  },
+  LLM: {
+    minimax: {
+      groupId: "<YOUR_GROUP_ID>",
+      appKey:
+        "<YOUR_APP_KEY>",
+    },
+  },
+};`);
+  process.exit(0);
+}
 
 console.log("发布路径", cwd);
 
@@ -42,7 +65,12 @@ if (!(await exists(join(cwd, ".commands", "publish"))) || !(await exists(join(cw
 
 if ((await $`git status --porcelain`.text()).trim()) {
   console.log("当前目录存在未提交的变更，请先提交再发布版本");
-  process.exit(0);
+  if (!(await exists(join(homedir(), ".commands", "commit.ts")))) {
+    process.exit(0);
+  }
+
+  if ((await cli.select("是否进行 Git 提交？", ["是", "否"])) !== "是") process.exit(0);
+  await import(join(homedir(), ".commands", "commit.ts"));
 }
 
 const packageJson = JSON.parse(await readFile(join(cwd, "packages", mainPackage, "package.json"), "utf-8"));
@@ -92,7 +120,7 @@ try {
         } catch (error: any) {
           console.log(error);
           console.log(error?.message ?? "");
-          if (await cli.confirm(`\n${childPackage} 发布失败，可能是网络异常，是否重试？`)) {
+          if ((await cli.select(`\n${childPackage} 发布失败，可能是网络异常，是否重试？`, ["是", "否"])) === "是") {
             console.log("好的，即将重试..");
           } else {
             console.log("已退出发布");
