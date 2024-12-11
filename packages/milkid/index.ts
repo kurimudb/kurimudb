@@ -1,111 +1,110 @@
+import { XXH64 } from "xxh3-ts";
 const ENCODING = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const ENCODING_FIRST_CHAR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const MAGIC_NUMBER = 733882188971;
-const ID_LENGTH = 32;
 
 let lastTime: number = 0;
-let lastRandom: string = "";
+let lastCounter: bigint = 0n;
 
-export function createId(length?: number): string {
-  const currentPRNG = detectPRNG();
-  const seed = Date.now();
-  if (seed <= lastTime) {
-    const incrementedTime = encodeDate(seed);
-    const incrementedRandom = (lastRandom = incrementBase32(lastRandom));
-    return incrementedTime + incrementedRandom;
-  } else {
-    const incrementedTime = encodeDate(seed);
-    lastTime = seed;
-    const newRandom = (lastRandom = encodeRandom((length ?? ID_LENGTH) - incrementedTime.length, currentPRNG));
-    return incrementedTime + newRandom;
-  }
+export type IdGeneratorOptions = {
+  length?: number;
+  timestamp: boolean;
+  entropy?: boolean;
+  hyphen?: boolean;
+  sequential?: boolean;
+  magicNumber?: number;
+};
+
+export function defineIdGenerator(options: IdGeneratorOptions) {
+  const textEncoder = new TextEncoder();
+  if (options.length !== undefined && options.length < 16) throw new Error("length must be larger than 16");
+  const randLength = (options.length ?? 24) + 1 - (options.timestamp ? 7 : 0) - (options.entropy ? 5 : 0);
+  let maxRandCharacter = "";
+  for (let i = 0; i < randLength; i++) maxRandCharacter += "z";
+  const maxRandDecimal = characterToDecimal(maxRandCharacter);
+
+  return {
+    createId(entropy?: string | Buffer) {
+      if (options.entropy && !entropy) throw new Error("entropy is required");
+
+      const now = Date.now();
+
+      let id = "";
+      if (options.timestamp) {
+        id += decimalToCharacter(BigInt(now - (options.magicNumber ?? 733882188971)));
+        if (id.length > 7) id = id.slice(-7);
+      }
+      if (entropy) {
+        if (options.hyphen) id += "-";
+        if (Buffer.isBuffer(entropy)) {
+          id += decimalToCharacter(BigInt(XXH64(entropy).toString(10))).slice(2, 7);
+        } else if (typeof entropy === "string") {
+          id += decimalToCharacter(BigInt(XXH64(Buffer.from(textEncoder.encode(entropy))).toString(10))).slice(2, 7);
+        }
+      }
+      if (randLength > 1) {
+        if (options.hyphen) id += "-";
+        let decimal = random(maxRandDecimal);
+        if (options.sequential !== false) {
+          if (lastTime !== now) {
+            lastTime = now;
+            lastCounter = 0n;
+          } else {
+            decimal = decimal + lastCounter++;
+          }
+        }
+        id += decimalToCharacter(random(decimal)).padStart(randLength, "0").slice(1, randLength);
+      }
+
+      return id;
+    },
+  };
 }
 
-function detectPRNG(): () => number {
-  let root = undefined as any;
-  // @ts-ignore
-  if (typeof WorkerGlobalScope !== "undefined" && self instanceof WorkerGlobalScope) {
-    root = self;
-  } else if (typeof window !== "undefined") {
-    root = window;
-  } else if (typeof globalThis !== "undefined") {
-    root = globalThis;
-  } else if (typeof self !== "undefined") {
-    root = self;
-  }
-
-  const globalCrypto = (root && (root.crypto || root.msCrypto)) || (typeof crypto !== "undefined" ? crypto : null);
-  if (typeof globalCrypto?.getRandomValues === "function") {
-    return () => {
-      const buffer = new Uint8Array(1);
-      globalCrypto.getRandomValues(buffer);
-      return buffer[0] / 0xff;
-    };
-  } else if (typeof globalCrypto?.randomBytes === "function") {
-    return () => globalCrypto.randomBytes(1).readUInt8() / 0xff;
-  }
-
-  throw new Error("No PRNG found");
-}
-
-function encodeDate(timestampMs: number) {
-  timestampMs = timestampMs - MAGIC_NUMBER;
+function decimalToCharacter(decimal: bigint): string {
   let result = "";
-  if (timestampMs === 0) {
-    return ENCODING[0];
-  }
-  let char = "";
-  while (timestampMs > 0) {
-    if (timestampMs < ENCODING.length) char = ENCODING_FIRST_CHAR[timestampMs % ENCODING_FIRST_CHAR.length];
-    else char = ENCODING[timestampMs % ENCODING.length];
-    result = char + result;
-    timestampMs = Math.floor(timestampMs / ENCODING.length);
-  }
-  return result;
-}
-
-function randomChar(encoding: string, prng: () => number): string {
-  let rand = Math.floor(prng() * encoding.length);
-  if (rand === encoding.length) {
-    rand = encoding.length - 1;
-  }
-  return encoding.charAt(rand);
-}
-
-function encodeRandom(len: number, detectPRNG: () => number): string {
-  let str = "";
-  for (; len > 0; len--) {
-    str = randomChar(ENCODING, detectPRNG) + str;
-  }
-  return str;
-}
-
-function incrementBase32(str: string): string {
-  let done: string = "";
-  let index = str.length;
-  let char: string;
-  let charIndex: number;
-  let output = str;
-  const maxCharIndex = ENCODING.length - 1;
-  while (!done && index-- >= 0) {
-    char = output[index];
-    charIndex = ENCODING.indexOf(char);
-    if (charIndex === -1) throw new Error("Failed incrementing string");
-    if (charIndex === maxCharIndex) {
-      output = replaceCharAt(output, index, ENCODING[0]);
-      continue;
+  while (decimal > 0) {
+    if (decimal <= 62n) {
+      result = ENCODING_FIRST_CHAR[0] + result;
+      decimal = decimal / 52n;
+    } else {
+      result = ENCODING[Number(decimal % 62n)] + result;
+      decimal = decimal / 62n;
     }
-    done = replaceCharAt(output, index, ENCODING[charIndex + 1]);
   }
-  if (typeof done === "string") {
-    return done;
-  }
-  throw new Error("Failed incrementing string");
+  return result || "0";
 }
 
-function replaceCharAt(str: string, index: number, char: string): string {
-  if (index > str.length - 1) {
-    return str;
+function characterToDecimal(character: string): bigint {
+  let decimal = 0n;
+  const base = BigInt(ENCODING.length);
+  for (let i = 0; i < character.length; i++) {
+    const charIndex = ENCODING.indexOf(character[i]);
+    decimal = decimal * base + BigInt(charIndex);
   }
-  return str.slice(0, index) + char + str.slice(index + 1);
+  return decimal;
+}
+
+function random(limit: bigint) {
+  if (limit <= 0n) throw new Error("Limit must be larger than 0");
+
+  let width = 0n;
+  for (let n = limit; n > 0n; width++) {
+    n >>= 64n;
+  }
+
+  const max = 1n << (width * 64n);
+  const buf = new BigUint64Array(Number(width));
+  const min = max - (max % limit);
+
+  let sample = 0n;
+  do {
+    const arrayBuffer = crypto.getRandomValues(new Uint8Array(buf.length * 8));
+    const view = new DataView(arrayBuffer.buffer);
+    sample = 0n;
+    for (let i = 0; i < buf.length; i++) {
+      sample = (sample << 64n) | BigInt(view.getBigUint64(i * 8));
+    }
+  } while (sample >= min);
+
+  return sample % limit;
 }

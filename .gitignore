@@ -1,5 +1,5 @@
 # ignore
-/projects/*/.milkio/generated
+/projects/*/.milkio
 node_modules
 .DS_Store
 *.old

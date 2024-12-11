@@ -9,7 +9,7 @@ import { calcHash } from "../utils/calc-hash";
 
 export const routeSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
   if (!paths.milkio) return;
-  const milkioRawPath = join(paths.cwd, ".milkio", "generated", "raw");
+  const milkioRawPath = join(paths.cwd, ".milkio", "raw");
   const milkioRawRoutesPath = join(milkioRawPath, "routes");
   if (!(await exists(milkioRawPath))) await mkdir(milkioRawPath);
   if (!(await exists(milkioRawRoutesPath))) await mkdir(milkioRawRoutesPath);
@@ -45,9 +45,9 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
         .replaceAll("/", "__")
         .replaceAll("#", "__")
         .replaceAll("-", "_");
-      const routeSchemaFolderPath = join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`);
-      const routeGeneratedSchemaFolderPath = join(paths.cwd, ".milkio", "generated", "generated", "routes", `${importName}`);
-      const routeSchemaPath = join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`, `${fileHash}.ts`);
+      const routeSchemaFolderPath = join(paths.cwd, ".milkio", "raw", "routes", `${importName}`);
+      const routeGeneratedSchemaFolderPath = join(paths.cwd, ".milkio", "generated", "routes", `${importName}`);
+      const routeSchemaPath = join(paths.cwd, ".milkio", "raw", "routes", `${importName}`, `${fileHash}.ts`);
       hashes.set(file, { importName, fileHash });
       if (!(await exists(routeSchemaFolderPath))) {
         await mkdir(routeSchemaFolderPath);
@@ -68,10 +68,10 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
         routeFileExports += `result: Awaited<ReturnType<typeof ${importName}["handler"]>> `;
         routeFileExports += `},`;
         if (project?.lazyRoutes === undefined || project?.lazyRoutes === true) {
-          routeFileImports += `\nimport type ${importName} from "../../../../../${file}";`;
-          routeFileExports += `module: () => import("../../../../../${file}"), `;
+          routeFileImports += `\nimport type ${importName} from "../../../../${file}";`;
+          routeFileExports += `module: () => import("../../../../${file}"), `;
         } else {
-          routeFileImports += `\nimport ${importName} from "../../../../../${file}";`;
+          routeFileImports += `\nimport ${importName} from "../../../../${file}";`;
           routeFileExports += `module: () => ${importName}, `;
         }
         routeFileExports += `validateParams: (params: any): IValidation<Parameters<typeof ${importName}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${importName}["handler"]>[1]>(params) as any, `;
@@ -85,8 +85,8 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
 
         const deleteTasks: Array<Promise<any>> = [];
         for (const oldFile of oldFiles) {
-          deleteTasks.push(unlink(join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`, oldFile)));
-          deleteTasks.push(unlink(join(paths.cwd, ".milkio", "generated", "generated", "routes", `${importName}`, oldFile)));
+          deleteTasks.push(unlink(join(paths.cwd, ".milkio", "raw", "routes", `${importName}`, oldFile)));
+          deleteTasks.push(unlink(join(paths.cwd, ".milkio", "generated", "routes", `${importName}`, oldFile)));
         }
         await Promise.all(deleteTasks);
 
@@ -104,7 +104,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
   await Promise.all(tasks);
 
   if (changeType) {
-    const routeSchemaPath = join(paths.cwd, ".milkio", "generated", "route-schema.ts");
+    const routeSchemaPath = join(paths.cwd, ".milkio", "route-schema.ts");
 
     let routeSchemaFileImports = `/* eslint-disable */\n// route-schema`;
     let routeSchemaFileExports = "export default {";
@@ -134,9 +134,9 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
           .replaceAll("-", "_");
       if (!fileHash) {
         try {
-          fileHash = (await readdir(join(paths.cwd, ".milkio", "generated", "raw", "routes", `${importName}`)))[0].slice(0, -3); // 3 === ".ts".length
+          fileHash = (await readdir(join(paths.cwd, ".milkio", "raw", "routes", `${importName}`)))[0].slice(0, -3); // 3 === ".ts".length
         } catch (error) {
-          consola.error(`Generation failed, cache file is incomplete, please manually delete your ${join(paths.cwd, ".milkio", "generated")} directory and try again.`);
+          consola.error(`Generation failed, cache file is incomplete, please manually delete your ${join(paths.cwd, ".milkio")} directory and try again.`);
           exit(1);
         }
       }

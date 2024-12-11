@@ -28,5 +28,5 @@ export const testSchema = async (options: CookbookOptions, paths: { cwd: string;
   }
   typescriptExports += "\n}";
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
-  await Bun.write(join(paths.cwd, ".milkio", "generated", "test-schema.ts"), typescript);
+  await Bun.write(join(paths.cwd, ".milkio", "test-schema.ts"), typescript);
 };

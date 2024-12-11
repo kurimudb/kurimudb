@@ -25,7 +25,7 @@ export const commandSchema = async (options: CookbookOptions, paths: { cwd: stri
 
     const nameWithPath = path.slice(0, path.length - 3); // 3 === ".ts".length
     const name = nameWithPath.replaceAll("/", "__").replaceAll("-", "_");
-    typescriptImports += `\nimport ${name} from "../../command/${nameWithPath}";`;
+    typescriptImports += `\nimport ${name} from "../command/${nameWithPath}";`;
     typescriptExports += `\n    "${nameWithPath}": { module: ${name} },`;
     ++len;
   }
@@ -33,5 +33,5 @@ export const commandSchema = async (options: CookbookOptions, paths: { cwd: stri
   typescriptExports += `\n  len: ${len}`;
   typescriptExports += "\n}";
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
-  await Bun.write(join(paths.cwd, ".milkio", "generated", "command-schema.ts"), typescript);
+  await Bun.write(join(paths.cwd, ".milkio", "command-schema.ts"), typescript);
 };

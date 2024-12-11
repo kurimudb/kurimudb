@@ -1,11 +1,13 @@
 {
   "name": "milkid",
-  "version": "1.0.5",
-  "module": "dist/index.js",
-  "typings": "typings.d.ts",
+  "version": "2.0.1",
+  "module": "index.ts",
   "type": "module",
   "scripts": {
     "build": "bun build ./index.ts --outdir ./dist"
   },
-  "files": ["dist", "typings.d.ts", "README.md", "LICENSE"]
+  "files": ["index.ts", "README.md", "LICENSE"],
+  "dependencies": {
+    "xxh3-ts": "^1.0.6"
+  }
 }

@@ -137,7 +137,7 @@ export const createAstra = async <AstraOptions extends AstraOptionsInit, Generat
       const paths = {
         cwd: join(cwd(), "projects", projectName),
         milkio: join(cwd(), "projects", projectName, ".milkio"),
-        generated: join(cwd(), "projects", projectName, ".milkio", "generated"),
+        generated: join(cwd(), "projects", projectName, ".milkio"),
       };
 
       const execute = async (path: Parameters<MirrorWorld["execute"]>[0], optionsInit?: Parameters<MirrorWorld["execute"]>[1]) => {

@@ -1,7 +1,7 @@
 import { env, argv } from "node:process";
 import { createWorld, reject } from "milkio";
-import { generated } from "./.milkio/generated";
-import { configSchema } from "./.milkio/generated/config-schema";
+import { generated } from "./.milkio";
+import { configSchema } from "./.milkio/config-schema";
 
 declare module "milkio" {
   interface $types {

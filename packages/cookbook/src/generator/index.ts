@@ -28,12 +28,12 @@ export const generator = {
         const paths = {
           cwd: join(cwd(), "projects", projectName),
           milkio: join(cwd(), "projects", projectName, ".milkio"),
-          generated: join(cwd(), "projects", projectName, ".milkio", "generated"),
+          generated: join(cwd(), "projects", projectName, ".milkio"),
         };
         if (!(await exists(paths.milkio))) await mkdir(paths.milkio);
         if (!(await exists(paths.generated))) await mkdir(paths.generated);
 
-        (() => {
+        await (async () => {
           let indexFile = "// index";
           indexFile += `\nimport routeSchema from "./route-schema.ts";`;
           indexFile += `\nimport commandSchema from "./command-schema.ts";`;
@@ -44,7 +44,7 @@ export const generator = {
           indexFile += "\n  routeSchema,";
           indexFile += "\n  commandSchema,";
           indexFile += "\n};";
-          Bun.write(join(paths.milkio, "generated", "index.ts"), indexFile);
+          await Bun.write(join(paths.milkio, "index.ts"), indexFile);
         })();
 
         await Promise.all([
@@ -73,7 +73,7 @@ export const generator = {
         const paths = {
           cwd: join(cwd(), "projects", projectName),
           milkio: join(cwd(), "projects", projectName, ".milkio"),
-          generated: join(cwd(), "projects", projectName, ".milkio", "generated"),
+          generated: join(cwd(), "projects", projectName, ".milkio"),
         };
         if (project?.insignificant && project.insignificant.length > 0) {
           for (const script of project.insignificant) {

@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { astra } from "/.milkio/test";
+import { astra } from "/test";
 
 test.sequential("basic", async () => {
   const [context, reject, world] = await astra.createMirrorWorld(import.meta.url);

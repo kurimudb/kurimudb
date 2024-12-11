@@ -8,7 +8,7 @@ export const initTest = async (options: CookbookOptions) => {
 };
 
 export const testRunner = async (key: string) => {
-  const tests = await import(join(cwd(), ".milkio", "generated", "test-schema.ts"));
+  const tests = await import(join(cwd(), ".milkio", "test-schema.ts"));
   if (!(key in tests)) {
     consola.error(`The test does not exist: ${key}`);
     exit(1);

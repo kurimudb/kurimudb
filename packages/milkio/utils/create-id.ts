@@ -1,3 +1,9 @@
-import { createId as _createId } from "milkid";
+import { defineIdGenerator } from "milkid";
 
-export const createId = _createId;
+const idGenerator = defineIdGenerator({
+  length: 24,
+  timestamp: true,
+  entropy: false,
+});
+
+export const createId = idGenerator.createId;
