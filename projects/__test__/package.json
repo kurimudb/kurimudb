@@ -6,11 +6,12 @@
   "scripts": {},
   "trustedDependencies": [],
   "dependencies": {
-    "@ryoppippi/unplugin-typia": "^1.0.6",
-    "typia": "^6.11.3",
-    "yaml": "^2.6.0",
     "@milkio/astra": "workspace:*",
     "@milkio/stargate": "workspace:*",
-    "milkio": "../../packages/milkio"
+    "@ryoppippi/unplugin-typia": "^1.0.6",
+    "milkid": "2.0.1",
+    "milkio": "../../packages/milkio",
+    "typia": "^6.11.3",
+    "yaml": "^2.6.0"
   }
 }

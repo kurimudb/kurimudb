@@ -12,7 +12,7 @@
     "@southern-aurora/tson": "*",
     "chalk": "^5.3.0",
     "date-fns": "^4.1.0",
-    "milkid": "2.0.0",
+    "milkid": "2.0.1",
     "typia": "6.11.3"
   },
   "devDependencies": {

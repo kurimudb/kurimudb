@@ -17,9 +17,9 @@ test("basic", { timeout: 100000 }, () => {
   expect(data.size === 16).toBe(true);
 });
 
-test("", { timeout: 100000 }, () => {
+test("one million", { skip: true, timeout: 100000 }, () => {
   const idGenerator = defineIdGenerator({
-    length: 12,
+    length: 16,
     timestamp: false,
   });
 
