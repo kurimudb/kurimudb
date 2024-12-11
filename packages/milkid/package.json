@@ -1,0 +1,11 @@
+{
+  "name": "milkid",
+  "version": "1.0.4",
+  "module": "dist/index.js",
+  "typings": "typings.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "bun build ./index.ts --outdir ./dist"
+  },
+  "files": ["dist", "typings.d.ts", "README.md", "LICENSE"]
+}

@@ -50,6 +50,8 @@ export const __initListener = (generated: GeneratedInit, runtime: any, executer:
     const pathString = `/${pathArray.join("/")}`;
 
     const executeId = runtime?.executeId ? await runtime.executeId(options.request) : createId();
+    console.log("executeId", await runtime.executeId(options.request), createId());
+
     const logger = createLogger(runtime, pathString, executeId);
     runtime.runtime.request.set(executeId, { logger: logger });
     const response: MilkioHttpResponse = {

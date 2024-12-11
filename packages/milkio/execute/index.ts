@@ -36,7 +36,6 @@ export const __initExecuter = (generated: GeneratedInit, runtime: any) => {
     if (!("toJSON" in headers)) (headers as any).toJSON = () => headersToJSON(headers);
 
     let params: Record<any, unknown>;
-    console.log("1112aqqq", options);
     if (options.paramsType === "raw") {
       params = options.params;
       if (typeof params === "undefined") params = {};
