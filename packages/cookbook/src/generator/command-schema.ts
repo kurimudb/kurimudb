@@ -3,6 +3,8 @@ import { join } from "node:path";
 import { exists } from "node:fs/promises";
 import { checkPath } from "./utils";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
+import consola from "consola";
+import { progress } from "../progress";
 
 export const commandSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
   const scanner = join(paths.cwd, "command");
@@ -34,4 +36,6 @@ export const commandSchema = async (options: CookbookOptions, paths: { cwd: stri
   typescriptExports += "\n}";
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
   await Bun.write(join(paths.cwd, ".milkio", "command-schema.ts"), typescript);
+
+  consola.info(`[${(progress.rate / 10).toFixed(1)}%] command schema generated.`);
 };

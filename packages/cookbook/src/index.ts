@@ -7,7 +7,7 @@ import { initWorkers } from "./workers";
 import { initWatcher } from "./watcher";
 import { initServer } from "./server";
 import { generator } from "./generator";
-import { openProgress } from "./progress";
+import { progress } from "./progress";
 import { checkCookbookOptions } from "./utils/cookbook-dto-checks";
 import { checkPort } from "./utils/check-port";
 import { killPort } from "./utils/kill-port";
@@ -16,7 +16,7 @@ export const execute = async () => {
   switch (process.argv[2]) {
     default: {
       console.log(asciis().join("\n"));
-      let closeProgress = openProgress();
+      progress.open();
 
       const startTime = new Date();
       const cookbookToml = Bun.file(join(cwd(), "cookbook.toml"));
@@ -48,7 +48,7 @@ export const execute = async () => {
       }
 
       if (!(await checkPort(options.general.cookbookPort))) {
-        await closeProgress();
+        progress.close();
         consola.info(`Port number ${options.general.cookbookPort} is already occupied. You may have started Cookbook.`);
         const confirm = await consola.prompt("Do you want to try to kill the process that is using the port number?", {
           type: "confirm",
@@ -63,7 +63,7 @@ export const execute = async () => {
             consola.error(`Attempted to kill the process occupying the port number, but this appears to be ineffective.`);
             await exit(0);
           }
-          closeProgress = openProgress();
+          progress.close();
         }
       }
 
@@ -77,7 +77,7 @@ export const execute = async () => {
       void initServer(options);
 
       const endTime = new Date();
-      await closeProgress();
+      progress.close();
 
       console.log(chalk.hex("#24B56A")(`△ `) + message());
       console.log(chalk.hex("#24B56A")(`△ `) + chalk.hex("#E6E7E9")(`Time taken: `) + chalk.hex("#24B56A")(`${endTime.getTime() - startTime.getTime()}ms`));

@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { exists } from "node:fs/promises";
 import { exit, cwd } from "node:process";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
+import { progress } from "../progress";
 
 export const testSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
   const scanner = join(paths.cwd);
@@ -29,4 +30,6 @@ export const testSchema = async (options: CookbookOptions, paths: { cwd: string;
   typescriptExports += "\n}";
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
   await Bun.write(join(paths.cwd, ".milkio", "test-schema.ts"), typescript);
+
+  consola.info(`[${(progress.rate / 10).toFixed(1)}%] test schema generated.`);
 };

@@ -2,6 +2,8 @@ import { env, Glob } from "bun";
 import { join } from "node:path";
 import { exists } from "node:fs/promises";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
+import consola from "consola";
+import { progress } from "../progress";
 
 export const configSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
   const mode = env.MODE ?? "development";
@@ -32,4 +34,6 @@ export const configSchema = async (options: CookbookOptions, paths: { cwd: strin
   typescriptExports += "\n  }\n}}";
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
   await Bun.write(join(paths.cwd, ".milkio", "config-schema.ts"), typescript);
+
+  consola.info(`[${(progress.rate / 10).toFixed(1)}%] config schema generated.`);
 };

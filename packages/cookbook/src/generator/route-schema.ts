@@ -6,6 +6,7 @@ import { exit } from "node:process";
 import type { CookbookOptions } from "../utils/cookbook-dto-types";
 import { checkPath } from "./utils";
 import { calcHash } from "../utils/calc-hash";
+import { progress } from "../progress";
 
 export const routeSchema = async (options: CookbookOptions, paths: { cwd: string; milkio: string; generated: string }, project: CookbookOptions["projects"]["key"]) => {
   if (!paths.milkio) return;
@@ -96,6 +97,8 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
           } catch (error) {
             await $`node ${typiaPath} generate --input ${routeSchemaFolderPath} --output ${routeGeneratedSchemaFolderPath} --project ${join(paths.cwd, "tsconfig.json")}`.cwd(join(paths.cwd)).quiet();
           }
+
+          consola.info(`[${(progress.rate / 10).toFixed(1)}%] route schema generated: ${file}`);
         }
       }
     };
@@ -148,5 +151,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
     routeSchemaFileExports += `\n};`;
 
     await writeFile(routeSchemaPath, `${routeSchemaFileImports}\n\n${routeSchemaFileExports}`);
+
+    consola.info(`[${(progress.rate / 10).toFixed(1)}%] route schema all generated.`);
   }
 };
