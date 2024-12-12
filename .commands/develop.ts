@@ -3,7 +3,7 @@
 import { $ } from "bun";
 import { join } from "node:path";
 import { readFile } from "fs/promises";
-import { exit, cwd } from "node:process";
+import { cwd } from "node:process";
 import fsExtra from "fs-extra";
 
 await $`bun i`;

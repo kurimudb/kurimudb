@@ -12,6 +12,6 @@
 
 <p align="center">
     <a href="https://github.com/akirarika">
-        <img src="https://raw.githubusercontent.com/southern-aurora/.github/main/profile/image.png" width="320px" />
+        <img src="https://raw.githubusercontent.com/akirarika/.github/main/profile/image.png" width="320px" />
     </a>
 </p>
