@@ -11,13 +11,13 @@ export const progress = {
   open() {
     progress.timeStart = Date.now();
     progress.current = 0;
-    const speed = 12800;
+    const speed = 4800;
     let intervalFrequency = 1000 / 60;
     const staticPercentage = 0.4;
     progress.timeWaste = 0;
     progress.time = 0;
     progress.rate = 0;
-    consola.start(`[${(progress.rate / 10).toFixed(1)}%] cookbook is generating..`);
+    consola.start(`[${(progress.rate++ / 10).toFixed(1)}%] cookbook is generating..`);
 
     progress.intervalId = setInterval(() => {
       progress.time += intervalFrequency;
@@ -29,7 +29,7 @@ export const progress = {
       progress.rate = Math.floor(progress.current * 1000);
     }, intervalFrequency);
     progress.textIntervalId = setInterval(() => {
-      if (progress.rate < 1000) consola.start(`[${(progress.rate / 10).toFixed(1)}%] cookbook is generating..`);
+      if (progress.rate < 1000) consola.start(`[${(progress.rate++ / 10).toFixed(1)}%] cookbook is generating..`);
     }, 500);
   },
   async close() {

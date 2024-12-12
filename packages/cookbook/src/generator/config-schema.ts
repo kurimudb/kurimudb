@@ -35,5 +35,5 @@ export const configSchema = async (options: CookbookOptions, paths: { cwd: strin
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
   await Bun.write(join(paths.cwd, ".milkio", "config-schema.ts"), typescript);
 
-  consola.info(`[${(progress.rate / 10).toFixed(1)}%] config schema generated.`);
+  consola.info(`[${(progress.rate++ / 10).toFixed(1)}%] config schema generated.`);
 };

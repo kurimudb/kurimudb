@@ -15,7 +15,6 @@ import { killPort } from "./utils/kill-port";
 export const execute = async () => {
   switch (process.argv[2]) {
     default: {
-      console.log(asciis().join("\n"));
       progress.open();
 
       const startTime = new Date();
@@ -77,18 +76,20 @@ export const execute = async () => {
       void initServer(options);
 
       const endTime = new Date();
-      progress.close();
+      progress.close().then(() => {
+        console.log(asciis().join("\n"));
+        console.log(chalk.hex("#24B56A")(`△ `) + message());
+        console.log(chalk.hex("#24B56A")(`△ `) + chalk.hex("#E6E7E9")(`Time taken: `) + chalk.hex("#24B56A")(`${endTime.getTime() - startTime.getTime()}ms`));
+        console.log("");
+        console.log(chalk.hex("#24B56A")(`△ `) + chalk.hex("#24B56A")(`cookbook:\t\t`) + chalk.hex("#4988fc")(`http://localhost:${options.general.cookbookPort}/`));
+        for (const projectName in options.projects) {
+          const project = options.projects[projectName];
+          console.log(chalk.hex("#24B56A")(`△ `) + chalk.hex("#24B56A")(`${projectName}:\t${projectName.length > 12 ? "" : "\t"}${projectName.length > 6 ? "" : "\t"}`) + chalk.hex("#4988fc")(`http://localhost:${project.port}/`));
+        }
+        console.log(chalk.hex("#0B346E")(`₋₋₋₋₋₋₋₋`));
+        console.log("The logger is ready for recording.");
+      });
 
-      console.log(chalk.hex("#24B56A")(`△ `) + message());
-      console.log(chalk.hex("#24B56A")(`△ `) + chalk.hex("#E6E7E9")(`Time taken: `) + chalk.hex("#24B56A")(`${endTime.getTime() - startTime.getTime()}ms`));
-      console.log("");
-      console.log(chalk.hex("#24B56A")(`△ `) + chalk.hex("#24B56A")(`cookbook:\t\t`) + chalk.hex("#4988fc")(`http://localhost:${options.general.cookbookPort}/`));
-      for (const projectName in options.projects) {
-        const project = options.projects[projectName];
-        console.log(chalk.hex("#24B56A")(`△ `) + chalk.hex("#24B56A")(`${projectName}:\t${projectName.length > 12 ? "" : "\t"}${projectName.length > 6 ? "" : "\t"}`) + chalk.hex("#4988fc")(`http://localhost:${project.port}/`));
-      }
-      console.log(chalk.hex("#0B346E")(`₋₋₋₋₋₋₋₋`));
-      console.log("The logger is ready for recording.");
       break;
     }
 
@@ -116,6 +117,7 @@ export const execute = async () => {
       // });
 
       const endTime = new Date();
+
       console.log("");
       console.log(`△ Milkio build completed!`);
       console.log(`△ Time taken: ${endTime.getTime() - startTime.getTime()}ms`);

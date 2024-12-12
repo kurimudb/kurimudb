@@ -98,7 +98,7 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
             await $`node ${typiaPath} generate --input ${routeSchemaFolderPath} --output ${routeGeneratedSchemaFolderPath} --project ${join(paths.cwd, "tsconfig.json")}`.cwd(join(paths.cwd)).quiet();
           }
 
-          consola.info(`[${(progress.rate / 10).toFixed(1)}%] route schema generated: ${file}`);
+          consola.info(`[${(progress.rate++ / 10).toFixed(1)}%] route schema generated: ${file}`);
         }
       }
     };
@@ -152,6 +152,6 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
 
     await writeFile(routeSchemaPath, `${routeSchemaFileImports}\n\n${routeSchemaFileExports}`);
 
-    consola.info(`[${(progress.rate / 10).toFixed(1)}%] route schema all generated.`);
+    consola.info(`[${(progress.rate++ / 10).toFixed(1)}%] route schema all generated.`);
   }
 };
