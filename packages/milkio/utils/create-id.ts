@@ -1,9 +1,11 @@
 import { defineIdGenerator } from "milkid";
 
 const idGenerator = defineIdGenerator({
-  length: 24,
+  length: 32,
+  hyphen: false,
+  fingerprint: false,
   timestamp: true,
-  entropy: false,
+  sequential: false,
 });
 
 export const createId = idGenerator.createId;
