@@ -11,6 +11,7 @@
     "@ryoppippi/unplugin-typia": "^1.0.6",
     "milkid": "2.0.1",
     "milkio": "../../packages/milkio",
+    "rolldown": "^1.0.0-beta.1",
     "typia": "^6.11.3",
     "yaml": "^2.6.0"
   }

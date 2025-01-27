@@ -3,3 +3,8 @@
 node_modules
 .DS_Store
 *.old
+
+# Tencent Cloud EdgeOne
+.edgeone
+.edgeone/*
+.tef_dist/*

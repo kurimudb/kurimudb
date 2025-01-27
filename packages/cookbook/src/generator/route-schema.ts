@@ -34,7 +34,8 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
   const tasks: Array<Promise<any>> = [];
   let changeType: "file-change" | "file-create-or-delete" | null = null;
   const hashes: Map<string, { importName: string; fileHash: string }> = new Map();
-  for await (const file of filesAsyncGenerator) {
+  for await (const fileRaw of filesAsyncGenerator) {
+    const file = fileRaw.replaceAll("\\", "/");
     files.push(file);
     const runner = async () => {
       const fileHash = calcHash(await readFile(join(scanner, file)));

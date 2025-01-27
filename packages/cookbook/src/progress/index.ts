@@ -30,7 +30,7 @@ export const progress = {
     }, intervalFrequency);
     progress.textIntervalId = setInterval(() => {
       if (progress.rate < 1000) consola.start(`[${(progress.rate++ / 10).toFixed(1)}%] cookbook is generating..`);
-    }, 500);
+    }, 334);
   },
   async close() {
     clearInterval(progress.intervalId);
