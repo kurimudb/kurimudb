@@ -6,5 +6,5 @@ cookbookPort = 8000
 port = 9000
 type = "milkio"
 typiaMode = "generation"
-start = ["bun", "run", "--watch", "./entries/command.ts"]
-build = ["bun", "run", ".milkio/bun-build.ts"]
+start = ["bun", "run", "--watch", "./runtime/bun.ts"]
+build = ["bun", "run", "./runtime/bun.ts"]

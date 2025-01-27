@@ -22,12 +22,12 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
     exit(1);
   }
 
-  const scanner = paths.cwd;
+  const scanner = join(paths.cwd, "functions");
   if (!(await exists(scanner))) {
     consola.error("The directory does not exist: " + scanner);
     exit(1);
   }
-  const glob = new Glob("{app,call}/**/*.{action,stream}.ts");
+  const glob = new Glob("{public,private}/**/*.{action,stream}.ts");
   const filesAsyncGenerator = glob.scan({ cwd: scanner, onlyFiles: true });
   const files: Array<string> = [];
 
@@ -70,10 +70,10 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
         routeFileExports += `result: Awaited<ReturnType<typeof ${importName}["handler"]>> `;
         routeFileExports += `},`;
         if (project?.lazyRoutes === undefined || project?.lazyRoutes === true) {
-          routeFileImports += `\nimport type ${importName} from "../../../../${file}";`;
-          routeFileExports += `module: () => import("../../../../${file}"), `;
+          routeFileImports += `\nimport type ${importName} from "../../../../functions/${file}";`;
+          routeFileExports += `module: () => import("../../../../functions/${file}"), `;
         } else {
-          routeFileImports += `\nimport ${importName} from "../../../../${file}";`;
+          routeFileImports += `\nimport ${importName} from "../../../../functions/${file}";`;
           routeFileExports += `module: () => ${importName}, `;
         }
         routeFileExports += `validateParams: (params: any): IValidation<Parameters<typeof ${importName}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${importName}["handler"]>[1]>(params) as any, `;
@@ -119,14 +119,14 @@ export const routeSchema = async (options: CookbookOptions, paths: { cwd: string
 
       let routePath = file.slice(0, file.length - 10); // 10 === ".stream.ts".length && 10 === ".action.ts".length
       if (routePath.endsWith("/index") || routePath === "index") routePath = routePath.slice(0, routePath.length - 5); // 5 === "index".length
-      if (routePath === "app" && routePath.length > 1) routePath = routePath.slice(0, routePath.length - 1);
+      if (routePath === "public" && routePath.length > 1) routePath = routePath.slice(0, routePath.length - 1);
       if (routePaths.includes(routePath)) {
-        consola.error(`Invalid path: "${join(paths.cwd, "app", file)}". The most common reason for having paths duplicate is that you created a new "${file}" and have a "${file}/index.ts".\n`);
+        consola.error(`Invalid path: "${join(paths.cwd, "public", file)}". The most common reason for having paths duplicate is that you created a new "${file}" and have a "${file}/index.ts".\n`);
         exit(1);
       }
       routePath = routePath.split(".")[0];
-      if (routePath.startsWith("app/")) routePath = routePath.slice(4); // 4 === "app/".length
-      if (routePath.startsWith("call/")) routePath = `\$${routePath}`;
+      if (routePath.startsWith("public/")) routePath = routePath.slice(7); // 7 === "public/".length
+      if (routePath.startsWith("private/")) routePath = `__${routePath.slice(7)}`;
       if (routePath !== "/" && routePath.endsWith("/")) routePath = routePath.slice(0, routePath.length - 1);
       routePaths.push(routePath);
 

@@ -31,5 +31,7 @@ export const testSchema = async (options: CookbookOptions, paths: { cwd: string;
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
   await Bun.write(join(paths.cwd, ".milkio", "test-schema.ts"), typescript);
 
-  consola.info(`[${(progress.rate++ / 10).toFixed(1)}%] test schema generated.`);
+  progress.rate++;
+  if (progress.rate > 1000) progress.rate = 1000;
+  consola.info(`[${(progress.rate / 10).toFixed(1)}%] test schema generated.`);
 };

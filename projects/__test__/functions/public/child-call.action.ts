@@ -9,7 +9,7 @@ export default action({
       throw?: boolean;
     },
   ) {
-    const result = await context.call(import("../call/calc.action"), {
+    const result = await context.call(import("../private/calc.action"), {
       a: params.a,
       b: params.b,
       throw: params.throw,

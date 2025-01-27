@@ -12,7 +12,7 @@ declare module "milkio" {
   }
 }
 
-export async function bootstrap() {
+export async function create() {
   const world = await createWorld(generated, configSchema, {
     port: 9000,
     cookbook: { cookbookPort: 8000 },

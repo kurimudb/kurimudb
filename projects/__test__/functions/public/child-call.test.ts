@@ -25,4 +25,5 @@ test.sequential("reject", async () => {
     },
   });
   if (!error) throw reject("Milkio execution was successful, but expectations should have failed", results);
+  if (!("REQUEST_FAIL" in error)) throw reject("Milkio execution was successful, but expectations should have failed", error);
 });

@@ -37,5 +37,7 @@ export const commandSchema = async (options: CookbookOptions, paths: { cwd: stri
   const typescript = `${typescriptImports}\n\n${typescriptExports}`;
   await Bun.write(join(paths.cwd, ".milkio", "command-schema.ts"), typescript);
 
-  consola.info(`[${(progress.rate++ / 10).toFixed(1)}%] command schema generated.`);
+  progress.rate++;
+  if (progress.rate > 1000) progress.rate = 1000;
+  consola.info(`[${(progress.rate / 10).toFixed(1)}%] command schema generated.`);
 };

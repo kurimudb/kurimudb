@@ -28,9 +28,11 @@ export async function createTemplate(fn: CreateTemplateFn) {
     name: () => argv[2],
     directory: () => argv[3],
     route: () => {
-      const pathArr = relative(cwd().replaceAll("\\", "/"), argv[3]).split("/").slice(2);
-      if (pathArr[0] === "app") pathArr.shift();
-      else if (pathArr[0] === "call") pathArr[0] = "$call";
+      const pathArr = relative(cwd().replaceAll("\\", "/") + "/functions", argv[3])
+        .split("/")
+        .slice(2);
+      if (pathArr[0] === "public") pathArr.shift();
+      else if (pathArr[0] === "private") pathArr[0] = "__";
       let path = pathArr.join("/");
       if (path.length > 0) return `/${path}/${argv[2]}`;
       if (path !== "/index" && path.endsWith("/index")) path = path.slice(0, path.length - 6);

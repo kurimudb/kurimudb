@@ -70,7 +70,7 @@ export const createWorld = async <MilkioOptions extends MilkioInit>(generated: G
     commander,
     // listener
     listener,
-    // functions
+    // function
     config,
   };
 
