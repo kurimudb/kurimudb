@@ -33,15 +33,8 @@ export const execute = async () => {
         exit(0);
       }
       for (const projectName in options.projects) {
-        const project = options.projects[projectName];
         if (!existsSync(join(cwd(), "projects", projectName, "package.json"))) {
           consola.error(`This project "${projectName}" does not exist (directory does not exist or there is no package.json), if the project has been deleted, please edit your "cookbook.toml" and delete [projects.${projectName}].`);
-          exit(0);
-        }
-        const packageJsonRaw = await Bun.file(join(cwd(), "projects", projectName, "package.json"));
-        const packageJson = await packageJsonRaw.json();
-        if (project.type === "milkio" && packageJson.dependencies?.["milkio"] === undefined) {
-          consola.error(`Project "${projectName}" does not have "milkio" in its dependencies. If this not a milkio project, modify the type in "cookbook.toml" to change it from "milkio" to "other".`);
           exit(0);
         }
       }
