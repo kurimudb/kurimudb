@@ -56,3 +56,5 @@ export async function create() {
 
   return world;
 }
+
+export type World = Awaited<ReturnType<typeof create>>;
