@@ -1,30 +1,30 @@
 {
   "compilerOptions": {
-    "rootDir": "./../../../",
+    "composite": true,
+    "target": "esnext",
+    "jsx": "react-jsx",
     "lib": [
       "ESNext"
     ],
-    "module": "esnext",
-    "target": "esnext",
-    "moduleResolution": "bundler",
     "moduleDetection": "force",
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "composite": true,
-    "strict": true,
-    "downlevelIteration": true,
-    "skipLibCheck": true,
-    "jsx": "react-jsx",
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowJs": true,
-    "types": [
-      "bun-types"
-    ],
+    "rootDir": "./../../../",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "paths": {
       "../../*": [
         "../../*"
       ]
-    }
-  },
+    },
+    "types": [
+      "bun-types"
+    ],
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "strict": true,
+    "downlevelIteration": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true
+  }
 }

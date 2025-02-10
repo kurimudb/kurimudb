@@ -1,2 +1,2 @@
-["general"]
-includes = ["co:bun"]
+[general]
+includes = [ "co:bun" ]

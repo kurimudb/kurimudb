@@ -1,5 +1,5 @@
-import kill from "kill-port";
+import kill from 'kill-port'
 
 export async function killPort(port: number): Promise<void> {
-  await kill(port, "tcp");
+  await kill(port, 'tcp')
 }

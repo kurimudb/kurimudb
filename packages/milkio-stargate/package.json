@@ -1,8 +1,8 @@
 {
   "name": "@milkio/stargate",
-  "module": "index.ts",
-  "version": "1.0.0-alpha.42",
   "type": "module",
+  "version": "1.0.0-alpha.42",
+  "module": "index.ts",
   "dependencies": {
     "@southern-aurora/tson": "^2.0.2"
   },

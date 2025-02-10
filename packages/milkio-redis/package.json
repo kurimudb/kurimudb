@@ -1,11 +1,11 @@
 {
   "name": "milkio-redis",
-  "module": "index.ts",
   "type": "module",
+  "version": "1.0.0-alpha.42",
+  "module": "index.ts",
   "devDependencies": {
-    "@types/bun": "latest",
     "@southern-aurora/tson": "*",
+    "@types/bun": "latest",
     "redis": "^4.7.0"
-  },
-  "version": "1.0.0-alpha.42"
+  }
 }

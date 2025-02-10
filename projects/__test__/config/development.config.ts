@@ -1,6 +1,6 @@
-import { config } from "milkio";
+import { config } from 'milkio'
 
-export default config((mode) => ({
+export default config(mode => ({
   foo: mode,
   bar: 10000,
-}));
+}))

@@ -1,38 +1,38 @@
 {
   "compilerOptions": {
+    "composite": true,
+    "target": "esnext",
+    "jsx": "preserve",
     "lib": [
       "ESNext"
     ],
-    "module": "esnext",
-    "target": "esnext",
-    "moduleResolution": "bundler",
-    "declaration": true,
-    "emitDeclarationOnly": true,
     "moduleDetection": "force",
-    "allowImportingTsExtensions": true,
-    "composite": true,
-    "strict": true,
-    "downlevelIteration": true,
-    "noImplicitAny": false,
-    "skipLibCheck": true,
-    "jsx": "preserve",
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "verbatimModuleSyntax": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false,
-    "strictNullChecks": true,
-    "allowJs": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "paths": {
       "/*": [
         "./*"
       ]
-    }
+    },
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "declaration": true,
+    "downlevelIteration": true,
+    "emitDeclarationOnly": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
   },
   "include": [
     "./.milkio/**/*",
-    "./**/*",
+    "./**/*"
   ]
 }

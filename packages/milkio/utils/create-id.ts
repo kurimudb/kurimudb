@@ -1,4 +1,4 @@
-import { defineIdGenerator } from "milkid";
+import { defineIdGenerator } from 'milkid'
 
 const idGenerator = defineIdGenerator({
   length: 32,
@@ -6,6 +6,6 @@ const idGenerator = defineIdGenerator({
   fingerprint: false,
   timestamp: true,
   sequential: false,
-});
+})
 
-export const createId = idGenerator.createId;
+export const createId = idGenerator.createId

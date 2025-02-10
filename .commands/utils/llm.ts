@@ -1,25 +1,25 @@
-import OpenAI from "openai";
-import { join } from "path";
+import OpenAI from 'openai'
+import { join } from 'node:path'
 
-const config: any = (await import(join(process.cwd(), ".commands", "utils", "config.ts"))).config;
+const config: any = (await import(join(process.cwd(), '.commands', 'utils', 'config.ts'))).config
 
 const client = new OpenAI({
-  baseURL: "https://api.minimax.chat/v1",
+  baseURL: 'https://api.minimax.chat/v1',
   apiKey: config.LLM.minimax.appKey,
-});
+})
 
 export function chat(options: { prompts: string }) {
   return async (message: string) => {
     const chatCompletion = await client.chat.completions.create({
-      model: "abab6.5s-chat",
+      model: 'abab6.5s-chat',
       messages: [
-        { role: "system", content: options.prompts },
-        { role: "user", content: message },
+        { role: 'system', content: options.prompts },
+        { role: 'user', content: message },
       ],
-    });
+    })
 
-    return chatCompletion.choices[0].message.content ?? "";
-  };
+    return chatCompletion.choices[0].message.content ?? ''
+  }
 }
 
 export const llm = {
@@ -61,4 +61,4 @@ export const llm = {
 4. 严格保持回复的内容仅包含润色后的文章本身，不包含任何多余的话，也不需要请求用户提出反馈。
 `,
   }),
-};
+}

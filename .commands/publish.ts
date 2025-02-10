@@ -1,27 +1,28 @@
-import { $ } from "bun";
-import OpenAI from "openai";
-import { join } from "node:path";
-import { homedir } from "os";
-import { exists, mkdir, readFile, writeFile } from "node:fs/promises";
-import { Octokit } from "@octokit/core";
-import { cli } from "./utils/cli.ts";
-import consola from "consola";
+import { $ } from 'bun'
+import OpenAI from 'openai'
+import { join } from 'node:path'
+import { homedir } from 'node:os'
+import { exists, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { Octokit } from '@octokit/core'
+import { cli } from './utils/cli.ts'
+import consola from 'consola'
 
-const mainPackage = "milkio";
-const childPackages = ["cookbook", "cookbook-template", "milkio-astra", "milkio-redis", "milkio-stargate"];
+const mainPackage = 'milkio'
+const childPackages = ['cookbook', 'cookbook-template', 'milkio-astra', 'milkio-redis', 'milkio-stargate']
 
-console.log("");
-console.log("[发布版本]");
-console.log("将代码发布到 NPM 中，并可选地在 Github 和 Gitee 上同步发布");
-console.log("");
+console.log('')
+console.log('[发布版本]')
+console.log('将代码发布到 NPM 中，并可选地在 Github 和 Gitee 上同步发布')
+console.log('')
 
-let cwd = join(process.cwd());
+const cwd = join(process.cwd())
 
-let config: any = undefined;
+let config: any
 try {
-  config = (await import(join(homedir(), ".commands", "utils", "config.ts"))).config;
-} catch (error) {
-  consola.error(`未找到配置文件，请在 ${join(homedir(), ".commands", "utils", "config.ts")} 中编写你的配置`);
+  config = (await import(join(homedir(), '.commands', 'utils', 'config.ts'))).config
+}
+catch (error) {
+  consola.error(`未找到配置文件，请在 ${join(homedir(), '.commands', 'utils', 'config.ts')} 中编写你的配置`)
   console.log(`export const config = {
   github: {
     token: "<YOUR_TOKEN>",
@@ -36,95 +37,98 @@ try {
         "<YOUR_APP_KEY>",
     },
   },
-};`);
-  process.exit(0);
+};`)
+  process.exit(0)
 }
 
-console.log("发布路径", cwd);
+console.log('发布路径', cwd)
 
-if (!(await exists(join(cwd, ".commands", "publish"))) || !(await exists(join(cwd, ".commands", "publish", "publish.json")))) {
-  console.log("此项目还未进行过发布配置，是否初始化？");
-  const selected = await cli.select("选择", ["是", "否"]);
-  if (selected === "否") process.exit(0);
+if (!(await exists(join(cwd, '.commands', 'publish'))) || !(await exists(join(cwd, '.commands', 'publish', 'publish.json')))) {
+  console.log('此项目还未进行过发布配置，是否初始化？')
+  const selected = await cli.select('选择', ['是', '否'])
+  if (selected === '否') process.exit(0)
   const publishJson = {
-    githubOwner: "akirarika",
-    githubRepo: "YOUR_REPO_NAME",
-    giteeOwner: "akirarika",
-    giteeRepo: "YOUR_REPO_NAME",
-  };
-  if (!(await exists(join(cwd, ".commands", "publish")))) await mkdir(join(cwd, ".commands", "publish"));
-  if (!(await exists(join(cwd, ".commands", "publish", "releases")))) await mkdir(join(cwd, "releases"));
-  if (!(await exists(join(cwd, ".commands", "publish", "releases-english")))) await mkdir(join(cwd, "releases-english"));
-  await writeFile(join(cwd, ".commands", "publish", "publish.json"), JSON.stringify(publishJson, null, 2), "utf-8");
+    githubOwner: 'akirarika',
+    githubRepo: 'YOUR_REPO_NAME',
+    giteeOwner: 'akirarika',
+    giteeRepo: 'YOUR_REPO_NAME',
+  }
+  if (!(await exists(join(cwd, '.commands', 'publish')))) await mkdir(join(cwd, '.commands', 'publish'))
+  if (!(await exists(join(cwd, '.commands', 'publish', 'releases')))) await mkdir(join(cwd, 'releases'))
+  if (!(await exists(join(cwd, '.commands', 'publish', 'releases-english')))) await mkdir(join(cwd, 'releases-english'))
+  await writeFile(join(cwd, '.commands', 'publish', 'publish.json'), JSON.stringify(publishJson, null, 2), 'utf-8')
 
-  console.log("初始化完成");
-  console.log(`编写 ${join(cwd, ".commands", "publish", "publish.json")} 文件，将其中的内容修改为合适的内容`);
+  console.log('初始化完成')
+  console.log(`编写 ${join(cwd, '.commands', 'publish', 'publish.json')} 文件，将其中的内容修改为合适的内容`)
 
-  process.exit(0);
+  process.exit(0)
 }
 
 if ((await $`git status --porcelain`.text()).trim()) {
-  console.log("当前目录存在未提交的变更，请先提交再发布版本");
-  if (!(await exists(join(homedir(), ".commands", "commit.ts")))) {
-    process.exit(0);
+  console.log('当前目录存在未提交的变更，请先提交再发布版本')
+  if (!(await exists(join(homedir(), '.commands', 'commit.ts')))) {
+    process.exit(0)
   }
 
-  if ((await cli.select("是否进行 Git 提交？", ["是", "否"])) !== "是") process.exit(0);
-  await import(join(homedir(), ".commands", "commit.ts"));
+  if ((await cli.select('是否进行 Git 提交？', ['是', '否'])) !== '是') process.exit(0)
+  await import(join(homedir(), '.commands', 'commit.ts'))
 }
 
-const packageJson = JSON.parse(await readFile(join(cwd, "packages", mainPackage, "package.json"), "utf-8"));
-const publishJson = JSON.parse(await readFile(join(cwd, ".commands", "publish", "publish.json"), "utf-8"));
+const packageJson = JSON.parse(await readFile(join(cwd, 'packages', mainPackage, 'package.json'), 'utf-8'))
+const publishJson = JSON.parse(await readFile(join(cwd, '.commands', 'publish', 'publish.json'), 'utf-8'))
 
-let lastVersion = packageJson.version;
-consola.success("上个版本号:", lastVersion);
+const lastVersion = packageJson.version
+consola.success('上个版本号:', lastVersion)
 
-const newVersion = (await cli.input("要发布的新版本号是")) ?? "";
+const newVersion = (await cli.input('要发布的新版本号是')) ?? ''
 if (!/^(\d+)\.(\d+)\.(\d+)((-rc|-beta|-alpha)\.(\d+))?$/.test(newVersion)) {
-  console.log("错误的版本号，未能满足正则表达式的校验");
-  process.exit(0);
+  console.log('错误的版本号，未能满足正则表达式的校验')
+  process.exit(0)
 }
-console.clear();
+console.clear()
 
 try {
-  await $`npm view ${packageJson.name}@${newVersion} --json`.quiet();
-  console.log("该版本已存在，跳过 npm 发布");
-} catch (error) {
-  if ((await cli.select("\n修改版本号并推送至 npm 吗？", ["是，继续", "否，我只是想预创建版本说明"])) === "是，继续") {
+  await $`npm view ${packageJson.name}@${newVersion} --json`.quiet()
+  console.log('该版本已存在，跳过 npm 发布')
+}
+catch (error) {
+  if ((await cli.select('\n修改版本号并推送至 npm 吗？', ['是，继续', '否，我只是想预创建版本说明'])) === '是，继续') {
     // 更新 package.json 中的版本号并保存
-    packageJson.version = newVersion;
-    await writeFile(join(cwd, "packages", mainPackage, "package.json"), JSON.stringify(packageJson, null, 2));
+    packageJson.version = newVersion
+    await writeFile(join(cwd, 'packages', mainPackage, 'package.json'), JSON.stringify(packageJson, null, 2))
     for (const childPackage of childPackages) {
-      const childPackageJson = JSON.parse(await readFile(join(cwd, "packages", childPackage, "package.json"), "utf-8"));
-      childPackageJson.version = newVersion;
-      await writeFile(join(cwd, "packages", childPackage, "package.json"), JSON.stringify(childPackageJson, null, 2));
+      const childPackageJson = JSON.parse(await readFile(join(cwd, 'packages', childPackage, 'package.json'), 'utf-8'))
+      childPackageJson.version = newVersion
+      await writeFile(join(cwd, 'packages', childPackage, 'package.json'), JSON.stringify(childPackageJson, null, 2))
     }
 
-    const checkGitStatus = await $`git status --porcelain`.text();
-    if (checkGitStatus.trim() !== "") {
-      await $`git add --all`;
-      await $`${{ raw: `git commit -m "🎈 publish: v${newVersion}"` }}`;
-      await $`git push -u origin ${(await $`git symbolic-ref --short HEAD`).text().trim()}`;
+    const checkGitStatus = await $`git status --porcelain`.text()
+    if (checkGitStatus.trim() !== '') {
+      await $`git add --all`
+      await $`${{ raw: `git commit -m "🎈 publish: v${newVersion}"` }}`
+      await $`git push -u origin ${(await $`git symbolic-ref --short HEAD`).text().trim()}`
     }
 
     for (const childPackage of [mainPackage, ...childPackages]) {
       while (true) {
         try {
-          let command = `npm publish --access public`;
-          if (newVersion.includes("-rc")) command += " --tag rc";
-          else if (newVersion.includes("-beta")) command += " --tag beta";
-          else if (newVersion.includes("-alpha")) command += " --tag alpha";
-          await $`${{ raw: command }}`.cwd(join(cwd, "packages", childPackage));
-          await Bun.sleep(1000);
-          break;
-        } catch (error: any) {
-          console.log(error);
-          console.log(error?.message ?? "");
-          if ((await cli.select(`\n${childPackage} 发布失败，可能是网络异常，是否重试？`, ["是", "否"])) === "是") {
-            console.log("好的，即将重试..");
-          } else {
-            console.log("已退出发布");
-            process.exit(0);
+          let command = `npm publish --access public`
+          if (newVersion.includes('-rc')) command += ' --tag rc'
+          else if (newVersion.includes('-beta')) command += ' --tag beta'
+          else if (newVersion.includes('-alpha')) command += ' --tag alpha'
+          await $`${{ raw: command }}`.cwd(join(cwd, 'packages', childPackage))
+          await Bun.sleep(1000)
+          break
+        }
+        catch (error: any) {
+          console.log(error)
+          console.log(error?.message ?? '')
+          if ((await cli.select(`\n${childPackage} 发布失败，可能是网络异常，是否重试？`, ['是', '否'])) === '是') {
+            console.log('好的，即将重试..')
+          }
+          else {
+            console.log('已退出发布')
+            process.exit(0)
           }
         }
       }
@@ -132,56 +136,57 @@ try {
   }
 }
 
-consola.success(`所有的包均发布完成：${[mainPackage, ...childPackages].join(", ")}`);
+consola.success(`所有的包均发布完成：${[mainPackage, ...childPackages].join(', ')}`)
 
-console.log("\n🧊 如果版本是修复 bug 版本 (仅最小版本号增加) 则无需编写发行说明");
-if ((await cli.select("要编写发行说明吗？", ["否", "是"])) === "是") {
-  console.clear();
-  if (await exists(join(cwd, ".commands", "publish", "releases", `${newVersion}.md`))) {
-    console.log("已存在该版本的发布说明文件，你可能输入了一个已经存在的版本号");
-    if ((await cli.select("确定使用此版本吗？", ["否", "是"])) === "否") process.exit(0);
-    console.log("🧊 请编辑发行说明文件，并在编辑完成后，再继续操作 (VS Code 按住 Ctrl 键点击下方路径可快速编辑)\n");
-  } else {
-    const markdownTemplate = `# ${newVersion} - 某章节名\n\n> 一段编纂出来的虚构科幻小说的摘抄片段\n\n## ...更新内容...\n\n...更新内容...\n\n## 升级\n\n\`\`\`\nbun i ${packageJson.name}@${newVersion}\n\`\`\``;
-    await writeFile(join(cwd, ".commands", "publish", "releases", `${newVersion}.md`), markdownTemplate);
-    console.log("🧊 已创建发行说明文件。请编辑它，并在编辑完成后，再继续操作 (VS Code 按住 Ctrl 键点击下方路径可快速编辑)\n");
+console.log('\n🧊 如果版本是修复 bug 版本 (仅最小版本号增加) 则无需编写发行说明')
+if ((await cli.select('要编写发行说明吗？', ['否', '是'])) === '是') {
+  console.clear()
+  if (await exists(join(cwd, '.commands', 'publish', 'releases', `${newVersion}.md`))) {
+    console.log('已存在该版本的发布说明文件，你可能输入了一个已经存在的版本号')
+    if ((await cli.select('确定使用此版本吗？', ['否', '是'])) === '否') process.exit(0)
+    console.log('🧊 请编辑发行说明文件，并在编辑完成后，再继续操作 (VS Code 按住 Ctrl 键点击下方路径可快速编辑)\n')
+  }
+  else {
+    const markdownTemplate = `# ${newVersion} - 某章节名\n\n> 一段编纂出来的虚构科幻小说的摘抄片段\n\n## ...更新内容...\n\n...更新内容...\n\n## 升级\n\n\`\`\`\nbun i ${packageJson.name}@${newVersion}\n\`\`\``
+    await writeFile(join(cwd, '.commands', 'publish', 'releases', `${newVersion}.md`), markdownTemplate)
+    console.log('🧊 已创建发行说明文件。请编辑它，并在编辑完成后，再继续操作 (VS Code 按住 Ctrl 键点击下方路径可快速编辑)\n')
   }
 
-  let releaseNote: string;
-  let releaseGithubNote: string;
+  let releaseNote: string
+  let releaseGithubNote: string
 
   while (true) {
-    console.log(join(cwd, ".commands", "publish", "releases", `${newVersion}.md`));
-    if ((await cli.select("\n编辑好了吗？按 Ctrl + C 并退出，日后继续发版是安全的", ["否", "是"])) === "是") break;
-    console.clear();
+    console.log(join(cwd, '.commands', 'publish', 'releases', `${newVersion}.md`))
+    if ((await cli.select('\n编辑好了吗？按 Ctrl + C 并退出，日后继续发版是安全的', ['否', '是'])) === '是') break
+    console.clear()
   }
 
   while (true) {
-    console.log(join(cwd, ".commands", "publish", "releases", `${newVersion}.md`));
-    releaseNote = await readFile(join(cwd, ".commands", "publish", "releases", `${newVersion}.md`), "utf8");
-    if (releaseNote.includes("...更新内容...")) {
-      console.log(`含有 "...更新内容..." 内容，校验未通过，请重新编辑它`);
-      alert("按回车以继续");
-      continue;
+    console.log(join(cwd, '.commands', 'publish', 'releases', `${newVersion}.md`))
+    releaseNote = await readFile(join(cwd, '.commands', 'publish', 'releases', `${newVersion}.md`), 'utf8')
+    if (releaseNote.includes('...更新内容...')) {
+      console.log(`含有 "...更新内容..." 内容，校验未通过，请重新编辑它`)
+      alert('按回车以继续')
+      continue
     }
-    if (releaseNote.includes("某章节名")) {
-      console.log(`含有 "某章节名" 内容，校验未通过，请重新编辑它`);
-      alert("按回车以继续");
-      continue;
+    if (releaseNote.includes('某章节名')) {
+      console.log(`含有 "某章节名" 内容，校验未通过，请重新编辑它`)
+      alert('按回车以继续')
+      continue
     }
-    if (releaseNote.includes("一段编纂出来的虚构科幻小说的摘抄片段")) {
-      console.log(`含有 "一段编纂出来的虚构科幻小说的摘抄片段" 内容，校验未通过，请重新编辑它`);
-      alert("按回车以继续");
-      continue;
+    if (releaseNote.includes('一段编纂出来的虚构科幻小说的摘抄片段')) {
+      console.log(`含有 "一段编纂出来的虚构科幻小说的摘抄片段" 内容，校验未通过，请重新编辑它`)
+      alert('按回车以继续')
+      continue
     }
-    console.clear();
-    break;
+    console.clear()
+    break
   }
 
   const openai = new OpenAI({
-    baseURL: "https://api.minimax.chat/v1",
+    baseURL: 'https://api.minimax.chat/v1',
     apiKey: config.LLM.minimax.appKey,
-  });
+  })
   const translateToEnglish = async (message: string) => {
     const prompts = `
     ##背景
@@ -199,88 +204,88 @@ if ((await cli.select("要编写发行说明吗？", ["否", "是"])) === "是")
     2. 对敏感词汇体现必要的敏感性。
     3. 严格保持文章的原 Markdown 格式。
     4. 严格保持回复的内容仅包含润色后的文章本身，不包含任何多余的话，也不需要请求用户提出反馈。
-    `;
+    `
     const chatCompletion = await openai.chat.completions.create({
-      model: "abab6.5s-chat",
+      model: 'abab6.5s-chat',
       messages: [
-        { role: "system", content: prompts },
-        { role: "user", content: message },
+        { role: 'system', content: prompts },
+        { role: 'user', content: message },
       ],
-    });
+    })
 
-    return chatCompletion.choices[0].message.content ?? "";
-  };
-
-  while (true) {
-    console.log("发行说明翻译中..");
-    releaseGithubNote = await translateToEnglish(releaseNote);
-    const releaseGithubNoteTranslated = await translateToEnglish(releaseGithubNote);
-    await writeFile(join(cwd, ".commands", "publish", "releases-english", `${newVersion}.md`), `${releaseGithubNote}\n\n----------------\n\n${releaseGithubNoteTranslated}`);
-    console.log("发行说明翻译完成");
-    console.log("🧊 请编辑它，检查翻译的内容是否合理");
-    console.log("其中，还重新回译了一份译文，你可以结合译文和回译译文，来判断结果是否有错漏。在正式提交前，需删除回译的译文\n");
-    console.log(join(cwd, ".commands", "publish", "releases-english", `${newVersion}.md`));
-    if ((await cli.select("\n检查完毕并继续吗？", ["否，重新翻译", "是，继续"])) === "是，继续") break;
-    console.log("好的，即将重新翻译..");
-    console.clear();
+    return chatCompletion.choices[0].message.content ?? ''
   }
 
   while (true) {
-    console.log(join(cwd, ".commands", "publish", "releases-english", `${newVersion}.md`));
-    releaseGithubNote = await readFile(join(cwd, ".commands", "publish", "releases-english", `${newVersion}.md`), "utf8");
-    if (releaseGithubNote.includes("----------------")) {
-      console.log(`含有 "分割线(---)" 内容，校验未通过，请重新编辑它`);
-      alert("按回车以继续");
-      continue;
+    console.log('发行说明翻译中..')
+    releaseGithubNote = await translateToEnglish(releaseNote)
+    const releaseGithubNoteTranslated = await translateToEnglish(releaseGithubNote)
+    await writeFile(join(cwd, '.commands', 'publish', 'releases-english', `${newVersion}.md`), `${releaseGithubNote}\n\n----------------\n\n${releaseGithubNoteTranslated}`)
+    console.log('发行说明翻译完成')
+    console.log('🧊 请编辑它，检查翻译的内容是否合理')
+    console.log('其中，还重新回译了一份译文，你可以结合译文和回译译文，来判断结果是否有错漏。在正式提交前，需删除回译的译文\n')
+    console.log(join(cwd, '.commands', 'publish', 'releases-english', `${newVersion}.md`))
+    if ((await cli.select('\n检查完毕并继续吗？', ['否，重新翻译', '是，继续'])) === '是，继续') break
+    console.log('好的，即将重新翻译..')
+    console.clear()
+  }
+
+  while (true) {
+    console.log(join(cwd, '.commands', 'publish', 'releases-english', `${newVersion}.md`))
+    releaseGithubNote = await readFile(join(cwd, '.commands', 'publish', 'releases-english', `${newVersion}.md`), 'utf8')
+    if (releaseGithubNote.includes('----------------')) {
+      console.log(`含有 "分割线(---)" 内容，校验未通过，请重新编辑它`)
+      alert('按回车以继续')
+      continue
     }
-    break;
+    break
   }
 
   const octokit = new Octokit({
     auth: config.github.token,
-  });
+  })
 
   await octokit.request(`POST /repos/${publishJson.githubOwner}/${publishJson.githubRepo}/releases`, {
     owner: publishJson.githubOwner,
     repo: publishJson.githubRepo,
     tag_name: `v${newVersion}`,
-    target_commitish: "main",
+    target_commitish: 'main',
     name: `v${newVersion}`,
     body: releaseGithubNote,
     draft: false,
     prerelease: false,
     generate_release_notes: false,
     headers: {
-      "X-GitHub-Api-Version": "2022-11-28",
+      'X-GitHub-Api-Version': '2022-11-28',
     },
-  });
+  })
 
   await fetch(`https://gitee.com/api/v5/repos/${publishJson.giteeOwner}/${publishJson.giteeRepo}/releases`, {
-    method: "POST",
+    method: 'POST',
     body: (() => {
-      const body = new FormData();
-      body.append("access_token", config.gitee.token);
-      body.append("owner", config.gitee.token);
-      body.append("repo", publishJson.giteeRepo);
-      body.append("tag_name", `v${newVersion}`);
-      body.append("target_commitish", "main");
-      body.append("name", `v${newVersion}`);
-      body.append("body", releaseNote);
-      body.append("prerelease", "false");
-      return body;
+      const body = new FormData()
+      body.append('access_token', config.gitee.token)
+      body.append('owner', config.gitee.token)
+      body.append('repo', publishJson.giteeRepo)
+      body.append('tag_name', `v${newVersion}`)
+      body.append('target_commitish', 'main')
+      body.append('name', `v${newVersion}`)
+      body.append('body', releaseNote)
+      body.append('prerelease', 'false')
+      return body
     })(),
-  });
+  })
 
-  const checkGitStatus = await $`git status --porcelain`.text();
-  if (checkGitStatus.trim() !== "") {
-    await $`git add --all`;
-    await $`${{ raw: `git commit -m "🎉 release: v${newVersion}"` }}`;
-    await $`git push -u origin ${(await $`git symbolic-ref --short HEAD`).text().trim()}`;
+  const checkGitStatus = await $`git status --porcelain`.text()
+  if (checkGitStatus.trim() !== '') {
+    await $`git add --all`
+    await $`${{ raw: `git commit -m "🎉 release: v${newVersion}"` }}`
+    await $`git push -u origin ${(await $`git symbolic-ref --short HEAD`).text().trim()}`
   }
 }
 
-console.log("\n\n🎉 发布成功\n");
-console.log(`- npm: https://www.npmjs.com/package/${packageJson.name}/v/${newVersion}`);
-console.log(`- gitee: https://gitee.com/${publishJson.giteeOwner}/${publishJson.giteeRepo}/releases/tag/v${newVersion}`);
-console.log(`- github: https://github.com/${publishJson.githubOwner}/${publishJson.githubRepo}/releases/tag/v${newVersion}`);
-console.log(`- 安装命令: bun i ${packageJson.name}@${newVersion}`);
+console.log('\n\n🎉 发布成功\n')
+console.log(`- npm: https://www.npmjs.com/package/${packageJson.name}/v/${newVersion}`)
+console.log(`- gitee: https://gitee.com/${publishJson.giteeOwner}/${publishJson.giteeRepo}/releases/tag/v${newVersion}`)
+console.log(`- github: https://github.com/${publishJson.githubOwner}/${publishJson.githubRepo}/releases/tag/v${newVersion}`)
+console.log(`- 安装命令: bun i ${packageJson.name}@${newVersion}`)

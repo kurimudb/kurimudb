@@ -3,9 +3,9 @@
 * It can be edited in the /packages/cookbook-dto/src/* file, and each time you run bun run dev, the generated file will be synced to another location based on the content of the /develop.ts.
 */
 
-import typia from "typia";
-import type { CookbookActionParams, CookbookOptions, CookbookSubscribeEmits } from "./cookbook-dto-types";
-export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
+import typia from 'typia';
+import type { CookbookActionParams, CookbookOptions, CookbookSubscribeEmits } from './cookbook-dto-types';
+export async function checkCookbookOptions(cookbookTomlParsed: any): Promise<[
     Record<any, any> & {
         message: string;
         stack: string;
@@ -14,8 +14,8 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
 ] | [
     null,
     CookbookOptions
-]> => {
-    let cookbookToml = { ...cookbookTomlParsed };
+]> {
+    const cookbookToml = { ...cookbookTomlParsed };
     const checkResult = (() => { const $join = (typia.validateEquals as any).join; const $io0 = (input: any, _exceptionable: boolean = true): boolean => "object" === typeof input.projects && null !== input.projects && false === Array.isArray(input.projects) && $io1(input.projects, true && _exceptionable) && ("object" === typeof input.general && null !== input.general && $io3(input.general, true && _exceptionable)) && (2 === Object.keys(input).length || Object.keys(input).every((key: any) => {
         if (["projects", "general"].some((prop: any) => key === prop))
             return true;
@@ -206,7 +206,7 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
             data: input
         } as any;
     }; })()(cookbookTomlParsed);
-    let error = null;
+    const error = null;
     if (!checkResult.success) {
         const error: any = checkResult.errors.at(0)!;
         error.message = `The "cookbook.toml" format is incorrect, [${error.path.slice(7)}] should be ${error.expected}, but it is actually ${error.value}. You may be missing some properties in the configuration item, or adding some properties that will not be used. If you have extra properties, these properties are likely due to a misspelling.`;
@@ -214,8 +214,8 @@ export const checkCookbookOptions = async (cookbookTomlParsed: any): Promise<[
         cookbookTomlParsed = null;
     }
     return [error, cookbookToml];
-};
-export const checkCookbookActionParams = async (resultsRaw: any): Promise<[
+}
+export async function checkCookbookActionParams(resultsRaw: any): Promise<[
     Record<any, any> & {
         message: string;
         stack: string;
@@ -224,10 +224,10 @@ export const checkCookbookActionParams = async (resultsRaw: any): Promise<[
 ] | [
     null,
     CookbookActionParams
-]> => {
+]> {
     let results = { ...resultsRaw };
-    if (typeof Bun === "undefined")
-        throw new Error("Bun is not defined");
+    if (typeof Bun === 'undefined')
+        throw new Error('Bun is not defined');
     const checkResult = (() => { const $throws = (typia.misc.validatePrune as any).throws; const $io0 = (input: any): boolean => "milkio@logger" === input.type && Array.isArray(input.log); const $io1 = (input: any): boolean => "milkio@template" === input.type && "string" === typeof input.name && "string" === typeof input.fsPath && "string" === typeof input.template; const $iu0 = (input: any): any => (() => {
         if ("milkio@logger" === input.type)
             return $io0(input);
@@ -326,7 +326,7 @@ export const checkCookbookActionParams = async (resultsRaw: any): Promise<[
             __prune(input);
         return result;
     }; })()(resultsRaw);
-    let error = null;
+    const error = null;
     if (!checkResult.success) {
         const error: any = checkResult.errors.at(0)!;
         error.message = `The "cookbook.toml" format is incorrect, [${error.path.slice(7)}] should be ${error.expected}, but it is actually ${error.value}. You may be missing some properties in the configuration item, or adding some properties that will not be used. If you have extra properties, these properties are likely due to a misspelling.`;
@@ -334,8 +334,8 @@ export const checkCookbookActionParams = async (resultsRaw: any): Promise<[
         results = null;
     }
     return [error, results];
-};
-export const checkCookbookSubscribeEmits = async (results: any): Promise<[
+}
+export async function checkCookbookSubscribeEmits(results: any): Promise<[
     Record<any, any> & {
         message: string;
         stack: string;
@@ -344,8 +344,8 @@ export const checkCookbookSubscribeEmits = async (results: any): Promise<[
 ] | [
     null,
     CookbookSubscribeEmits
-]> => {
-    const typia = await import("typia");
+]> {
+    const typia = await import('typia');
     const checkResult = (() => { const $throws = (typia.misc.validatePrune as any).throws; const $io0 = (input: any): boolean => "workers@stdout" === input.type && "string" === typeof input.key && "string" === typeof input.chunk; const $io1 = (input: any): boolean => "workers@state" === input.type && "string" === typeof input.key && ("running" === input.state || "stopped" === input.state) && (null === input.code || "running" === input.code || "kill" === input.code || "number" === typeof input.code); const $io2 = (input: any): boolean => "watcher@change" === input.type && ("rename" === input.event || "change" === input.event) && "string" === typeof input.path; const $io3 = (input: any): boolean => "milkio@logger" === input.type && Array.isArray(input.log); const $iu0 = (input: any): any => (() => {
         if ("workers@stdout" === input.type)
             return $io0(input);
@@ -492,7 +492,7 @@ export const checkCookbookSubscribeEmits = async (results: any): Promise<[
             __prune(input);
         return result;
     }; })()(results);
-    let error = null;
+    const error = null;
     if (!checkResult.success) {
         const error: any = checkResult.errors.at(0)!;
         error.message = `The "cookbook.toml" format is incorrect, [${error.path.slice(7)}] should be ${error.expected}, but it is actually ${error.value}. You may be missing some properties in the configuration item, or adding some properties that will not be used. If you have extra properties, these properties are likely due to a misspelling.`;
@@ -500,4 +500,4 @@ export const checkCookbookSubscribeEmits = async (results: any): Promise<[
         results = null;
     }
     return [error, results];
-};
+}

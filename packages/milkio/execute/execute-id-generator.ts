@@ -1,7 +1,7 @@
-import { createId } from "../utils/create-id";
+import { createId } from '../utils/create-id'
 
-export type ExecuteIdGenerator = (request?: Request) => string | Promise<string>;
+export type ExecuteIdGenerator = (request?: Request) => string | Promise<string>
 
-export const defineDefaultExecuteIdGenerator = () => {
-  return createId;
-};
+export function defineDefaultExecuteIdGenerator() {
+  return createId
+}

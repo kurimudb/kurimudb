@@ -1,12 +1,12 @@
 {
   "name": "milkio",
   "type": "module",
-  "module": "index.ts",
   "version": "1.0.0-alpha.42",
+  "module": "index.ts",
+  "scripts": {},
   "peerDependencies": {
     "typescript": "^5.4.2"
   },
-  "scripts": {},
   "dependencies": {
     "@poech/camel-hump-under": "^1.1.0",
     "@southern-aurora/tson": "*",

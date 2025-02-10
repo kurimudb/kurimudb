@@ -1,21 +1,21 @@
-import { join } from "node:path";
-import { exit, cwd } from "node:process";
-import consola from "consola";
-import type { CookbookOptions } from "../utils/cookbook-dto-types";
+import { join } from 'node:path'
+import { exit, cwd } from 'node:process'
+import consola from 'consola'
+import type { CookbookOptions } from '../utils/cookbook-dto-types'
 
-export const initTest = async (options: CookbookOptions) => {
+export async function initTest(options: CookbookOptions) {
   //
-};
+}
 
-export const testRunner = async (key: string) => {
-  const tests = await import(join(cwd(), ".milkio", "test-schema.ts"));
+export async function testRunner(key: string) {
+  const tests = await import(join(cwd(), '.milkio', 'test-schema.ts'))
   if (!(key in tests)) {
-    consola.error(`The test does not exist: ${key}`);
-    exit(1);
+    consola.error(`The test does not exist: ${key}`)
+    exit(1)
   }
 
-  const test = tests[key];
-};
+  const test = tests[key]
+}
 
 // 测试怎么实现：
 // 当调用 initTest 此方法时，传递一个路径，或者星号

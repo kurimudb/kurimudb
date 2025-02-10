@@ -1,13 +1,13 @@
 {
   "name": "@milkio/cookbook",
   "type": "module",
-  "module": "./exports.ts",
   "version": "1.0.0-alpha.42",
-  "scripts": {
-    "typia": "typia"
-  },
+  "module": "./exports.ts",
   "bin": {
     "cookbook": "./cookbook.ts"
+  },
+  "scripts": {
+    "typia": "typia"
   },
   "dependencies": {
     "@poech/camel-hump-under": "^1.1.0",

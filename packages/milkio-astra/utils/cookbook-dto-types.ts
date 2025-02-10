@@ -3,15 +3,15 @@
 * It can be edited in the /packages/cookbook-dto/src/* file, and each time you run bun run dev, the generated file will be synced to another location based on the content of the /develop.ts.
 */
 
-export type CookbookOptions = {
+export interface CookbookOptions {
     projects: Record<string, {
-        type: "milkio" | "other";
+        type: 'milkio' | 'other';
         port: number;
         start: Array<string>;
         build: Array<string>;
         watch?: boolean;
         lazyRoutes?: boolean;
-        typiaMode?: "generation" | "bundler";
+        typiaMode?: 'generation' | 'bundler';
         significant?: Array<string>;
         insignificant?: Array<string>;
     }>;
@@ -19,30 +19,30 @@ export type CookbookOptions = {
         start: string;
         cookbookPort: number;
     };
-};
+}
 export type CookbookActionParams = {
-    type: "milkio@logger";
+    type: 'milkio@logger';
     log: Array<any>;
 } | {
-    type: "milkio@template";
+    type: 'milkio@template';
     name: string;
     fsPath: string;
     template: string;
 };
 export type CookbookSubscribeEmits = {
-    type: "workers@stdout";
+    type: 'workers@stdout';
     key: string;
     chunk: string;
 } | {
-    type: "workers@state";
+    type: 'workers@state';
     key: string;
-    state: "running" | "stopped";
-    code: number | null | "kill" | "running";
+    state: 'running' | 'stopped';
+    code: number | null | 'kill' | 'running';
 } | {
-    type: "watcher@change";
-    event: "rename" | "change";
+    type: 'watcher@change';
+    event: 'rename' | 'change';
     path: string;
 } | {
-    type: "milkio@logger";
+    type: 'milkio@logger';
     log: Array<any>;
 };

@@ -1,19 +1,19 @@
-import { action, reject } from "milkio";
+import { action, reject } from 'milkio'
 
 export default action({
   async handler(
     context,
     params: {
-      a: string;
-      b: number;
-      throw?: boolean;
+      a: string
+      b: number
+      throw?: boolean
     },
   ) {
-    const count = Number(params.a) + params.b;
-    context.logger.info("count", count);
+    const count = Number(params.a) + params.b
+    context.logger.info('count', count)
 
-    if (params.throw) throw reject("REQUEST_FAIL", "custom failed");
+    if (params.throw) throw reject('REQUEST_FAIL', 'custom failed')
 
-    return { count };
+    return { count }
   },
-});
+})
