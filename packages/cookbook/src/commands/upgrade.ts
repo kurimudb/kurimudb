@@ -1,7 +1,7 @@
 import consola from 'consola'
 import { join } from 'node:path'
 import { cwd, exit } from 'node:process'
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 
 export async function buildUpgrade() {
   const packageJson = JSON.parse(await readFile(join(cwd(), 'package.json'), 'utf-8'))
@@ -33,6 +33,8 @@ export async function buildUpgrade() {
       if (key === "milkio" || key.startsWith("@milkio/")) packageJson.peerDependencies[key] = result;
     }
   }
+
+  await writeFile(join(cwd(), 'package.json'), JSON.stringify(packageJson, null, 2))
 
   console.log('')
   console.log(`△ Milkio upgrade!`)
