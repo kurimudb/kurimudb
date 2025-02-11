@@ -1,6 +1,6 @@
 import { TSON } from '@southern-aurora/tson'
 
-export interface MilkioStargateOptions {
+export type MilkioStargateOptions = {
   baseUrl: string | (() => string) | (() => Promise<string>)
   timeout?: number
   fetch?: typeof fetch
@@ -9,7 +9,7 @@ export interface MilkioStargateOptions {
 
 export type Mixin<T, U> = U & Omit<T, keyof U>
 
-export interface ExecuteOptions {
+export type ExecuteOptions = {
   params?: Record<any, any>
   headers?: Record<string, string>
   timeout?: number
@@ -17,7 +17,7 @@ export interface ExecuteOptions {
   baseUrl?: string | (() => string) | (() => Promise<string>)
 }
 
-export interface ExecuteResultsOption { executeId: string }
+export type ExecuteResultsOption = { executeId: string }
 
 export type Ping =
   | [
@@ -40,7 +40,7 @@ export async function createStargate<Generated extends { routeSchema: any, rejec
   const $fetch = stargateOptions.fetch ?? fetch
   const $abort = stargateOptions.abort ?? AbortController
 
-  interface StargateEvents {
+  type StargateEvents = {
     'milkio:executeBefore': { path: string, options: Mixin<ExecuteOptions, { headers: Record<string, string>, baseUrl: string }> }
     'milkio:fetchBefore': { path: string, options: Mixin<ExecuteOptions, { headers: Record<string, string>, baseUrl: string }>, body: string }
     'milkio:executeError': {

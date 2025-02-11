@@ -8,7 +8,7 @@ import { TSON } from '@southern-aurora/tson'
 import { format } from 'date-fns'
 import type { CookbookOptions } from './utils/cookbook-dto-types'
 
-export interface AstraOptionsInit {
+export type AstraOptionsInit = {
   stargate: { $types: any, execute: any, ping: any, cookbook: any }
   bootstrap: () => Promise<Record<string, any>>
 }
@@ -17,19 +17,19 @@ type GeneratorGeneric<T> = T extends AsyncGenerator<infer I> ? I : never
 
 type Mixin<T, U> = U & Omit<T, keyof U>
 
-interface ExecuteOptions {
+type ExecuteOptions = {
   headers?: Record<string, string>
   timeout?: number
   type?: 'action' | 'stream'
 }
 
-interface ExecuteResultsOption { executeId: string }
+type ExecuteResultsOption = { executeId: string }
 
-interface Context {
+type  Context = {
   logger: Logger
 }
 
-interface Logger {
+type Logger = {
   debug: (description: string, ...params: Array<unknown>) => Log
   info: (description: string, ...params: Array<unknown>) => Log
   warn: (description: string, ...params: Array<unknown>) => Log
