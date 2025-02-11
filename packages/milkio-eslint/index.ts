@@ -45,7 +45,10 @@ export default async function milkio(options?: TypedFlatConfigItem | Promise<Typ
 
   // tests
   rules.push({
-    ignores: ['{projects,packages}/**/*.test.{ts,js}'],
+    files: ['{projects,packages}/**/*.test.{ts,js}'],
+    rules: {
+      'unused-imports/no-unused-vars': 'off',
+    },
   })
 
   return rules
