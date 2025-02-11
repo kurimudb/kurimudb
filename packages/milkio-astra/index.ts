@@ -142,6 +142,7 @@ export async function createAstra<AstraOptions extends AstraOptionsInit, Generat
       }
 
       const execute = async (path: Parameters<MirrorWorld['execute']>[0], optionsInit?: Parameters<MirrorWorld['execute']>[1]) => {
+        console.log('\n[MILKIO]', 'executing..')
         const options = (optionsInit as any) ?? {}
         if (options?.generateParams === true) {
           if (!options?.params) options.params = {}
