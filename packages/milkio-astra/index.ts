@@ -63,7 +63,7 @@ export async function createAstra<AstraOptions extends AstraOptionsInit, Generat
             return
           }
           try {
-            console.log('\n[ASTRA]', `connecting.. (${counter})`)
+            console.log('\n[ASTRA]', `connecting.. ${counter >= 255 ? '' : `(${counter})`}`)
             const response = await fetchWithTimeout(`http://localhost:${project.port}/generate_204`, { method: 'HEAD', timeout: 1024 })
             if (response.status === 204) {
               if (timer) clearTimeout(timer)
