@@ -27,8 +27,7 @@ export async function routeSchema(options: CookbookOptions, paths: { cwd: string
     consola.error(`The directory does not exist: ${scanner}`)
     exit(1)
   }
-  // const glob = new Glob("{public,private}/**/*.{action,stream}.ts");
-  const glob = new Glob('{public}/**/*.{action,stream}.ts')
+  const glob = new Glob("{public,private}/**/*.{action,stream}.ts");
   const filesAsyncGenerator = glob.scan({ cwd: scanner, onlyFiles: true })
   const files: Array<string> = []
 
