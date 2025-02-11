@@ -16,6 +16,11 @@ export async function buildUpgrade() {
     placeholder: lastMilkioVersion
   })
 
+  if (typeof result !== 'string' || !/^(\d+)\.(\d+)\.(\d+)((-rc|-beta|-alpha)\.(\d+))?$/.test(result)) {
+    consola.error('The version number is not entered or the format is incorrect.')
+    exit(0)
+  }
+
   if ("dependencies" in packageJson) {
     for (const key in packageJson.dependencies) {
       if (key === "milkio" || key.startsWith("@milkio/")) packageJson.dependencies[key] = result;
