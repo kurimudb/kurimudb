@@ -9,6 +9,11 @@ export async function execute() {
       break
     }
 
+    case 'dev': {
+      await defaultCommand()
+      break
+    }
+
     case 'build': {
       await buildCommand()
       break
