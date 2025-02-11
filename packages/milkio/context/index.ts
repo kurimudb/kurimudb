@@ -1,6 +1,7 @@
-import type { MilkioHttpRequest, MilkioHttpResponse, $types, Logger, Action } from '..'
+import type { MilkioHttpRequest, MilkioHttpResponse, $types, Logger, Action, MilkioRuntimeInit, MilkioInit } from '..'
 
 export interface $context {
+  _: MilkioRuntimeInit<MilkioInit>
   develop: boolean
   executeId: string
   environment: string

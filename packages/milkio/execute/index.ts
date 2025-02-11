@@ -73,6 +73,7 @@ export function __initExecuter(generated: GeneratedInit, runtime: any) {
       executeId: options.createdExecuteId,
       config: runtime.runtime.config,
       call: (module: any, options: any) => __call(context, module, options),
+      _: runtime
     } as unknown as $context
     const results: Results<any> = { value: undefined }
 
