@@ -8,16 +8,18 @@ import { progress } from '../progress'
 export async function configSchema(options: CookbookOptions, paths: { cwd: string, milkio: string, generated: string }, project: CookbookOptions['projects']['key']) {
   const mode = env.MODE ?? 'development'
   const scanner = join(paths.cwd)
-  let files: AsyncIterableIterator<string> | Array<string> = []
+  let modeFiles: AsyncIterableIterator<string> | Array<string> = []
+  let globalModeFiles: AsyncIterableIterator<string> | Array<string> = []
   if (await exists(scanner)) {
-    const glob = new Glob(`{config,configs,functions}/**/{${mode},*.${mode}}.config.ts`)
-    files = glob.scan({ cwd: scanner, onlyFiles: true })
+    modeFiles = (new Glob(`{config,configs,functions}/**/{${mode},*.${mode}}.config.ts`)).scan({ cwd: scanner, onlyFiles: true })
+    globalModeFiles = (new Glob(`{config,configs,functions}/**/{global,*.global}.config.ts`)).scan({ cwd: scanner, onlyFiles: true })
   }
 
   let typescriptImports = `/* eslint-disable */\n// config-schema`
   let typescriptExports = `const mode = "${mode}";`
   typescriptExports += '\n\nexport const configSchema = { get: async () => {\n  return {'
-  for await (let path of files) {
+  
+  for await (let path of globalModeFiles) {
     path = path.replaceAll('\\', '/')
     let nameWithPath = path.slice(0, path.length - 10) // 10 === ".config.ts".length
     if (nameWithPath.endsWith('/index') || nameWithPath === 'index') nameWithPath = nameWithPath.slice(0, nameWithPath.length - 5) // 5 === "index".length
@@ -29,7 +31,21 @@ export async function configSchema(options: CookbookOptions, paths: { cwd: strin
       .split('/')
       .at(-1)
     typescriptImports += `\nimport ${name} from "../${nameWithPath}.config";`
-    typescriptExports += `\n    ...(await ${name}(\n      // @ts-expect-error\n      mode\n    )),`
+    typescriptExports += `\n    ...(await ${name}(mode)),`
+  }
+  for await (let path of modeFiles) {
+    path = path.replaceAll('\\', '/')
+    let nameWithPath = path.slice(0, path.length - 10) // 10 === ".config.ts".length
+    if (nameWithPath.endsWith('/index') || nameWithPath === 'index') nameWithPath = nameWithPath.slice(0, nameWithPath.length - 5) // 5 === "index".length
+    const name = path
+      .slice(0, path.length - 10)
+      .replaceAll('/', '__')
+      .replaceAll('-', '_')
+      .replaceAll('.config.ts', '')
+      .split('/')
+      .at(-1)
+    typescriptImports += `\nimport ${name} from "../${nameWithPath}.config";`
+    typescriptExports += `\n    ...(await ${name}(mode)),`
   }
   typescriptExports += '\n  }\n}}'
   const typescript = `${typescriptImports}\n\n${typescriptExports}`

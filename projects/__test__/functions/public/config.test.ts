@@ -11,4 +11,5 @@ it.sequential('basic', async () => {
 
   // Check if the return value is as expected
   expect(results.foo).toBe('development')
+  expect(results.baz).toBe('baz')
 })
