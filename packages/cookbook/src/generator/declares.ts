@@ -7,7 +7,7 @@ export async function declares(options: CookbookOptions, paths: { cwd: string, m
     declaresImports += `\nimport { generated } from "./index";`
     declaresImports += `\nimport { configSchema } from "./config-schema";`
 
-    let declaresFile = `declare module 'milkio' {`
+    let declaresFile = `declare module "milkio" {`
     declaresFile += `\n  interface $types {`
     declaresFile += `\n    generated: typeof generated`
     declaresFile += `\n    configSchema: typeof configSchema`
@@ -65,5 +65,5 @@ export async function declares(options: CookbookOptions, paths: { cwd: string, m
     declaresFile += ` {}`
 
     declaresFile += `\n}`
-    await Bun.write(join(paths.milkio, 'declares.ts'), `${declaresImports}\n\n${declaresFile}`)
+    await Bun.write(join(paths.milkio, 'declares.d.ts'), `${declaresImports}\n\n${declaresFile}`)
 }

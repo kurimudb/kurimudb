@@ -40,7 +40,7 @@ export const generator = {
 
         await (async () => {
           let indexFile = '// index'
-          indexFile += `\nimport "./declares.ts";`
+          indexFile += `\nimport "./declares.d.ts";`
           indexFile += `\nimport routeSchema from "./route-schema.ts";`
           indexFile += `\nimport commandSchema from "./command-schema.ts";`
           indexFile += `\nimport handlerSchema from "./handler-schema.ts";`
