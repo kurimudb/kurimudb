@@ -9,8 +9,8 @@
     "@milkio/astra": "workspace:*",
     "@milkio/stargate": "workspace:*",
     "@ryoppippi/unplugin-typia": "^1.0.6",
-    "milkid": "2.0.1",
-    "milkio": "../../packages/milkio",
+    "milkid": "2.0.7",
+    "milkio": "workspace:*",
     "rolldown": "^1.0.0-beta.1",
     "typia": "^6.11.3",
     "yaml": "^2.6.0"

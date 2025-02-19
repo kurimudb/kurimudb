@@ -7,12 +7,12 @@ export function stream<StreamInitT extends StreamInit>(init: StreamInitT): Strea
   return stream
 }
 
-export interface StreamInit {
+export type StreamInit = {
   meta?: $meta
   handler: (context: $context, params: any) => AsyncGenerator<unknown>
 }
 
-export interface Stream<StreamInitT extends StreamInit> {
+export type Stream<StreamInitT extends StreamInit> = {
   $milkioType: 'stream'
   meta: StreamInitT['meta'] extends undefined ? {} : StreamInitT['meta']
   handler: StreamInitT['handler']

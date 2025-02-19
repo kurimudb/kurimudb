@@ -20,9 +20,6 @@ export async function commandSchema(options: CookbookOptions, paths: { cwd: stri
   let len = 0
   for await (let path of files) {
     path = path.replaceAll('\\', '/')
-    const file = Bun.file(join(scanner, path))
-    const fileUnit8Array = await file.text()
-    if (!fileUnit8Array.includes('export default command({')) continue
     checkPath(paths, path)
 
     const nameWithPath = path.slice(0, path.length - 3) // 3 === ".ts".length

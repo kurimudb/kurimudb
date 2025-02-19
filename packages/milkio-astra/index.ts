@@ -53,7 +53,7 @@ export async function createAstra<AstraOptions extends AstraOptionsInit, Generat
         const project = cookbookOptions.projects[projectName]
         if (project.type !== 'milkio') continue
         projectStatus.set(projectName, withResolvers())
-        let counter = 256
+        let counter = 64
         let timer: Timer | null = setInterval(async () => {
           if (--counter <= 0) {
             clearInterval(timer!)
@@ -63,7 +63,7 @@ export async function createAstra<AstraOptions extends AstraOptionsInit, Generat
             return
           }
           try {
-            console.log('\n[ASTRA]', `connecting.. ${counter >= 255 ? '' : `(${counter})`}`)
+            console.log('\n[ASTRA]', `connecting.. ${counter >= 64 ? '' : `(${counter})`}`)
             const response = await fetchWithTimeout(`http://localhost:${project.port}/generate_204`, { method: 'HEAD', timeout: 1024 })
             if (response.status === 204) {
               if (timer) clearTimeout(timer)

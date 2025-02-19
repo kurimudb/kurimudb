@@ -64,7 +64,7 @@ export async function routeSchema(options: CookbookOptions, paths: { cwd: string
         let routeFileExports = 'export default { '
         routeFileExports += `type: "${type}", `
         routeFileExports += `types: undefined as any as { `
-        routeFileExports += `"🐣": boolean, `
+        routeFileExports += `"🐣": ${type === 'action' ? 'boolean' : 'number'}, `
         routeFileExports += `meta: typeof ${importName}["meta"], `
         routeFileExports += `params: Parameters<typeof ${importName}["handler"]>[1], `
         routeFileExports += `result: Awaited<ReturnType<typeof ${importName}["handler"]>> `

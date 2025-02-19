@@ -7,12 +7,12 @@ export function action<ActionInitT extends ActionInit>(init: ActionInitT): Actio
   return action
 }
 
-export interface ActionInit {
+export type ActionInit = {
   meta?: $meta
   handler: (context: $context, params: any) => Promise<unknown>
 }
 
-export interface Action<ActionInitT extends ActionInit> {
+export type Action<ActionInitT extends ActionInit> = {
   $milkioType: 'action'
   meta: ActionInitT['meta'] extends undefined ? {} : ActionInitT['meta']
   handler: ActionInitT['handler']

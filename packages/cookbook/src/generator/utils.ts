@@ -3,7 +3,8 @@ import { join } from 'node:path'
 import { exit } from 'node:process'
 
 export function checkPath(paths: { cwd: string }, path: string, type?: string) {
-  if (!/^[#a-z0-9/$/-]+$/.test(path.slice(0, path.length - (type?.length ?? 0) - (type ? 4 : 3)))) {
+  const regex = /^(?!.*[A-Z])[a-z0-9\/\-\p{L}]+$/u;
+  if (!regex.test(path.slice(0, path.length - (type?.length ?? 0) - (type ? 4 : 3)))) {
     consola.error(`Invalid path: "${join(paths.cwd, 'functions', path)}". The path can only contain lowercase letters, numbers, and "-".\n`)
     exit(1)
   }

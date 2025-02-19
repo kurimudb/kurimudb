@@ -82,6 +82,8 @@ export async function createWorld<MilkioOptions extends MilkioInit>(generated: G
     }
   }
 
+  await Promise.all(generated.handlerSchema.loadHandlers(world))
+
   return world as MilkioWorld<MilkioOptions>
 }
 

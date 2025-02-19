@@ -21,7 +21,7 @@ export function reject<Code extends keyof $rejectCode, RejectData extends $rejec
   return error
 }
 
-export interface MilkioRejectError<Code extends keyof $rejectCode = keyof $rejectCode, RejectData extends $rejectCode[Code] = $rejectCode[Code]> { code: Code, data: RejectData, stack: string, $milkioReject: true }
+export type MilkioRejectError<Code extends keyof $rejectCode = keyof $rejectCode, RejectData extends $rejectCode[Code] = $rejectCode[Code]> = { code: Code, data: RejectData, stack: string, $milkioReject: true }
 
 export function exceptionHandler(executeId: string, logger: Logger, error: MilkioRejectError<any, any> | any): MilkioResponseReject {
   const name = error?.code ?? error?.name ?? error?.constructor?.name ?? 'Unnamed Exception'
