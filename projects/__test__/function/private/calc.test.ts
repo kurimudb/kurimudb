@@ -3,7 +3,7 @@ import { astra } from '/test'
 
 it.sequential('basic', async () => {
   const [context, reject, world] = await astra.createMirrorWorld(import.meta.url)
-  const [error, results] = await world.execute('/#/calc', {
+  const [error, results] = await world.execute('/_/calc', {
     params: {
       //
     },

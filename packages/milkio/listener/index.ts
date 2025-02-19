@@ -87,7 +87,7 @@ export function __initListener(generated: GeneratedInit, runtime: any, executer:
 
       await runtime.emit('milkio:httpRequest', { executeId, logger, path: http.path.string as string, http })
 
-      if (!runtime.develop && ((http.path.string as string).startsWith('/#/'))) {
+      if (!runtime.develop && ((http.path.string as string).startsWith('/_/'))) {
         await runtime.emit('milkio:httpNotFound', { executeId, logger, path: http.path.string as string, http })
         throw reject('NOT_FOUND', { path: http.path.string as string })
       }

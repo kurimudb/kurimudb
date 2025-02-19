@@ -127,7 +127,7 @@ export async function routeSchema(options: CookbookOptions, paths: { cwd: string
       }
       routePath = routePath.split('.')[0]
       if (routePath.startsWith('public/')) routePath = routePath.slice(7) // 7 === "public/".length
-      if (routePath.startsWith('private/')) routePath = `#${routePath.slice(7)}`
+      if (routePath.startsWith('private/')) routePath = `_${routePath.slice(7)}`
       if (routePath !== '/' && routePath.endsWith('/')) routePath = routePath.slice(0, routePath.length - 1)
       routePaths.push(routePath)
 
