@@ -22,7 +22,7 @@ export async function routeSchema(options: CookbookOptions, paths: { cwd: string
     exit(1)
   }
 
-  const scanner = join(paths.cwd, 'functions')
+  const scanner = join(paths.cwd, 'function')
   if (!(await exists(scanner))) {
     consola.error(`The directory does not exist: ${scanner}`)
     exit(1)
@@ -45,7 +45,6 @@ export async function routeSchema(options: CookbookOptions, paths: { cwd: string
       const importName = file
         .slice(0, file.length - 10) // 10 === ".ts".length
         .replaceAll('/', '__')
-        .replaceAll('#', '__')
         .replaceAll('-', '_')
       const routeSchemaFolderPath = join(paths.cwd, '.milkio', 'raw', 'routes', `${importName}`)
       const routeGeneratedSchemaFolderPath = join(paths.cwd, '.milkio', 'generated', 'routes', `${importName}`)
@@ -70,11 +69,11 @@ export async function routeSchema(options: CookbookOptions, paths: { cwd: string
         routeFileExports += `result: Awaited<ReturnType<typeof ${importName}["handler"]>> `
         routeFileExports += `},`
         if (project?.lazyRoutes === undefined || project?.lazyRoutes === true) {
-          routeFileImports += `\nimport type ${importName} from "../../../../functions/${file}";`
-          routeFileExports += `module: () => import("../../../../functions/${file}"), `
+          routeFileImports += `\nimport type ${importName} from "../../../../function/${file}";`
+          routeFileExports += `module: () => import("../../../../function/${file}"), `
         }
         else {
-          routeFileImports += `\nimport ${importName} from "../../../../functions/${file}";`
+          routeFileImports += `\nimport ${importName} from "../../../../function/${file}";`
           routeFileExports += `module: () => ${importName}, `
         }
         routeFileExports += `validateParams: (params: any): IValidation<Parameters<typeof ${importName}["handler"]>[1]> => typia.misc.validatePrune<Parameters<typeof ${importName}["handler"]>[1]>(params) as any, `
@@ -128,7 +127,7 @@ export async function routeSchema(options: CookbookOptions, paths: { cwd: string
       }
       routePath = routePath.split('.')[0]
       if (routePath.startsWith('public/')) routePath = routePath.slice(7) // 7 === "public/".length
-      if (routePath.startsWith('private/')) routePath = `__${routePath.slice(7)}`
+      if (routePath.startsWith('private/')) routePath = `#${routePath.slice(7)}`
       if (routePath !== '/' && routePath.endsWith('/')) routePath = routePath.slice(0, routePath.length - 1)
       routePaths.push(routePath)
 
@@ -136,7 +135,6 @@ export async function routeSchema(options: CookbookOptions, paths: { cwd: string
         importName = file
           .slice(0, file.length - 10) // 10 === ".ts".length
           .replaceAll('/', '__')
-          .replaceAll('#', '__')
           .replaceAll('-', '_')
       }
       if (!fileHash) {

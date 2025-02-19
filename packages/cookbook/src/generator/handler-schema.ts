@@ -9,10 +9,6 @@ import { progress } from '../progress'
 
 export async function handlerSchema(options: CookbookOptions, paths: { cwd: string, milkio: string, generated: string }, project: CookbookOptions['projects']['key']) {
   if (!paths.milkio) return
-  const milkioRawPath = join(paths.cwd, '.milkio', 'raw')
-  const milkioRawRoutesPath = join(milkioRawPath, 'routes')
-  if (!(await exists(milkioRawPath))) await mkdir(milkioRawPath)
-  if (!(await exists(milkioRawRoutesPath))) await mkdir(milkioRawRoutesPath)
 
   let typiaPath = join(paths.cwd, './node_modules/typia/lib/executable/typia.js')
   if (!(await exists(typiaPath))) typiaPath = join(paths.cwd, '../../node_modules/typia/lib/executable/typia.js')
@@ -26,7 +22,7 @@ export async function handlerSchema(options: CookbookOptions, paths: { cwd: stri
     consola.error(`The directory does not exist: ${scanner}`)
     exit(1)
   }
-  const glob = new Glob("{functions,handlers}/**/*.handler.ts");
+  const glob = new Glob("{function,handler}/**/*.handler.ts");
   const filesAsyncGenerator = glob.scan({ cwd: scanner, onlyFiles: true })
 
   let typescriptImports = `/* eslint-disable */\n// handler-schema`

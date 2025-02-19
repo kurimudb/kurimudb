@@ -15,10 +15,27 @@ export async function declares(options: CookbookOptions, paths: { cwd: string, m
     
     /**
      * ------------------------------------------------------------------------------------------------
+     * @step meta
+     * ------------------------------------------------------------------------------------------------
+     */
+    const metaDts = (new Glob(`{meta}/**/*.meta.ts`)).scan({ cwd: join(paths.cwd), onlyFiles: true })
+    declaresFile += `\n  interface $meta`
+    let metaIndex = 0
+    for await (const path of metaDts) {
+        declaresImports+= `\nimport type { _ as meta_${metaIndex} } from "../${path.replaceAll('\\', '/')}";`
+        if (metaIndex > 0) declaresFile += `, `
+        else declaresFile += ` extends `
+        declaresFile += `meta_${metaIndex}`
+        ++metaIndex;
+    }
+    declaresFile += ` {}`
+    
+    /**
+     * ------------------------------------------------------------------------------------------------
      * @step context
      * ------------------------------------------------------------------------------------------------
      */
-    const contextDts = (new Glob(`{contexts}/**/{*.d.ts`)).scan({ cwd: join(paths.cwd), onlyFiles: true })
+    const contextDts = (new Glob(`{context}/**/*.context.ts`)).scan({ cwd: join(paths.cwd), onlyFiles: true })
     declaresFile += `\n  interface $context`
     let contextIndex = 0
     for await (const path of contextDts) {
@@ -35,7 +52,7 @@ export async function declares(options: CookbookOptions, paths: { cwd: string, m
      * @step event
      * ------------------------------------------------------------------------------------------------
      */
-    const eventDts = (new Glob(`{events}/**/{*.d.ts`)).scan({ cwd: join(paths.cwd), onlyFiles: true })
+    const eventDts = (new Glob(`{event}/**/*.event.ts`)).scan({ cwd: join(paths.cwd), onlyFiles: true })
     declaresFile += `\n  interface $events`
     let eventIndex = 0
     for await (const path of eventDts) {
@@ -52,7 +69,7 @@ export async function declares(options: CookbookOptions, paths: { cwd: string, m
      * @step code
      * ------------------------------------------------------------------------------------------------
      */
-    const codeDts = (new Glob(`{codes}/**/{*.d.ts`)).scan({ cwd: join(paths.cwd), onlyFiles: true })
+    const codeDts = (new Glob(`{code}/**/*.code.ts`)).scan({ cwd: join(paths.cwd), onlyFiles: true })
     declaresFile += `\n  interface $rejectCode`
     let codeIndex = 0
     for await (const path of codeDts) {

@@ -35,7 +35,7 @@ export const generator = {
           generated: join(cwd(), 'projects', projectName, '.milkio', 'generated'),
         }
         if (!(await exists(paths.milkio))) await mkdir(paths.milkio)
-          if (!(await exists(paths.milkioRaw))) await mkdir(paths.milkioRaw)
+        if (!(await exists(paths.milkioRaw))) await mkdir(paths.milkioRaw)
         if (!(await exists(paths.generated))) await mkdir(paths.generated)
 
         await (async () => {

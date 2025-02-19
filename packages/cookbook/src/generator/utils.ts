@@ -9,12 +9,12 @@ export function toSafeImportName(path: string) {
 export function checkPath(paths: { cwd: string }, path: string, type?: string) {
   const regex = /^(?!.*[A-Z])[a-z0-9\/\-\p{L}]+$/u;
   if (!regex.test(path.slice(0, path.length - (type?.length ?? 0) - (type ? 4 : 3)))) {
-    consola.error(`Invalid path: "${join(paths.cwd, 'functions', path)}". The path can only contain lowercase letters, numbers, and "-".\n`)
+    consola.error(`Invalid path: "${join(paths.cwd, 'function', path)}". The path can only contain lowercase letters, numbers, and "-".\n`)
     exit(1)
   }
   for (const keyword of keywords) {
     if (!path.endsWith(`/${keyword}.ts`) && path !== `${keyword}.ts`) continue
-    consola.error(`Invalid path: "${join(paths.cwd, 'functions', path)}". The name is a JavaScript keyword, which can cause potential problems.\n`)
+    consola.error(`Invalid path: "${join(paths.cwd, 'function', path)}". The name is a JavaScript keyword, which can cause potential problems.\n`)
     exit(1)
   }
 }

@@ -28,7 +28,7 @@ export async function createTemplate(fn: CreateTemplateFn) {
     name: () => argv[2],
     directory: () => argv[3],
     route: () => {
-      const pathArr = relative(`${cwd().replaceAll('\\', '/')}/functions`, argv[3])
+      const pathArr = relative(`${cwd().replaceAll('\\', '/')}/function`, argv[3])
         .split('/')
         .slice(2)
       if (pathArr[0] === 'public') pathArr.shift()
