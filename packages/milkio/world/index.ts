@@ -17,7 +17,7 @@ export interface MilkioInit {
   executeId?: (request: Request) => string | Promise<string>
   onLoggerSubmitting?: LoggerSubmittingHandler
   onLoggerInserting?: LoggerInsertingHandler
-  bootstraps?: Array<(world: MilkioWorld<any>) => Promise<void>>
+  bootstraps?: Array<(world: MilkioWorld) => Promise<void> | void>
 }
 
 export type MilkioRuntimeInit<T extends MilkioInit> = Mixin<

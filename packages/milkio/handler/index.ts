@@ -1,4 +1,4 @@
-import type { $context, ContextHttp, Results, Logger, $meta, MilkioWorld } from '..'
+import type { MilkioWorld } from '..'
 
 export function handler<HandlerInitT extends HandlerInit>(init: HandlerInitT): HandlerInitT {
   return init

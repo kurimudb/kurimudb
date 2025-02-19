@@ -9,6 +9,7 @@ import { configSchema } from './config-schema'
 import { checkPort } from '../utils/check-port'
 import killPort from 'kill-port'
 import { handlerSchema } from './handler-schema'
+import { declares } from './declares'
 
 let firstGenerate = true
 
@@ -39,6 +40,7 @@ export const generator = {
 
         await (async () => {
           let indexFile = '// index'
+          indexFile += `\nimport "./declares.ts";`
           indexFile += `\nimport routeSchema from "./route-schema.ts";`
           indexFile += `\nimport commandSchema from "./command-schema.ts";`
           indexFile += `\nimport handlerSchema from "./handler-schema.ts";`
@@ -60,6 +62,7 @@ export const generator = {
           configSchema(options, paths, project),
           handlerSchema(options, paths, project),
         ])
+        await declares(options, paths, project)
         if (project?.significant && project.significant.length > 0) {
           for (const script of project.significant) {
             await $`${{ raw: script }}`.cwd(join(paths.cwd))

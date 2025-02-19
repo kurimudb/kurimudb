@@ -2,6 +2,10 @@ import consola from 'consola'
 import { join } from 'node:path'
 import { exit } from 'node:process'
 
+export function toSafeImportName(path: string) {
+  return path.replaceAll('\\', '/').replaceAll('/', '__').replaceAll('-', '_').replaceAll('.', '$')
+}
+
 export function checkPath(paths: { cwd: string }, path: string, type?: string) {
   const regex = /^(?!.*[A-Z])[a-z0-9\/\-\p{L}]+$/u;
   if (!regex.test(path.slice(0, path.length - (type?.length ?? 0) - (type ? 4 : 3)))) {
