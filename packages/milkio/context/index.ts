@@ -4,7 +4,7 @@ export interface $context {
   _: MilkioRuntimeInit<MilkioInit>
   develop: boolean
   executeId: string
-  environment: string
+  emit: MilkioRuntimeInit<MilkioInit>['emit']
   path: string
   logger: Logger
   http: ContextHttp<Record<any, any>>

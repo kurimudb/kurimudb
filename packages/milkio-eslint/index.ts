@@ -12,8 +12,7 @@ export default async function milkio(options?: TypedFlatConfigItem | Promise<Typ
 
   // other typescript files
   rules.push({
-    files: ['{projects,packages}/**/*.ts'],
-    ignores: ['{projects,packages}/**/*.d.ts'],
+    files: ['{projects,packages}/**/*.ts','{projects,packages}/**/*.d.ts'],
     rules: {
       ...(await typescript()).at(-1)!.rules,
       'ts/ban-ts-comment': 'off',
@@ -48,6 +47,7 @@ export default async function milkio(options?: TypedFlatConfigItem | Promise<Typ
     files: ['{projects,packages}/**/*.test.{ts,js}'],
     rules: {
       'unused-imports/no-unused-vars': 'off',
+      'no-console': 'off'
     },
   })
 

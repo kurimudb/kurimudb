@@ -36,7 +36,7 @@ export async function declares(options: CookbookOptions, paths: { cwd: string, m
      * ------------------------------------------------------------------------------------------------
      */
     const eventDts = (new Glob(`{events}/**/{*.d.ts`)).scan({ cwd: join(paths.cwd), onlyFiles: true })
-    declaresFile += `\n  interface $event`
+    declaresFile += `\n  interface $events`
     let eventIndex = 0
     for await (const path of eventDts) {
         declaresImports+= `\nimport type { _ as event_${eventIndex} } from "../${path.replaceAll('\\', '/')}";`

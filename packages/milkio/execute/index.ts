@@ -70,6 +70,7 @@ export function __initExecuter(generated: GeneratedInit, runtime: any) {
       develop: runtime.develop,
       path: options.path,
       logger: options.createdLogger,
+      emit: runtime.emit,
       executeId: options.createdExecuteId,
       config: runtime.runtime.config,
       call: (module: any, options: any) => __call(context, module, options),
