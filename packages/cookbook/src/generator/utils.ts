@@ -76,6 +76,7 @@ const keywords = [
   'transient',
   'true',
   'try',
+  'type',
   'typeof',
   'var',
   'void',

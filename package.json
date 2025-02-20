@@ -10,12 +10,12 @@
   },
   "trustedDependencies": [],
   "dependencies": {
-    "@milkio/cookbook": "./packages/cookbook",
+    "@milkio/cookbook": "workspace:*",
     "@milkio/cookbook-template": "./packages/cookbook-template",
     "@ryoppippi/unplugin-typia": "^1.0.6",
     "@types/fs-extra": "^11.0.4",
     "fs-extra": "^11.2.0",
-    "typia": "^6.11.3",
+    "typia": "^7.6.4",
     "vitest": "3.0.5"
   },
   "devDependencies": {

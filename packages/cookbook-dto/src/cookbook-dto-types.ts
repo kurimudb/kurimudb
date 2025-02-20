@@ -21,6 +21,9 @@ export interface CookbookOptions {
 
 export type CookbookActionParams =
   | {
+      type: 'milkio@ping'
+    }
+  | {
     type: 'milkio@logger'
     log: Array<any>
   }
@@ -30,7 +33,15 @@ export type CookbookActionParams =
     fsPath: string
     template: string
   }
-
+  | {
+    type:'workers@list'
+  }
+  | {
+    type:'workers@get'
+    key: string
+    index: number
+  }
+  
 export type CookbookSubscribeEmits =
   | {
     type: 'workers@stdout'

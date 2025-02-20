@@ -1,0 +1,29 @@
+{
+  "name": "cookbook-ui",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --mode development",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@arco-design/web-vue": "^2.56.3",
+    "@arco-plugins/vite-vue": "^1.4.5",
+    "@microsoft/fetch-event-source": "^2.0.1",
+    "pinia": "^3.0.1",
+    "remixicon": "^4.6.0",
+    "unplugin-auto-import": "^19.1.0",
+    "unplugin-vue-components": "^28.4.0",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@southern-aurora/tson": "*",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.1.0",
+    "vue-tsc": "^2.2.0"
+  }
+}

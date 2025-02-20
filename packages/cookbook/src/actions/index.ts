@@ -1,21 +1,24 @@
-import { $ } from 'bun'
-import { emitter } from '../emitter'
 import type { CookbookActionParams } from '../utils/cookbook-dto-types'
+import { actionPing } from './ping'
+import { actionLogger } from './logger'
+import { actionTemplate } from './template'
+import { actionWorkersList } from './workers-list'
+import { actionWorkersGet } from './workers-get'
+
+const actions = [
+  actionPing,
+  actionLogger,
+  actionTemplate,
+  actionWorkersList,
+  actionWorkersGet
+]
 
 export async function actionHandler(options: CookbookActionParams) {
-  if (!options || !options.type) {
-    throw `Invalid cookbook command, please upgrade the version of cookbook.`
+  if (!options || !options.type) throw `Invalid cookbook command, please upgrade the version of cookbook.`
+  for (const action of actions) {
+    const result = await action(options)
+    if (result === false) continue
+    return result
   }
-  else if (options.type === 'milkio@logger') {
-    emitter.emit('data', {
-      type: 'milkio@logger',
-      log: options.log,
-    })
-  }
-  else if (options.type === 'milkio@template') {
-    await $`bun run .templates/${options.template}.template.ts ${options.name} ${options.fsPath}`
-  }
-  else {
-    throw `Unknown cookbook command, please upgrade the version of cookbook.`
-  }
+  throw `Unknown cookbook command, please upgrade the version of cookbook.`
 }

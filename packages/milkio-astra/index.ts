@@ -53,7 +53,7 @@ export async function createAstra<AstraOptions extends AstraOptionsInit, Generat
         const project = cookbookOptions.projects[projectName]
         if (project.type !== 'milkio') continue
         projectStatus.set(projectName, withResolvers())
-        let counter = 64
+        let counter = 65
         let timer: Timer | null = setInterval(async () => {
           if (--counter <= 0) {
             clearInterval(timer!)
