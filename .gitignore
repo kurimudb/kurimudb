@@ -1,5 +1,6 @@
 # ignore
 /projects/*/.milkio
+/packages/cookbook/src/ui/www
 node_modules
 .DS_Store
 *.old

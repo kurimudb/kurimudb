@@ -1,4 +1,4 @@
-This is the front end of the cookbook.
+This is the UI of the cookbook.
 
 This part has not been open-sourced for the time being, only the built products.
 

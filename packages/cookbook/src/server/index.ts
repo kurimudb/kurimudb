@@ -31,7 +31,7 @@ export async function initServer(options: CookbookOptions) {
           }
         }
         default: {
-          const assets = join(import.meta.dirname, '..', 'website')
+          const assets = join(import.meta.dirname, '..', 'ui', 'www')
           const response = { body: '' as any, headers: { 'Cache-Control': 'no-store' } as Record<string, string> }
           let file: BunFile | string = Bun.file(join(assets, url.pathname))
 
@@ -40,7 +40,10 @@ export async function initServer(options: CookbookOptions) {
           }
           else {
             file = Bun.file(join(assets, url.pathname, 'index.html'))
-            if (!(await file.exists())) file = "404 Not Found ~ UwU";
+            if (!(await file.exists())) {
+              file = Bun.file(join(assets, 'index.html'))
+              if (!(await file.exists())) file = "404 Not Found ~ UwU";
+            }
           }
 
           return new Response(file, response)

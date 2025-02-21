@@ -17,17 +17,3 @@ build = [
   "run",
   "./runtime/bun.ts"
 ]
-
-[projects.cookbook-ui]
-port = 8999
-type = "other"
-start = [
-  "bun",
-  "run",
-  "dev"
-]
-build = [
-  "bun",
-  "run",
-  ".milkio/bun-build.ts"
-]

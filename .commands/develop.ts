@@ -2,7 +2,7 @@
 
 import { $ } from 'bun'
 import { join } from 'node:path'
-import { readFile } from 'node:fs/promises'
+import { exists, readFile } from 'node:fs/promises'
 import { cwd } from 'node:process'
 import fsExtra from 'fs-extra'
 
@@ -52,8 +52,8 @@ tasks.push((async () => {
   }
 })())
 
-tasks.push((async () => { 
-  await $`cd ./projects/cookbook-ui && bun run build`
+tasks.push((async () => {
+  if (await exists(join(cwd(), '../canto-projects/projects/cookbook-ui/package.json'))) await $`cd ../canto-projects/projects/cookbook-ui && bun run build.ts`
 })())
 
 await Promise.all(tasks)
